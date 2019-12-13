@@ -1,4 +1,6 @@
 import { VlElement, define } from '/node_modules/vl-ui-core/vl-core.js';
+import '/node_modules/vl-ui-button/vl-button.js';
+import '/node_modules/vl-ui-icon/vl-icon.js';
 
 /**
  * VlProzaMessage
@@ -15,10 +17,140 @@ import { VlElement, define } from '/node_modules/vl-ui-core/vl-core.js';
  * 
  */
 export class VlProzaMessage extends VlElement(HTMLElement) {
+    static get _observedAttributes() {
+        return ['data-vl-domain', 'data-vl-code'];
+    }
+
     constructor() {
         super(`
-            <span>Dit is een proza tekst</span>
+            <style>
+                @import '/node_modules/vl-ui-button/style.css';
+                @import '/node_modules/vl-ui-icon/style.css';
+                
+                :host > div {
+                    display: inline;
+                }
+            </style>
+            <div>
+                <span id="content"></span>
+            </div>
         `);
+    }
+
+    connectedCallback() {
+        this.__processToegelatenOperaties();
+    }
+
+    get _contentElement() {
+        return this._element.querySelector('#content');
+    }
+
+    _getEditButtonTemplate() {
+        return this._template(`
+            <button is="vl-button-link" type="button">
+                <span is="vl-icon" icon="edit"></span>
+            </button>
+        `);
+    }
+
+    _data_vl_domainChangedCallback(oldValue, newValue) {
+        this._domain = newValue;
+        this._loadMessage();
+    }
+
+    _data_vl_codeChangedCallback(oldValue, newValue) {
+        this._code = newValue;
+        this._loadMessage();
+    }
+
+    _loadMessage() {
+        if (this._domain && this._code) {
+            VlProzaMessage._getMessage(this._domain, this._code).then(message => this._contentElement.innerHTML = message.tekst);
+        } else {
+            this._contentElement.innerHTML = null;
+        }
+    }
+
+    static _getMessage(domain, code) {
+        const messageCache = VlProzaMessage.__getMessageCacheForDomain(domain);
+        if (!messageCache[code]) {
+            messageCache[code] = VlProzaMessage.__fetchMessage(domain, code);
+        }
+        return messageCache[code];
+    }
+
+    static _getToegelatenOperaties(domain) {
+        let toegelatenOperatiesCache = VlProzaMessage.__getToegelatenOperatiesCacheForDomain(domain);
+        if (!toegelatenOperatiesCache) {
+            toegelatenOperatiesCache = VlProzaMessage.__fetchToegelatenOperaties(domain);
+            VlProzaMessage.__setToegelatenOperatiesCacheForDomain(domain, toegelatenOperatiesCache);
+        }
+        return toegelatenOperatiesCache;
+    }
+
+    static __fetchMessage(domain, code) {
+        return fetch("proza/domein/" + domain + "/" + code).then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw Error('Ophalen van Proza bericht is mislukt: ' + response.statusText);
+            }
+        }).catch(error => {
+            console.error('Er is iets fout gelopen bij het ophalen van de Proza berichten', error);
+            return Promise.reject(error);
+        });
+    }
+
+    static __fetchToegelatenOperaties(domain) {
+        return fetch("proza/domein/" + domain + "/toegelatenoperaties").then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw Error('Ophalen toegelaten Proza operaties is mislukt: ' + response.statusText);
+            }
+        }).catch(error => {
+            console.error('Er is iets fout gelopen bij het ophalen van de toegelaten Proza operaties', error);
+            return Promise.reject(error);
+        });
+    }
+
+    static get __domainCache() {
+        if (!VlProzaMessage.__cache) {
+            VlProzaMessage.__cache = {};
+        }
+        return VlProzaMessage.__cache;
+    }
+
+    static __getCacheForDomain(domain) {
+        const cache = VlProzaMessage.__domainCache;
+        if (!cache[domain]) {
+            cache[domain] = {};
+        }
+        return cache[domain];
+    }
+
+    static __getMessageCacheForDomain(domain) {
+        const cache = VlProzaMessage.__getCacheForDomain(domain);
+        if (!cache.messages) {
+            cache.messages = {};
+        }
+        return cache.messages;
+    }
+
+    static __getToegelatenOperatiesCacheForDomain(domain) {
+        return VlProzaMessage.__getCacheForDomain(domain).toegelatenOperaties;
+    }
+
+    static __setToegelatenOperatiesCacheForDomain(domain, toegelatenOperaties) {
+        const cache = VlProzaMessage.__getCacheForDomain(domain);
+        cache.toegelatenOperaties = toegelatenOperaties;
+    }
+
+    async __processToegelatenOperaties() {
+        const toegelatenOperaties = await VlProzaMessage._getToegelatenOperaties(this._domain);
+        if (toegelatenOperaties.update) {
+            this._element.appendChild(this._getEditButtonTemplate());
+        }
     }
 }
 
