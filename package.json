@@ -1,6 +1,6 @@
 {
   "name": "vl-ui-proza-message",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Component om een proza message te tonen en inline te updaten",
   "scripts": {
     "prepare": "npm update --dev vl-ui-util && npm run prepare:util",
