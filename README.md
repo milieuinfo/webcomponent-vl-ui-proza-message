@@ -1,27 +1,28 @@
-# vl-proza-message
+# vl-ui-proza-message
 ![GitHub issues](https://img.shields.io/github/issues-raw/milieuinfo/webcomponent-vl-ui-proza-message) ![GitHub pull requests](https://img.shields.io/github/issues-pr-raw/milieuinfo/webcomponent-vl-ui-proza-message) ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/milieuinfo/webcomponent-vl-ui-proza-message)
+
 Component om een proza message te tonen en inline te updaten
 
 ## Installatie
-```
-npm install --save vl-ui-proza-message
+``` bash
+$ npm install --save vl-ui-proza-message
 ```
 
 ## API
-De [API](https://webcomponenten.omgeving.vlaanderen.be/doc/Vlproza-message.html) bevat een overzicht van de ondersteunde attributen en een beschrijving van de beschikbare functies.
+De [API](https://webcomponenten.omgeving.vlaanderen.be/doc/VlProzaMessage.html) bevat een overzicht van de ondersteunde attributen en een beschrijving van de beschikbare functies.
 
 ## Demo
 De [demo](https://webcomponenten.omgeving.vlaanderen.be/demo/vl-proza-message.html) pagina bevat een overzicht van de mogelijkheden met code voorbeelden. Lokaal opstarten kan met onderstaand [NPM](https://www.npmjs.com) script.
-```
-npm run demo
+``` bash
+$ npm run demo
 ```
 
 ## Testen
 De webcomponent bevat verschillende unit testen die bij elke commit geautomatiseerd in Chrome en Firefox draaien. Hierdoor kunnen we bij elke release een minimum aan kwaliteit garanderen. Later zullen er ook nog UI testen toegevoegd worden zodat al de functionaliteit uitgebreid getest wordt.
 
 De testen kunnen lokaal opgestart worden met onderstaand [NPM](https://www.npmjs.com) script.
-```
-npm run test
+``` bash
+$ npm run test
 ```
 
 ## Issues
