@@ -4,6 +4,26 @@
         <title>vl-proza-message voorbeeld</title>
         <script type="module" src="demo.js"></script>
         <script type="module" src="../vl-proza-message.src.js"></script>
+        <script src="../node_modules/fetch-mock/es5/client-bundle.js"></script>
+
+        <script>
+            fetchMock.mock('proza/domein/foo/bar', {
+                "code": "bar",
+                "tekst": "foobar"
+            });
+            fetchMock.mock('proza/domein/bar', [
+                {
+                    "code": "foo",
+                    "tekst": "barfoo"
+                }
+            ]);
+            fetchMock.mock(/proza\/domein\/.*\/toegelatenoperaties/, {
+                "create": true,
+                "read": true,
+                "update" :true,
+                "delete": true
+            });
+        </script>
     </head>
 
 	<body>
@@ -18,6 +38,18 @@
             </pre>
             <div class="demo">
                 <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
+            </div>
+        </div>
+
+        <div>
+            <h2>Proza message met preloading</h2>
+            <pre>
+                <code class="line-numbers language-markup">
+                    &lt;vl-proza-message id="message-2" data-vl-domain="bar" data-vl-code="foo" data-vl-preload&gt;&lt;/vl-proza-message&gt;
+                </code>
+            </pre>
+            <div class="demo">
+                <vl-proza-message id="message-2" data-vl-domain="bar" data-vl-code="foo" data-vl-preload></vl-proza-message>
             </div>
         </div>
     </body>

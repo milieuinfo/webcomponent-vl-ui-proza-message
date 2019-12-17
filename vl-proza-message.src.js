@@ -45,6 +45,10 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
         return this._element.querySelector('#content');
     }
 
+    get _shouldPreload() {
+        return this.dataset.vlPreload != undefined;
+    }
+
     _getEditButtonTemplate() {
         return this._template(`
             <button is="vl-button-link" type="button">
@@ -65,18 +69,48 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
 
     _loadMessage() {
         if (this._domain && this._code) {
-            VlProzaMessage._getMessage(this._domain, this._code).then(message => this._contentElement.innerHTML = message.tekst);
+            this._getMessage(this._domain, this._code).then(message => this._contentElement.innerHTML = message);
         } else {
             this._contentElement.innerHTML = null;
+        }
+    }
+
+    _getMessage(domain, code) {
+        if (this._shouldPreload) {
+            return VlProzaMessage._getPreloadedMessage(domain, code);
+        } else {
+            return VlProzaMessage._getMessage(domain, code);
         }
     }
 
     static _getMessage(domain, code) {
         const messageCache = VlProzaMessage.__getMessageCacheForDomain(domain);
         if (!messageCache[code]) {
-            messageCache[code] = VlProzaMessage.__fetchMessage(domain, code);
+            messageCache[code] = VlProzaMessage.__fetchMessage(domain, code).then(message => message.tekst);
         }
         return messageCache[code];
+    }
+
+    static _getPreloadedMessage(domain, code) {
+        return VlProzaMessage._getMessages(domain).then(messages => {
+            const message = messages[code];
+            if (message) {
+                return message;
+            } else {
+                throw Error(`Bericht voor {domein: ${domain}, code: ${code}} niet gevonden`);
+            }
+        });
+    }
+
+    static _getMessages(domain) {
+        let messageCache = VlProzaMessage.__getPreloadedMessagesCacheForDomain(domain);
+        if (!messageCache) {
+            messageCache = VlProzaMessage.__fetchMessages(domain).then(messages => {
+                return Object.assign({}, ...(messages.map(message => ({ [message.code]: message.tekst }) )));
+            });
+            VlProzaMessage.__setPreloadedMessagesCacheForDomain(domain, messageCache);
+        }
+        return messageCache;
     }
 
     static _getToegelatenOperaties(domain) {
@@ -89,28 +123,33 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
     }
 
     static __fetchMessage(domain, code) {
-        return fetch("proza/domein/" + domain + "/" + code).then(response => {
-            if (response.ok) {
-                return response.json();
-            } else {
-                throw Error('Ophalen van Proza bericht is mislukt: ' + response.statusText);
-            }
-        }).catch(error => {
-            console.error('Er is iets fout gelopen bij het ophalen van de Proza berichten', error);
+        return VlProzaMessage.__fetchJson(`proza/domein/${domain}/${code}`).catch(error => {
+            console.error(`Er is iets fout gelopen bij het ophalen van het Proza bericht voor {domein: ${domain}, code: ${code}}`, error);
+            return Promise.reject(error);
+        });
+    }
+
+    static __fetchMessages(domain) {
+        return VlProzaMessage.__fetchJson(`proza/domein/${domain}`).catch(error => {
+            console.error(`Er is iets fout gelopen bij het ophalen van de Proza berichten voor domein ${domain}`, error);
             return Promise.reject(error);
         });
     }
 
     static __fetchToegelatenOperaties(domain) {
-        return fetch("proza/domein/" + domain + "/toegelatenoperaties").then(response => {
+        return VlProzaMessage.__fetchJson(`proza/domein/${domain}/toegelatenoperaties`).catch(error => {
+            console.error(`Er is iets fout gelopen bij het ophalen van de toegelaten Proza operaties voor domein ${domain}`, error);
+            return Promise.reject(error);
+        });
+    }
+
+    static __fetchJson(url) {
+        return fetch(url).then(response => {
             if (response.ok) {
                 return response.json();
             } else {
-                throw Error('Ophalen toegelaten Proza operaties is mislukt: ' + response.statusText);
+                throw Error(`Response geeft aan dat er een fout is: ${response.statusText}`);
             }
-        }).catch(error => {
-            console.error('Er is iets fout gelopen bij het ophalen van de toegelaten Proza operaties', error);
-            return Promise.reject(error);
         });
     }
 
@@ -129,21 +168,28 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
         return cache[domain];
     }
 
+    static __getToegelatenOperatiesCacheForDomain(domain) {
+        return VlProzaMessage.__getCacheForDomain(domain).toegelatenOperaties;
+    }
+
+    static __setToegelatenOperatiesCacheForDomain(domain, toegelatenOperaties) {
+        VlProzaMessage.__getCacheForDomain(domain).toegelatenOperaties = toegelatenOperaties;
+    }
+
+    static __getPreloadedMessagesCacheForDomain(domain) {
+        return VlProzaMessage.__getCacheForDomain(domain).preloadedMessages;
+    }
+
+    static __setPreloadedMessagesCacheForDomain(domain, messages) {
+        VlProzaMessage.__getCacheForDomain(domain).preloadedMessages = messages;
+    }
+
     static __getMessageCacheForDomain(domain) {
         const cache = VlProzaMessage.__getCacheForDomain(domain);
         if (!cache.messages) {
             cache.messages = {};
         }
         return cache.messages;
-    }
-
-    static __getToegelatenOperatiesCacheForDomain(domain) {
-        return VlProzaMessage.__getCacheForDomain(domain).toegelatenOperaties;
-    }
-
-    static __setToegelatenOperatiesCacheForDomain(domain, toegelatenOperaties) {
-        const cache = VlProzaMessage.__getCacheForDomain(domain);
-        cache.toegelatenOperaties = toegelatenOperaties;
     }
 
     async __processToegelatenOperaties() {
