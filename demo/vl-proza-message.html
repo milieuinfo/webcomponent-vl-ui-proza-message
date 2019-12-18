@@ -15,6 +15,10 @@
                 {
                     "code": "foo",
                     "tekst": "barfoo"
+                },
+                {
+                    "code": "bar",
+                    "tekst": "barbar"
                 }
             ]);
             fetchMock.mock(/proza\/domein\/.*\/toegelatenoperaties/, {
@@ -33,7 +37,7 @@
             <h2>Proza message</h2>
             <pre>
                 <code class="line-numbers language-markup">
-                    &lt;vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"&gt;&lt;/vl-proza-message&gt;
+                    &lt;vl-proza-message id=&quot;message-1&quot; data-vl-domain=&quot;foo&quot; data-vl-code=&quot;bar&quot;&gt;&lt;/vl-proza-message&gt;
                 </code>
             </pre>
             <div class="demo">
@@ -45,11 +49,15 @@
             <h2>Proza message met preloading</h2>
             <pre>
                 <code class="line-numbers language-markup">
-                    &lt;vl-proza-message id="message-2" data-vl-domain="bar" data-vl-code="foo" data-vl-preload&gt;&lt;/vl-proza-message&gt;
+                    &lt;vl-proza-message-preloader id=&quot;preloader-1&quot; data-vl-domain=&quot;bar&quot;&gt;&lt;/vl-proza-message-preloader&gt;
+                    &lt;vl-proza-message id=&quot;message-2&quot; data-vl-domain=&quot;bar&quot; data-vl-code=&quot;foo&quot;&gt;&lt;/vl-proza-message&gt;
+                    &lt;vl-proza-message id=&quot;message-3&quot; data-vl-domain=&quot;bar&quot; data-vl-code=&quot;bar&quot;&gt;&lt;/vl-proza-message&gt;
                 </code>
             </pre>
             <div class="demo">
-                <vl-proza-message id="message-2" data-vl-domain="bar" data-vl-code="foo" data-vl-preload></vl-proza-message>
+                <vl-proza-message-preloader id="preloader-1" data-vl-domain="bar"></vl-proza-message-preloader>
+                <vl-proza-message id="message-2" data-vl-domain="bar" data-vl-code="foo"></vl-proza-message>
+                <vl-proza-message id="message-3" data-vl-domain="bar" data-vl-code="bar"></vl-proza-message>
             </div>
         </div>
     </body>

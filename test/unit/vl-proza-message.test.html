@@ -12,12 +12,6 @@
 </head>
 
 <body>
-  <test-fixture id="vl-proza-message-fixture">
-    <template>
-      <vl-proza-message data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
-    </template>
-  </test-fixture>
-
   <test-fixture id="vl-proza-messages-fixture">
     <template>
       <div>
@@ -27,23 +21,8 @@
     </template>
   </test-fixture>
 
-  <test-fixture id="vl-proza-message-preload-fixture">
-    <template>
-      <vl-proza-message data-vl-domain="foo" data-vl-code="foo" data-vl-preload></vl-proza-message>
-    </template>
-  </test-fixture>
-
-  <test-fixture id="vl-proza-messages-preload-fixture">
-    <template>
-      <div>
-        <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar" data-vl-preload></vl-proza-message>
-        <vl-proza-message id="message-2" data-vl-domain="foo" data-vl-code="foo" data-vl-preload></vl-proza-message>
-      </div>
-    </template>
-  </test-fixture>
-
   <script type="module">
-    import { VlProzaMessage } from '../../vl-proza-message.src.js';
+    import { VlProzaMessage, VlProzaMessagePreloader } from '../../vl-proza-message.src.js';
 
     suite('vl-proza-message', () => {
       const should = chai.should();
@@ -52,23 +31,6 @@
 
       setup(() => {
         fetchStub = sandbox.stub(window, 'fetch');
-
-        const defaultMessagesResponse = Promise.resolve({
-          ok: true,
-          json: () => {
-            return [
-              {
-                code: "bar",
-                tekst: "foobar"
-              },
-              {
-                code: "foo",
-                tekst: "foofoo"
-              }
-            ]
-          }
-        });
-        fetchStub.withArgs('proza/domein/foo').returns(defaultMessagesResponse);
 
         const defaultMessageResponse = Promise.resolve({
           ok: true,
@@ -95,33 +57,43 @@
       teardown(() => {
         sandbox.restore();
         delete VlProzaMessage.__cache;
+        delete VlProzaMessagePreloader.__cache;
       });
+
+      function prozaMessageContent(message) {
+        return message.shadowRoot.querySelector('#content').textContent;
+      }
+
+      function prozaMessageEditButton(message) {
+        return message.shadowRoot.querySelector('button');
+      }
+
+      function prozaMessageEditButtonIcon(button) {
+        return button.querySelector('[is="vl-icon"]').getAttribute('icon');
+      }
 
       test('toont een bericht', (done) => {
-        const proza = fixture('vl-proza-message-fixture');
+        const proza = fixture('vl-proza-messages-fixture');
         setTimeout(() => {
-          const content = proza.shadowRoot.querySelector('#content');
-          content.textContent.should.equal('foobar');
-          done();
-        });
-      });
-
-      test('toont een preloaded bericht', (done) => {
-        const proza = fixture('vl-proza-message-preload-fixture');
-        setTimeout(() => {
-          const content = proza.shadowRoot.querySelector('#content');
-          content.textContent.should.equal('foofoo');
+          prozaMessageContent(proza.querySelector('#message-1')).should.equal('foobar');
+          prozaMessageContent(proza.querySelector('#message-2')).should.equal('foobar');
           done();
         });
       });
 
       test('bevat de mogelijkheid om de content te wijzigen indien de wijzig operatie toegelaten is', (done) => {
-        const proza = fixture('vl-proza-message-fixture');
+        const proza = fixture('vl-proza-messages-fixture');
         setTimeout(() => {
-          const button = proza.shadowRoot.querySelector('button');
-          const icon = button.querySelector('[is="vl-icon"]');
-          should.exist(button);
-          assert.equal(icon.getAttribute('icon'), 'edit');
+          const button1 = prozaMessageEditButton(proza.querySelector('#message-1'));
+          const icon1 = prozaMessageEditButtonIcon(button1);
+          should.exist(button1);
+          icon1.should.equal('edit');
+
+          const button2 = prozaMessageEditButton(proza.querySelector('#message-2'));
+          const icon2 = prozaMessageEditButtonIcon(button2);
+          should.exist(button2);
+          icon2.should.equal('edit');
+
           done();
         });
       });
@@ -137,10 +109,10 @@
         });
         fetchStub.withArgs('proza/domein/foo/toegelatenoperaties').returns(response);
 
-        const proza = fixture('vl-proza-message-fixture');
+        const proza = fixture('vl-proza-messages-fixture');
         setTimeout(() => {
-          const button = proza.shadowRoot.querySelector('button');
-          should.not.exist(button);
+          should.not.exist(prozaMessageEditButton(proza.querySelector('#message-1')));
+          should.not.exist(prozaMessageEditButton(proza.querySelector('#message-2')));
           done();
         });
       });
@@ -152,26 +124,10 @@
         });
         fetchStub.withArgs('proza/domein/foo/bar').returns(response);
 
-        const proza = fixture('vl-proza-message-fixture');
+        const proza = fixture('vl-proza-messages-fixture');
         setTimeout(() => {
-          const content = proza.shadowRoot.querySelector('#content');
-          content.textContent.should.equal('');
-          assert(console.error.called);
-          done();
-        });
-      });
-
-      test('er wordt een error gelogd indien er iets fout loopt bij het preloaden van proza berichten', (done) => {
-        sandbox.spy(console, 'error');
-        const response = Promise.resolve({
-          ok: false
-        });
-        fetchStub.withArgs('proza/domein/foo').returns(response);
-
-        const proza = fixture('vl-proza-message-preload-fixture');
-        setTimeout(() => {
-          const content = proza.shadowRoot.querySelector('#content');
-          content.textContent.should.equal('');
+          prozaMessageContent(proza.querySelector('#message-1')).should.equal('');
+          prozaMessageContent(proza.querySelector('#message-2')).should.equal('');
           assert(console.error.called);
           done();
         });
@@ -184,46 +140,20 @@
         });
         fetchStub.withArgs('proza/domein/foo/toegelatenoperaties').returns(response);
 
-        const proza = fixture('vl-proza-message-fixture');
+        const proza = fixture('vl-proza-messages-fixture');
         setTimeout(() => {
-          const button = proza.shadowRoot.querySelector('button');
-          should.not.exist(button);
+          should.not.exist(prozaMessageEditButton(proza.querySelector('#message-1')));
+          should.not.exist(prozaMessageEditButton(proza.querySelector('#message-2')));
           assert(console.error.called);
           done();
         });
       });
 
       test('haalt het bericht en de toegelaten operaties maar 1 keer op indien deze al in de cache zitten', (done) => {
-        const proza = fixture('vl-proza-messages-fixture');
+        fixture('vl-proza-messages-fixture');
         setTimeout(() => {
-          const message1 = proza.querySelector('#message-1');
-          const content1 = message1.shadowRoot.querySelector('#content');
-          content1.textContent.should.equal('foobar');
-
-          const message2 = proza.querySelector('#message-2');
-          const content2 = message2.shadowRoot.querySelector('#content');
-          content2.textContent.should.equal('foobar');
-
           fetchStub.should.have.been.calledTwice;
           fetchStub.should.have.been.calledWith('proza/domein/foo/bar');
-          fetchStub.should.have.been.calledWith('proza/domein/foo/toegelatenoperaties');
-          done();
-        });
-      });
-
-      test('haalt het bericht en de toegelaten operaties maar 1 keer op indien deze al in de preload cache zitten', (done) => {
-        const proza = fixture('vl-proza-messages-preload-fixture');
-        setTimeout(() => {
-          const message1 = proza.querySelector('#message-1');
-          const content1 = message1.shadowRoot.querySelector('#content');
-          content1.textContent.should.equal('foobar');
-
-          const message2 = proza.querySelector('#message-2');
-          const content2 = message2.shadowRoot.querySelector('#content');
-          content2.textContent.should.equal('foofoo');
-
-          fetchStub.should.have.been.calledTwice;
-          fetchStub.should.have.been.calledWith('proza/domein/foo');
           fetchStub.should.have.been.calledWith('proza/domein/foo/toegelatenoperaties');
           done();
         });
