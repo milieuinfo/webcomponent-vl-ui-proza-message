@@ -24,45 +24,29 @@
 
 <script type="module">
     import { VlProzaMessage, VlProzaMessagePreloader } from '../../vl-proza-message.src.js';
+    import fetchMock from 'fetch-mock/esm/client.mjs';
 
     suite('preloaded vl-proza-message', () => {
         const should = chai.should();
         const sandbox = sinon.createSandbox();
-        let fetchStub;
 
         setup(() => {
-            fetchStub = sandbox.stub(window, 'fetch');
-
-            const defaultMessagesResponse = Promise.resolve({
-                ok: true,
-                json: () => {
-                    return [
-                        {
-                            code: "bar",
-                            tekst: "foobar"
-                        },
-                        {
-                            code: "foo",
-                            tekst: "foofoo"
-                        }
-                    ]
+            fetchMock.mock('proza/domein/foo', [
+                {
+                    code: "bar",
+                    tekst: "foobar"
+                },
+                {
+                    code: "foo",
+                    tekst: "foofoo"
                 }
-            });
-            fetchStub.withArgs('proza/domein/foo').returns(defaultMessagesResponse);
-
-            const defaultToegelatenOperatiesResponse = Promise.resolve({
-                ok: true,
-                json: () => {
-                    return {
-                        update: true
-                    }
-                }
-            });
-            fetchStub.withArgs('proza/domein/foo/toegelatenoperaties').returns(defaultToegelatenOperatiesResponse);
+            ]);
+            fetchMock.mock('proza/domein/foo/toegelatenoperaties', { update: true });
         });
 
         teardown(() => {
             sandbox.restore();
+            fetchMock.restore();
             delete VlProzaMessage.__cache;
             delete VlProzaMessagePreloader.__cache;
         });
@@ -71,38 +55,31 @@
             return message.shadowRoot.querySelector('#content').textContent;
         }
 
-        test('toont een bericht', (done) => {
+        test('toont een bericht', () => {
             const proza = fixture('vl-proza-preloaded-messages-fixture');
-            setTimeout(() => {
+            return fetchMock.flush(true).then(() => {
                 prozaMessageContent(proza.querySelector('#message-1')).should.equal('foobar');
                 prozaMessageContent(proza.querySelector('#message-2')).should.equal('foofoo');
-                done();
             });
         });
 
-        test('haalt het bericht en de toegelaten operaties maar 1 keer op indien deze al in de preload cache zitten', (done) => {
+        test('haalt het bericht en de toegelaten operaties maar 1 keer op indien deze al in de preload cache zitten', () => {
             fixture('vl-proza-preloaded-messages-fixture');
-            setTimeout(() => {
-                fetchStub.should.have.been.calledTwice;
-                fetchStub.should.have.been.calledWith('proza/domein/foo');
-                fetchStub.should.have.been.calledWith('proza/domein/foo/toegelatenoperaties');
-                done();
+            return fetchMock.flush(true).then(() => {
+                fetchMock.calls('proza/domein/foo').length.should.equal(1);
+                fetchMock.calls('proza/domein/foo/toegelatenoperaties').length.should.equal(1);
             });
         });
 
-        test('er wordt een error gelogd indien er iets fout loopt bij het preloaden van proza berichten', (done) => {
+        test('er wordt een error gelogd indien er iets fout loopt bij het preloaden van proza berichten', () => {
             sandbox.spy(console, 'error');
-            const response = Promise.resolve({
-                ok: false
-            });
-            fetchStub.withArgs('proza/domein/foo').returns(response);
+            fetchMock.mock('proza/domein/foo', 404, { overwriteRoutes: true });
 
             const proza = fixture('vl-proza-preloaded-messages-fixture');
-            setTimeout(() => {
+            return fetchMock.flush(true).then(() => {
                 prozaMessageContent(proza.querySelector('#message-1')).should.equal('');
                 prozaMessageContent(proza.querySelector('#message-2')).should.equal('');
                 assert(console.error.called);
-                done();
             });
         });
     });

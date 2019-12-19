@@ -5,8 +5,6 @@
     <meta charset="utf-8">
     <script src="../../node_modules/@webcomponents/webcomponentsjs/webcomponents-lite.js"></script>
     <script src="../../node_modules/web-component-tester/browser.js"></script>
-    <script src="../../node_modules/sinon/pkg/sinon.js"></script>
-    <script src="../../node_modules/sinon-chai/lib/sinon-chai.js"></script>
 
     <script type="module" src="../../vl-proza-message.src.js"></script>
 </head>
@@ -20,35 +18,26 @@
 
 <script type="module">
     import { VlProzaMessagePreloader } from '../../vl-proza-message.src.js';
+    import fetchMock from 'fetch-mock/esm/client.mjs';
 
     suite('vl-proza-message-preloader', () => {
         const should = chai.should();
-        const sandbox = sinon.createSandbox();
-        let fetchStub;
 
         setup(() => {
-            fetchStub = sandbox.stub(window, 'fetch');
-
-            const defaultMessagesResponse = Promise.resolve({
-                ok: true,
-                json: () => {
-                    return [
-                        {
-                            code: "bar",
-                            tekst: "foobar"
-                        },
-                        {
-                            code: "foo",
-                            tekst: "foofoo"
-                        }
-                    ]
+            fetchMock.mock('proza/domein/foo', [
+                {
+                    code: "bar",
+                    tekst: "foobar"
+                },
+                {
+                    code: "foo",
+                    tekst: "foofoo"
                 }
-            });
-            fetchStub.withArgs('proza/domein/foo').returns(defaultMessagesResponse);
+            ]);
         });
 
         teardown(() => {
-            sandbox.restore();
+            fetchMock.restore();
             delete VlProzaMessagePreloader.__cache;
         });
 
