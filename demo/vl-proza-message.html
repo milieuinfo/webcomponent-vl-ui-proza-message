@@ -1,24 +1,28 @@
 <!DOCTYPE html>
 <html class="js">
-	<head>
-        <title>vl-proza-message voorbeeld</title>
-        <script type="module" src="demo.js"></script>
-        <script type="module" src="../vl-proza-message.src.js"></script>
-    </head>
 
-	<body>
-        <h1>vl-ui-proza-message demo</h1>
+<head>
+    <title>vl-proza-message voorbeeld</title>
+    <script type="module" src="demo.js"></script>
+    <script type="module" src="../vl-proza-message.src.js"></script>
+    <script src="/node_modules/tinymce/tinymce.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="../style.css"/>
+</head>
 
-        <div>
-            <h2>Proza message</h2>
-            <pre>
-                <code class="line-numbers language-markup">
-                    &lt;vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"&gt;&lt;/vl-proza-message&gt;
-                </code>
-            </pre>
-            <div class="demo">
-                <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
-            </div>
+<body>
+    <h1>vl-ui-proza-message demo</h1>
+
+    <div>
+        <h2>Proza message</h2>
+        <pre>
+            <code class="line-numbers language-markup">
+                &lt;vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"&gt;&lt;/vl-proza-message&gt;
+            </code>
+        </pre>
+        <div class="demo">
+            <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
         </div>
-    </body>
+    </div>
+</body>
+
 </html>

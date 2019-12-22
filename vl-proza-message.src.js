@@ -1,6 +1,8 @@
-import { VlElement, define } from '/node_modules/vl-ui-core/vl-core.js';
+import { VlElement, define, awaitScript } from '/node_modules/vl-ui-core/vl-core.js';
 import '/node_modules/vl-ui-button/vl-button.js';
 import '/node_modules/vl-ui-icon/vl-icon.js';
+
+awaitScript('tinymce', '/node_modules/tinymce/tinymce.min.js').then(() => define('vl-proza-message', VlProzaMessage));
 
 /**
  * VlProzaMessage
@@ -22,17 +24,16 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
     }
 
     constructor() {
-        super(`
+        super();
+        this.appendChild(this.__createWysiwygElement());
+        this._shadow(`
             <style>
+                @import '../style.css';
                 @import '/node_modules/vl-ui-button/style.css';
                 @import '/node_modules/vl-ui-icon/style.css';
-                
-                :host > div {
-                    display: inline;
-                }
             </style>
             <div>
-                <span id="content"></span>
+                <slot></slot>
             </div>
         `);
     }
@@ -42,15 +43,21 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
     }
 
     get _contentElement() {
-        return this._element.querySelector('#content');
+        return this._element.querySelector('slot').assignedElements()[0];
+    }
+
+    get _buttonElement() {
+        return this._shadow.querySelector('button');
     }
 
     _getEditButtonTemplate() {
-        return this._template(`
+        const button = this._template(`
             <button is="vl-button-link" type="button">
                 <span is="vl-icon" icon="edit"></span>
             </button>
         `);
+        button.firstElementChild.addEventListener('click', () => this.__initWysiwyg());
+        return button;
     }
 
     _data_vl_domainChangedCallback(oldValue, newValue) {
@@ -152,6 +159,48 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
             this._element.appendChild(this._getEditButtonTemplate());
         }
     }
-}
 
-define('vl-proza-message', VlProzaMessage);
+    __initWysiwyg() {
+        tinyMCE.baseURL = '/node_modules/tinymce';
+        const editor = tinyMCE.init({
+            target: this._shadow.querySelector('slot').assignedElements()[0],
+            menubar: false,
+            inline: true,
+            toolbar: false,
+            plugins: ['quickbars'],
+            quickbars_selection_toolbar: 'bold italic underline',
+            powerpaste_word_import: 'clean',
+            powerpaste_html_import: 'clean'
+        });
+        editor.then(([editor]) => {
+            editor.focus();
+            editor.selection.select(editor.getBody(), true);
+            editor.selection.collapse(false);
+            this._buttonElement.remove();
+            editor.on('keydown', (e) => {
+                if (e.keyCode === 27) {
+                    while (editor.undoManager.hasUndo()) {
+                        editor.undoManager.undo();
+                    }
+                    editor.destroy();
+                    this._element.appendChild(this._getEditButtonTemplate());
+                }
+                if (e.keyCode === 13 && !e.shiftKey) {
+                    editor.destroy();
+                    this._element.appendChild(this._getEditButtonTemplate());
+                }
+            });
+            editor.on('blur', () => {
+                editor.destroy();
+                this._element.appendChild(this._getEditButtonTemplate());
+            });
+        });
+    }
+
+    __createWysiwygElement() {
+        const span = document.createElement('span');
+        span.classList.add('vl-typography');
+        span.id = "wysiwyg";
+        return span;
+    }
+}
