@@ -117,6 +117,28 @@
           fetchMock.calls('proza/domein/foo/toegelatenoperaties').length.should.equal(1);
         });
       });
+
+      test('het aanpassen van het data-vl-code attribuut zal ervoor zorgen dat het bericht voor die code getoond wordt', () => {
+        fetchMock.mock('proza/domein/foo/foo', { code: "foo", tekst: "foofoo" });
+
+        const proza = fixture('vl-proza-messages-fixture');
+        const message1 = proza.querySelector('#message-1');
+        message1.dataset.vlCode = 'foo';
+        return fetchMock.flush(true).then(() => {
+          prozaMessageContent(message1).should.equal('foofoo');
+        });
+      });
+
+      test('het aanpassen van het data-vl-domain attribuut zal ervoor zorgen dat het bericht voor dat domein getoond wordt', () => {
+        fetchMock.mock('proza/domein/bar/bar', { code: "bar", tekst: "barbar" });
+
+        const proza = fixture('vl-proza-messages-fixture');
+        const message1 = proza.querySelector('#message-1');
+        message1.dataset.vlDomain = 'bar';
+        return fetchMock.flush(true).then(() => {
+          prozaMessageContent(message1).should.equal('barbar');
+        });
+      });
     });
   </script>
 </body>

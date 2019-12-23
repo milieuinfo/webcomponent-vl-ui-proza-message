@@ -68,6 +68,21 @@
                     error.message.should.equal('Bericht voor {domein: foo, code: abc} niet gevonden');
                 });
         });
+
+        test('het aanpassen van het data-vl-domein attribuut zal ervoor zorgen dat dat domein ingeladen wordt', () => {
+            fetchMock.mock('proza/domein/bar', [
+                {
+                    code: "foo",
+                    tekst: "barfoo"
+                }
+            ]);
+
+            const preloader = fixture('vl-proza-message-preloader-fixture');
+            preloader.dataset.vlDomain = 'bar';
+            return VlProzaMessagePreloader.getMessage('bar', 'foo').then(message => {
+                message.should.equal('barfoo');
+            });
+        });
     });
 </script>
 </body>
