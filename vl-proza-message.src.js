@@ -3,7 +3,10 @@ import '/node_modules/vl-ui-button/vl-button.js';
 import '/node_modules/vl-ui-icon/vl-icon.js';
 import '/node_modules/vl-ui-typography/vl-typography.js';
 
-awaitScript('tinymce', '/node_modules/tinymce/tinymce.min.js').then(() => define('vl-proza-message', VlProzaMessage));
+awaitScript('tinymce', '/node_modules/tinymce/tinymce.min.js').then(() => {
+    define('vl-proza-message-preloader', VlProzaMessagePreloader);
+    define('vl-proza-message', VlProzaMessage);
+});
 
 /**
  * VlProzaMessage
@@ -162,7 +165,7 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
             powerpaste_html_import: 'clean',
             content_css: '/style.css',
             verify_html: false,
-            forced_root_block : ""
+            forced_root_block: ""
         });
         editor.then(([editor]) => {
             editor.focus();
@@ -330,7 +333,7 @@ class ProzaRestClient {
 
     static getMessages(domain) {
         return ProzaRestClient.__fetchJson(`proza/domein/${domain}`)
-            .then(messages => Object.assign({}, ...(messages.map(message => ({[message.code]: message.tekst})))))
+            .then(messages => Object.assign({}, ...(messages.map(message => ({ [message.code]: message.tekst })))))
             .catch(error => {
                 console.error(`Er is iets fout gelopen bij het ophalen van de Proza berichten voor domein ${domain}`, error);
                 return Promise.reject(error);
@@ -354,6 +357,3 @@ class ProzaRestClient {
         });
     }
 }
-
-define('vl-proza-message-preloader', VlProzaMessagePreloader);
-define('vl-proza-message', VlProzaMessage);
