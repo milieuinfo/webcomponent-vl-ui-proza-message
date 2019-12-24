@@ -51,8 +51,16 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
         return this._element.querySelector('slot').assignedElements()[0];
     }
 
+    get _wysiwygElement() {
+        return this.querySelector('#wysiwyg');
+    }
+
     get _buttonElement() {
         return this._shadow.querySelector('button');
+    }
+
+    get _typographyElement() {
+        return this.querySelector('vl-typography');
     }
 
     _getEditButtonTemplate() {
@@ -84,7 +92,7 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
     _loadMessage() {
         if (this._domain && this._code) {
             VlProzaMessage._getMessage(this._domain, this._code).then(message => {
-                this._contentElement.innerHTML = message;
+                this._wysiwygElement.innerHTML = message;
                 this.__wrapWysiwygElement();
             });
         } else {
@@ -165,7 +173,8 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
             powerpaste_html_import: 'clean',
             content_css: '/style.css',
             verify_html: false,
-            forced_root_block: ""
+            forced_root_block: '',
+            suffix: '.min'
         });
         editor.then(([editor]) => {
             editor.focus();
@@ -204,16 +213,20 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
     }
 
     __wrapWysiwygElement() {
-        const typography = document.createElement('vl-typography');
-        typography.appendChild(this._contentElement);
-        this.appendChild(typography);
+        if (!this._typographyElement) {
+            const typography = document.createElement('vl-typography');
+            typography.appendChild(this._contentElement);
+            this.appendChild(typography);
+        }
     }
 
     __unwrapWysiwygElement() {
-        const typography = this.querySelector('vl-typography');
-        const wysiwyg = typography.firstElementChild;
-        this.appendChild(wysiwyg);
-        typography.remove();
+        if (this._typographyElement) {
+            const typography = this._typographyElement;
+            const wysiwyg = typography.firstChild;
+            this.appendChild(wysiwyg);
+            typography.remove();
+        }
     }
 }
 
