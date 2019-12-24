@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <script src="../../node_modules/@webcomponents/webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../node_modules/web-component-tester/browser.js"></script>
+    <script src="../../node_modules/sinon/pkg/sinon.js"></script>
+    <script src="../../node_modules/sinon-chai/lib/sinon-chai.js"></script>
+
+    <script type="module" src="../../vl-proza-message.src.js"></script>
+</head>
+
+<body>
+<test-fixture id="vl-proza-preloaded-messages-fixture">
+    <template>
+        <div>
+            <vl-proza-message-preloader id="preloader" data-vl-domain="foo"></vl-proza-message-preloader>
+            <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar" data-vl-preload></vl-proza-message>
+            <vl-proza-message id="message-2" data-vl-domain="foo" data-vl-code="foo" data-vl-preload></vl-proza-message>
+        </div>
+    </template>
+</test-fixture>
+
+<script type="module">
+    import { VlProzaMessage, VlProzaMessagePreloader } from '../../vl-proza-message.src.js';
+    import fetchMock from 'fetch-mock/esm/client.mjs';
+
+    suite('preloaded vl-proza-message', () => {
+        const should = chai.should();
+        const sandbox = sinon.createSandbox();
+
+        setup(() => {
+            fetchMock.mock('proza/domein/foo', [
+                {
+                    code: "bar",
+                    tekst: "foobar"
+                },
+                {
+                    code: "foo",
+                    tekst: "foofoo"
+                }
+            ]);
+            fetchMock.mock('proza/domein/foo/toegelatenoperaties', { update: true });
+        });
+
+        teardown(() => {
+            sandbox.restore();
+            fetchMock.restore();
+            delete VlProzaMessage.__cache;
+            delete VlProzaMessagePreloader.__cache;
+        });
+
+        function prozaMessageContent(message) {
+            return message.shadowRoot.querySelector('#content').textContent;
+        }
+
+        test('toont een bericht', () => {
+            const proza = fixture('vl-proza-preloaded-messages-fixture');
+            return fetchMock.flush(true).then(() => {
+                prozaMessageContent(proza.querySelector('#message-1')).should.equal('foobar');
+                prozaMessageContent(proza.querySelector('#message-2')).should.equal('foofoo');
+            });
+        });
+
+        test('haalt het bericht en de toegelaten operaties maar 1 keer op indien deze al in de preload cache zitten', () => {
+            fixture('vl-proza-preloaded-messages-fixture');
+            return fetchMock.flush(true).then(() => {
+                fetchMock.calls('proza/domein/foo').length.should.equal(1);
+                fetchMock.calls('proza/domein/foo/toegelatenoperaties').length.should.equal(1);
+            });
+        });
+
+        test('er wordt een error gelogd indien er iets fout loopt bij het preloaden van proza berichten', () => {
+            sandbox.spy(console, 'error');
+            fetchMock.mock('proza/domein/foo', 404, { overwriteRoutes: true });
+
+            const proza = fixture('vl-proza-preloaded-messages-fixture');
+            return fetchMock.flush(true).then(() => {
+                prozaMessageContent(proza.querySelector('#message-1')).should.equal('');
+                prozaMessageContent(proza.querySelector('#message-2')).should.equal('');
+                assert(console.error.called);
+            });
+        });
+    });
+</script>
+</body>
+
+</html>

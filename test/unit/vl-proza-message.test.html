@@ -12,12 +12,6 @@
 </head>
 
 <body>
-  <test-fixture id="vl-proza-message-fixture">
-    <template>
-      <vl-proza-message data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
-    </template>
-  </test-fixture>
-
   <test-fixture id="vl-proza-messages-fixture">
     <template>
       <div>
@@ -28,129 +22,121 @@
   </test-fixture>
 
   <script type="module">
-    import { VlProzaMessage } from '../../vl-proza-message.src.js';
+    import { VlProzaMessage, VlProzaMessagePreloader } from '../../vl-proza-message.src.js';
+    import fetchMock from 'fetch-mock/esm/client.mjs';
 
     suite('vl-proza-message', () => {
       const should = chai.should();
       const sandbox = sinon.createSandbox();
-      let fetchStub;
 
       setup(() => {
-        fetchStub = sandbox.stub(window, 'fetch');
-
-        const defaultMessageResponse = Promise.resolve({
-          ok: true,
-          json: () => {
-            return {
-              code: "bar",
-              tekst: "foobar"
-            }
-          }
-        });
-        fetchStub.withArgs('proza/domein/foo/bar').returns(defaultMessageResponse);
-
-        const defaultToegelatenOperatiesResponse = Promise.resolve({
-          ok: true,
-          json: () => {
-            return {
-              update: true
-            }
-          }
-        });
-        fetchStub.withArgs('proza/domein/foo/toegelatenoperaties').returns(defaultToegelatenOperatiesResponse);
+        fetchMock.mock('proza/domein/foo/bar', { code: "bar", tekst: "foobar" });
+        fetchMock.mock('proza/domein/foo/toegelatenoperaties', { update: true });
       });
 
       teardown(() => {
         sandbox.restore();
+        fetchMock.restore();
         delete VlProzaMessage.__cache;
+        delete VlProzaMessagePreloader.__cache;
       });
 
-      test('toont een bericht', (done) => {
-        const proza = fixture('vl-proza-message-fixture');
-        setTimeout(() => {
-          const content = proza.shadowRoot.querySelector('#content');
-          content.textContent.should.equal('foobar');
-          done();
-        });
-      });
+      function prozaMessageContent(message) {
+        return message.shadowRoot.querySelector('#content').textContent;
+      }
 
-      test('bevat de mogelijkheid om de content te wijzigen indien de wijzig operatie toegelaten is', (done) => {
-        const proza = fixture('vl-proza-message-fixture');
-        setTimeout(() => {
-          const button = proza.shadowRoot.querySelector('button');
-          const icon = button.querySelector('[is="vl-icon"]');
-          should.exist(button);
-          assert.equal(icon.getAttribute('icon'), 'edit');
-          done();
-        });
-      });
+      function prozaMessageEditButton(message) {
+        return message.shadowRoot.querySelector('button');
+      }
 
-      test('bevat niet de mogelijkheid om de content te wijzigen indien de wijzig operatie niet toegelaten is', (done) => {
-        const response = Promise.resolve({
-          ok: true,
-          json: () => {
-            return {
-              update: false
-            }
-          }
-        });
-        fetchStub.withArgs('proza/domein/foo/toegelatenoperaties').returns(response);
+      function prozaMessageEditButtonIcon(button) {
+        return button.querySelector('[is="vl-icon"]').getAttribute('icon');
+      }
 
-        const proza = fixture('vl-proza-message-fixture');
-        setTimeout(() => {
-          const button = proza.shadowRoot.querySelector('button');
-          should.not.exist(button);
-          done();
-        });
-      });
-
-      test('er wordt een error gelogd indien er iets fout loopt bij het ophalen van een proza bericht', (done) => {
-        sandbox.spy(console, 'error');
-        const response = Promise.resolve({
-          ok: false
-        });
-        fetchStub.withArgs('proza/domein/foo/bar').returns(response);
-
-        const proza = fixture('vl-proza-message-fixture');
-        setTimeout(() => {
-          const content = proza.shadowRoot.querySelector('#content');
-          content.textContent.should.equal('');
-          assert(console.error.called);
-          done();
-        });
-      });
-
-      test('er wordt een error gelogd indien er iets fout loopt bij het ophalen van de toegelaten operaties', (done) => {
-        sandbox.spy(console, 'error');
-        const response = Promise.resolve({
-          ok: false
-        });
-        fetchStub.withArgs('proza/domein/foo/toegelatenoperaties').returns(response);
-
-        const proza = fixture('vl-proza-message-fixture');
-        setTimeout(() => {
-          const button = proza.shadowRoot.querySelector('button');
-          should.not.exist(button);
-          assert(console.error.called);
-          done();
-        });
-      });
-
-      test('haalt het bericht en de toegelaten operaties maar 1 keer op indien deze al in de cache zitten', (done) => {
+      test('toont een bericht', () => {
         const proza = fixture('vl-proza-messages-fixture');
-        setTimeout(() => {
-          const message1 = proza.querySelector('#message-1');
-          const content1 = message1.shadowRoot.querySelector('#content');
-          content1.textContent.should.equal('foobar');
+        return fetchMock.flush(true).then(() => {
+          prozaMessageContent(proza.querySelector('#message-1')).should.equal('foobar');
+          prozaMessageContent(proza.querySelector('#message-2')).should.equal('foobar');
+        });
+      });
 
-          const message2 = proza.querySelector('#message-2');
-          const content2 = message2.shadowRoot.querySelector('#content');
-          content2.textContent.should.equal('foobar');
+      test('bevat de mogelijkheid om de content te wijzigen indien de wijzig operatie toegelaten is', () => {
+        const proza = fixture('vl-proza-messages-fixture');
+        return fetchMock.flush(true).then(() => {
+          const button1 = prozaMessageEditButton(proza.querySelector('#message-1'));
+          const icon1 = prozaMessageEditButtonIcon(button1);
+          should.exist(button1);
+          icon1.should.equal('edit');
 
-          fetchStub.should.have.been.calledTwice;
-          fetchStub.should.have.been.calledWith('proza/domein/foo/bar');
-          fetchStub.should.have.been.calledWith('proza/domein/foo/toegelatenoperaties');
-          done();
+          const button2 = prozaMessageEditButton(proza.querySelector('#message-2'));
+          const icon2 = prozaMessageEditButtonIcon(button2);
+          should.exist(button2);
+          icon2.should.equal('edit');
+        });
+      });
+
+      test('bevat niet de mogelijkheid om de content te wijzigen indien de wijzig operatie niet toegelaten is', () => {
+        fetchMock.mock('proza/domein/foo/toegelatenoperaties', { update: false }, { overwriteRoutes: true });
+
+        const proza = fixture('vl-proza-messages-fixture');
+        return fetchMock.flush(true).then(() => {
+          should.not.exist(prozaMessageEditButton(proza.querySelector('#message-1')));
+          should.not.exist(prozaMessageEditButton(proza.querySelector('#message-2')));
+        });
+      });
+
+      test('er wordt een error gelogd indien er iets fout loopt bij het ophalen van een proza bericht', () => {
+        sandbox.spy(console, 'error');
+        fetchMock.mock('proza/domein/foo/bar', 404, { overwriteRoutes: true });
+
+        const proza = fixture('vl-proza-messages-fixture');
+        return fetchMock.flush(true).then(() => {
+          prozaMessageContent(proza.querySelector('#message-1')).should.equal('');
+          prozaMessageContent(proza.querySelector('#message-2')).should.equal('');
+          assert(console.error.called);
+        });
+      });
+
+      test('er wordt een error gelogd indien er iets fout loopt bij het ophalen van de toegelaten operaties', () => {
+        sandbox.spy(console, 'error');
+        fetchMock.mock('proza/domein/foo/toegelatenoperaties', 404, { overwriteRoutes: true });
+
+        const proza = fixture('vl-proza-messages-fixture');
+        return fetchMock.flush(true).then(() => {
+          should.not.exist(prozaMessageEditButton(proza.querySelector('#message-1')));
+          should.not.exist(prozaMessageEditButton(proza.querySelector('#message-2')));
+          assert(console.error.called);
+        });
+      });
+
+      test('haalt het bericht en de toegelaten operaties maar 1 keer op indien deze al in de cache zitten', () => {
+        fixture('vl-proza-messages-fixture');
+        return fetchMock.flush(true).then(() => {
+          fetchMock.calls('proza/domein/foo/bar').length.should.equal(1);
+          fetchMock.calls('proza/domein/foo/toegelatenoperaties').length.should.equal(1);
+        });
+      });
+
+      test('het aanpassen van het data-vl-code attribuut zal ervoor zorgen dat het bericht voor die code getoond wordt', () => {
+        fetchMock.mock('proza/domein/foo/foo', { code: "foo", tekst: "foofoo" });
+
+        const proza = fixture('vl-proza-messages-fixture');
+        const message1 = proza.querySelector('#message-1');
+        message1.dataset.vlCode = 'foo';
+        return fetchMock.flush(true).then(() => {
+          prozaMessageContent(message1).should.equal('foofoo');
+        });
+      });
+
+      test('het aanpassen van het data-vl-domain attribuut zal ervoor zorgen dat het bericht voor dat domein getoond wordt', () => {
+        fetchMock.mock('proza/domein/bar/bar', { code: "bar", tekst: "barbar" });
+
+        const proza = fixture('vl-proza-messages-fixture');
+        const message1 = proza.querySelector('#message-1');
+        message1.dataset.vlDomain = 'bar';
+        return fetchMock.flush(true).then(() => {
+          prozaMessageContent(message1).should.equal('barbar');
         });
       });
     });
