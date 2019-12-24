@@ -1,6 +1,7 @@
 import { VlElement, define, awaitScript } from '/node_modules/vl-ui-core/vl-core.js';
 import '/node_modules/vl-ui-button/vl-button.js';
 import '/node_modules/vl-ui-icon/vl-icon.js';
+import '/node_modules/vl-ui-typography/vl-typography.js';
 
 awaitScript('tinymce', '/node_modules/tinymce/tinymce.min.js').then(() => define('vl-proza-message', VlProzaMessage));
 
@@ -72,7 +73,10 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
 
     _loadMessage() {
         if (this._domain && this._code) {
-            VlProzaMessage._getMessage(this._domain, this._code).then(message => this._contentElement.innerHTML = message.tekst);
+            VlProzaMessage._getMessage(this._domain, this._code).then(message => {
+                this._contentElement.innerHTML = message.tekst;
+                this.__wrapWysiwygElement();
+            });
         } else {
             this._contentElement.innerHTML = null;
         }
@@ -161,6 +165,7 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
     }
 
     __initWysiwyg() {
+        this.__unwrapWysiwygElement();
         tinyMCE.baseURL = '/node_modules/tinymce';
         const editor = tinyMCE.init({
             target: this._shadow.querySelector('slot').assignedElements()[0],
@@ -170,37 +175,57 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
             plugins: ['quickbars'],
             quickbars_selection_toolbar: 'bold italic underline',
             powerpaste_word_import: 'clean',
-            powerpaste_html_import: 'clean'
+            powerpaste_html_import: 'clean',
+            content_css: '/style.css',
+            verify_html: false,
+            forced_root_block : ""
         });
         editor.then(([editor]) => {
             editor.focus();
             editor.selection.select(editor.getBody(), true);
             editor.selection.collapse(false);
+            editor.bodyElement.classList.add('vl-typography');
             this._buttonElement.remove();
             editor.on('keydown', (e) => {
                 if (e.keyCode === 27) {
                     while (editor.undoManager.hasUndo()) {
                         editor.undoManager.undo();
                     }
-                    editor.destroy();
-                    this._element.appendChild(this._getEditButtonTemplate());
+                    this.__stopWysiwyg(editor);
                 }
                 if (e.keyCode === 13 && !e.shiftKey) {
-                    editor.destroy();
-                    this._element.appendChild(this._getEditButtonTemplate());
+                    this.__stopWysiwyg(editor);
                 }
             });
             editor.on('blur', () => {
-                editor.destroy();
-                this._element.appendChild(this._getEditButtonTemplate());
+                this.__stopWysiwyg(editor);
             });
         });
     }
 
+    __stopWysiwyg(editor) {
+        editor.destroy();
+        this._element.appendChild(this._getEditButtonTemplate());
+        this.__wrapWysiwygElement();
+    }
+
     __createWysiwygElement() {
-        const span = document.createElement('span');
-        span.classList.add('vl-typography');
-        span.id = "wysiwyg";
-        return span;
+        const div = document.createElement('div');
+        div.id = "wysiwyg";
+        div.style = "display: inline;";
+        return div;
+    }
+
+    __wrapWysiwygElement() {
+        const typography = document.createElement('vl-typography');
+        typography.appendChild(this._contentElement);
+        this.appendChild(typography);
+    }
+
+    __unwrapWysiwygElement() {
+        const typography = this.querySelector('vl-typography');
+        const wysiwyg = typography.firstElementChild;
+        this.appendChild(wysiwyg);
+        typography.remove();
     }
 }

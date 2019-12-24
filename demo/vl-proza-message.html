@@ -4,9 +4,9 @@
 <head>
     <title>vl-proza-message voorbeeld</title>
     <script type="module" src="demo.js"></script>
-    <script type="module" src="../vl-proza-message.src.js"></script>
     <script src="/node_modules/tinymce/tinymce.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="../style.css"/>
+    <script type="module" src="/node_modules/vl-ui-button/vl-button.js"></script>
+    <script type="module" src="../vl-proza-message.src.js"></script>
 </head>
 
 <body>
@@ -21,6 +21,102 @@
         </pre>
         <div class="demo">
             <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
+        </div>
+    </div>
+
+    <div>
+        <h2>Proza message</h2>
+        <pre>
+            <code class="line-numbers language-markup">
+                &lt;button is="vl-button"&gt;foo&lt;/button&gt;
+                &lt;button is="vl-button"&gt;
+                    &lt;vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"&gt;&lt;/vl-proza-message&gt;
+                &lt;/button&gt;
+                &lt;button is="vl-button" disabled&gt;
+                    &lt;vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"&gt;&lt;/vl-proza-message&gt;
+                &lt;/button&gt;
+                &lt;button is="vl-button" error&gt;
+                    &lt;vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"&gt;&lt;/vl-proza-message&gt;
+                &lt;/button&gt;
+                &lt;button is="vl-button" secondary&gt;
+                    &lt;vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"&gt;&lt;/vl-proza-message&gt;
+                &lt;/button&gt;
+            </code>
+        </pre>
+        <div class="demo">
+            <button is="vl-button">foo</button>
+            <button is="vl-button">
+                <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
+            </button>
+            <button is="vl-button" disabled>
+                <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
+            </button>
+            <button is="vl-button" error>
+                <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
+            </button>
+            <button is="vl-button" secondary>
+                <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
+            </button>
+        </div>
+    </div>
+
+    <div>
+        <h2>Proza message typografie</h2>
+        <pre>
+            <code class="line-numbers language-markup">
+                &lt;vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="typography"&gt;&lt;/vl-proza-message&gt;
+            </code>
+        </pre>
+        <div class="demo">
+            <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="typography"></vl-proza-message>
+        </div>
+    </div>
+
+    <div>
+        <h2>Proza message titels</h2>
+        <pre>
+            <code class="line-numbers language-markup">
+                &lt;vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="titles"&gt;&lt;/vl-proza-message&gt;
+            </code>
+        </pre>
+        <div class="demo">
+            <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="titles"></vl-proza-message>
+        </div>
+    </div>
+
+    <div>
+        <h2>Proza message lijst</h2>
+        <pre>
+            <code class="line-numbers language-markup">
+                &lt;vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="list"&gt;&lt;/vl-proza-message&gt;
+            </code>
+        </pre>
+        <div class="demo">
+            <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="list"></vl-proza-message>
+        </div>
+    </div>
+
+    <div>
+        <h2>Proza message markup</h2>
+        <pre>
+            <code class="line-numbers language-markup">
+                &lt;vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="markup"&gt;&lt;/vl-proza-message&gt;
+            </code>
+        </pre>
+        <div class="demo">
+            <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="markup"></vl-proza-message>
+        </div>
+    </div>
+
+    <div>
+        <h2>Proza message tabel</h2>
+        <pre>
+            <code class="line-numbers language-markup">
+                &lt;vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="table"&gt;&lt;/vl-proza-message&gt;
+            </code>
+        </pre>
+        <div class="demo">
+            <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="table"></vl-proza-message>
         </div>
     </div>
 </body>

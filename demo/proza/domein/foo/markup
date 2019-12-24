@@ -1,0 +1,4 @@
+{
+    "code": "list",
+    "tekst": "<p><strong>strong-tag</strong></p><p><b>b-tag</b></p><p><em>em-tag</em></p><p><i>i-tag</i></p><p><strike>strike-tag</strike></p><p><s>s-tag</s></p><p><mark>mark-tag</mark></p><p><code>code-tag</code></p><p><pre>pre-tag</pre></p><p><hr/></p><p><blockquote>Lorem ipsum dolor sit amet.</blockquote></p>"
+}
