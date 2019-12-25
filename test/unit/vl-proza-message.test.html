@@ -203,13 +203,56 @@
         });
       });
 
+      test('bij het klikken op de bewerk knop zal na het activeren van de bewerk modus de bewerk knop verwijderd worden', (done) => {
+        sandbox.spy(tinyMCE, 'init');
+        const message = fixture('vl-proza-message-fixture');
+        fetchMock.flush(true).then(() => {
+          prozaMessageEditButton(message).click();
+          const editor = tinyMCE.activeEditor;
+          editor.on('init', () => {
+            should.not.exist(prozaMessageEditButton(message));
+            editor.destroy();
+            done();
+          });
+        });
+      });
+
+      test('bij het klikken op de bewerk knop krijgt de geactiveerde wysiwyg focus', (done) => {
+        sandbox.spy(tinyMCE, 'init');
+        const message = fixture('vl-proza-message-fixture');
+        fetchMock.flush(true).then(() => {
+          prozaMessageEditButton(message).click();
+          const editor = tinyMCE.activeEditor;
+          sandbox.spy(editor, 'focus');
+          editor.on('init', () => {
+            assert(editor.focus.called);
+            editor.destroy();
+            done();
+          });
+        });
+      });
+
+      test('bij het klikken op de bewerk knop krijgt de geactiveerde wysiwyg de typography class zodat in de bewerk modus zodat de wysiwyg stijl toegepast wordt', (done) => {
+        sandbox.spy(tinyMCE, 'init');
+        const message = fixture('vl-proza-message-fixture');
+        fetchMock.flush(true).then(() => {
+          prozaMessageEditButton(message).click();
+          const editor = tinyMCE.activeEditor;
+          editor.on('init', () => {
+            const wysiwyg = prozaWysiwygElement(message);
+            wysiwyg.classList.contains('vl-typography').should.to.be.true;
+            editor.destroy();
+            done();
+          });
+        });
+      });
+
       test('een escape toets zal de bewerk modus deactiveren en de wijzigingen ongedaan maken', (done) => {
         const message = fixture('vl-proza-message-fixture');
         fetchMock.flush(true).then(() => {
           prozaMessageEditButton(message).click();
           const editor = tinyMCE.activeEditor;
           editor.on('init', () => {
-            debugger;
             sandbox.spy(editor, 'destroy');
             const hasUndoStub = sandbox.stub(editor.undoManager, 'hasUndo');
             hasUndoStub.onCall(0).returns(true);
