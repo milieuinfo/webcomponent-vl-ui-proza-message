@@ -47,10 +47,6 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
         this.__processToegelatenOperaties();
     }
 
-    get _contentElement() {
-        return this._element.querySelector('slot').assignedElements()[0];
-    }
-
     get _wysiwygElement() {
         return this.querySelector('#wysiwyg');
     }
@@ -96,7 +92,7 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
                 this.__wrapWysiwygElement();
             });
         } else {
-            this._contentElement.innerHTML = null;
+            this._wysiwygElement.innerHTML = null;
         }
     }
 
@@ -162,8 +158,8 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
     __initWysiwyg() {
         this.__unwrapWysiwygElement();
         tinyMCE.baseURL = '/node_modules/tinymce';
-        const editor = tinyMCE.init({
-            target: this._shadow.querySelector('slot').assignedElements()[0],
+        tinyMCE.init({
+            target: this._wysiwygElement,
             menubar: false,
             inline: true,
             toolbar: false,
@@ -173,10 +169,10 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
             powerpaste_html_import: 'clean',
             content_css: '/style.css',
             verify_html: false,
-            forced_root_block: '',
             suffix: '.min'
         });
-        editor.then(([editor]) => {
+        tinyMCE.activeEditor.on('init', () => {
+            const editor = tinyMCE.activeEditor;
             editor.focus();
             editor.selection.select(editor.getBody(), true);
             editor.selection.collapse(false);
@@ -215,7 +211,7 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
     __wrapWysiwygElement() {
         if (!this._typographyElement) {
             const typography = document.createElement('vl-typography');
-            typography.appendChild(this._contentElement);
+            typography.appendChild(this._wysiwygElement);
             this.appendChild(typography);
         }
     }
