@@ -271,15 +271,17 @@
         });
       });
 
-      test('een enter toets zal de bewerk modus deactiveren', (done) => {
+      test('een enter toets zal de bewerk modus deactiveren en de enter wijziging ongedaan maken', (done) => {
         const message = fixture('vl-proza-message-fixture');
         fetchMock.flush(true).then(() => {
           prozaMessageEditButton(message).click();
           const editor = tinyMCE.activeEditor;
           editor.on('init', () => {
             sandbox.spy(editor, 'destroy');
+            sandbox.spy(editor.undoManager, 'undo');
             editor.on('keydown', () => {
               assert(editor.destroy.called);
+              assert(editor.undoManager.undo.calledOnce);
               done();
             });
             editor.fire('keydown', {

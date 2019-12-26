@@ -2,11 +2,7 @@ import { VlElement, define, awaitScript } from '/node_modules/vl-ui-core/vl-core
 import '/node_modules/vl-ui-button/vl-button.js';
 import '/node_modules/vl-ui-icon/vl-icon.js';
 import '/node_modules/vl-ui-typography/vl-typography.js';
-
-awaitScript('tinymce', '/node_modules/tinymce/tinymce.min.js').then(() => {
-    define('vl-proza-message-preloader', VlProzaMessagePreloader);
-    define('vl-proza-message', VlProzaMessage);
-});
+import '/node_modules/tinymce/tinymce.min.js';
 
 /**
  * VlProzaMessage
@@ -85,6 +81,27 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
         return this.dataset.vlCode;
     }
 
+    get _wysiwygConfig() {
+        return {
+            target: this._wysiwygElement,
+            menubar: false,
+            inline: true,
+            toolbar: false,
+            plugins: ['quickbars'],
+            quickbars_selection_toolbar: 'bold italic underline',
+            powerpaste_word_import: 'clean',
+            powerpaste_html_import: 'clean',
+            content_css: '/style.css',
+            verify_html: false,
+            forced_root_block: '',
+            suffix: '.min'
+        }
+    }
+
+    get _activeWysiwygEditor() {
+        return tinyMCE.activeEditor;
+    }
+
     _loadMessage() {
         if (this._domain && this._code) {
             VlProzaMessage._getMessage(this._domain, this._code).then(message => {
@@ -158,47 +175,63 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
     __initWysiwyg() {
         this.__unwrapWysiwygElement();
         tinyMCE.baseURL = '/node_modules/tinymce';
-        tinyMCE.init({
-            target: this._wysiwygElement,
-            menubar: false,
-            inline: true,
-            toolbar: false,
-            plugins: ['quickbars'],
-            quickbars_selection_toolbar: 'bold italic underline',
-            powerpaste_word_import: 'clean',
-            powerpaste_html_import: 'clean',
-            content_css: '/style.css',
-            verify_html: false,
-            suffix: '.min'
+        tinyMCE.init(this._wysiwygConfig);
+        this._activeWysiwygEditor.on('init', () => {
+            this.__focusWysiwyg();
+            this.__configureWysiwygStyle();
+            this.__hideWysiwygButton();
+            this.__bindWysiwygEvents();
         });
-        tinyMCE.activeEditor.on('init', () => {
-            const editor = tinyMCE.activeEditor;
-            editor.focus();
-            editor.selection.select(editor.getBody(), true);
-            editor.selection.collapse(false);
-            editor.bodyElement.classList.add('vl-typography');
-            this._buttonElement.hidden = true;
-            editor.on('keydown', (e) => {
-                if (e.keyCode === 27) {
-                    while (editor.undoManager.hasUndo()) {
-                        editor.undoManager.undo();
-                    }
-                    this.__stopWysiwyg(editor);
-                }
-                if (e.keyCode === 13 && !e.shiftKey) {
-                    this.__stopWysiwyg(editor);
-                }
-            });
-            editor.on('blur', () => {
-                this.__stopWysiwyg(editor);
-            });
-        });
+    }
+
+    __focusWysiwyg() {
+        const editor = this._activeWysiwygEditor;
+        editor.focus();
+        editor.selection.select(editor.getBody(), true);
+        editor.selection.collapse(false);
+    }
+
+    __configureWysiwygStyle() {
+        this._activeWysiwygEditor.bodyElement.classList.add('vl-typography');
+    }
+
+    __bindWysiwygEvents() {
+        const editor = this._activeWysiwygEditor;
+        editor.on('keydown', (e) => this.__processKeydownEvent(e));
+        editor.on('blur', (e) => this.__processBlurEvent(e));
+    }
+
+    __processKeydownEvent(e) {
+        const editor = this._activeWysiwygEditor;
+        if (e.keyCode === 27) {
+            while (editor.undoManager.hasUndo()) {
+                editor.undoManager.undo();
+            }
+            this.__stopWysiwyg(editor);
+        }
+        if (e.keyCode === 13 && !e.shiftKey) {
+            editor.undoManager.undo();
+            this.__stopWysiwyg(editor);
+        }
+    }
+
+    __processBlurEvent() {
+        const editor = this._activeWysiwygEditor;
+        this.__stopWysiwyg(editor);
     }
 
     __stopWysiwyg(editor) {
         editor.destroy();
-        this._buttonElement.hidden = false;
+        this.__showWysiwygButton();
         this.__wrapWysiwygElement();
+    }
+
+    __hideWysiwygButton() {
+        this._buttonElement.hidden = true;
+    }
+
+    __showWysiwygButton() {
+        this._buttonElement.hidden = false;
     }
 
     __createWysiwygElement() {
@@ -366,3 +399,6 @@ class ProzaRestClient {
         });
     }
 }
+
+define('vl-proza-message-preloader', VlProzaMessagePreloader);
+define('vl-proza-message', VlProzaMessage);
