@@ -23,6 +23,7 @@
 
   <script type="module">
     import { VlProzaMessage, VlProzaMessagePreloader } from '../../vl-proza-message.src.js';
+    import { awaitUntil } from 'vl-ui-core/vl-core';
     import fetchMock from 'fetch-mock/esm/client.mjs';
 
     suite('vl-proza-message', () => {
@@ -56,8 +57,10 @@
       test('toont een bericht', () => {
         const proza = fixture('vl-proza-messages-fixture');
         return fetchMock.flush(true).then(() => {
-          prozaMessageContent(proza.querySelector('#message-1')).should.equal('foobar');
-          prozaMessageContent(proza.querySelector('#message-2')).should.equal('foobar');
+          return awaitUntil(() => {
+            return prozaMessageContent(proza.querySelector('#message-1')) === 'foobar' &&
+                    prozaMessageContent(proza.querySelector('#message-2')) === 'foobar';
+          });
         });
       });
 
@@ -125,7 +128,9 @@
         const message1 = proza.querySelector('#message-1');
         message1.dataset.vlCode = 'foo';
         return fetchMock.flush(true).then(() => {
-          prozaMessageContent(message1).should.equal('foofoo');
+          return awaitUntil(() => {
+            return prozaMessageContent(proza.querySelector('#message-1')) === 'foofoo';
+          });
         });
       });
 
@@ -136,7 +141,9 @@
         const message1 = proza.querySelector('#message-1');
         message1.dataset.vlDomain = 'bar';
         return fetchMock.flush(true).then(() => {
-          prozaMessageContent(message1).should.equal('barbar');
+          return awaitUntil(() => {
+            return prozaMessageContent(proza.querySelector('#message-1')) === 'barbar';
+          });
         });
       });
     });
