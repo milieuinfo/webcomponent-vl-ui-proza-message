@@ -54,7 +54,6 @@
         }
 
         test('toont een bericht', () => {
-            debugger;
             const proza = fixture('vl-proza-preloaded-messages-fixture');
             return fetchMock.flush(true).then(() => {
                 prozaMessageContent(proza.querySelector('#message-1')).should.equal('foobar');
