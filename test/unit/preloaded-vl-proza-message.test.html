@@ -24,6 +24,7 @@
 
 <script type="module">
     import { VlProzaMessage, VlProzaMessagePreloader } from '../../vl-proza-message.src.js';
+    import { awaitUntil } from 'vl-ui-core/vl-core';
     import fetchMock from 'fetch-mock/esm/client.mjs';
 
     suite('preloaded vl-proza-message', () => {
@@ -58,8 +59,10 @@
         test('toont een bericht', () => {
             const proza = fixture('vl-proza-preloaded-messages-fixture');
             return fetchMock.flush(true).then(() => {
-                prozaMessageContent(proza.querySelector('#message-1')).should.equal('foobar');
-                prozaMessageContent(proza.querySelector('#message-2')).should.equal('foofoo');
+                return awaitUntil(() => {
+                    return prozaMessageContent(proza.querySelector('#message-1')) === 'foobar' &&
+                        prozaMessageContent(proza.querySelector('#message-2')) === 'foofoo';
+                });
             });
         });
 
@@ -80,6 +83,24 @@
                 prozaMessageContent(proza.querySelector('#message-1')).should.equal('');
                 prozaMessageContent(proza.querySelector('#message-2')).should.equal('');
                 assert(console.error.called);
+            });
+        });
+
+        test('een bericht wordt individueel opgehaald indien het niet in de preload cache gevonden kan worden', () => {
+            fetchMock.mock('proza/domein/foo', [
+                {
+                    code: "bar",
+                    tekst: "foobar"
+                }
+            ], { overwriteRoutes: true });
+            fetchMock.mock('proza/domein/foo/foo', { code: "foo", tekst: "foofoo" });
+
+            const proza = fixture('vl-proza-preloaded-messages-fixture');
+            return fetchMock.flush(true).then(() => {
+                return awaitUntil(() => {
+                    return prozaMessageContent(proza.querySelector('#message-1')) === 'foobar' &&
+                        prozaMessageContent(proza.querySelector('#message-2')) === 'foofoo';
+                });
             });
         });
     });

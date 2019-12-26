@@ -79,15 +79,13 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
     }
 
     static _getMessage(domain, code) {
-        if (VlProzaMessagePreloader.isPreloaded(domain)) {
-            return VlProzaMessagePreloader.getMessage(domain, code);
-        } else {
+        return VlProzaMessagePreloader.getMessage(domain, code).catch(() => {
             const messageCache = VlProzaMessage.__getMessageCacheForDomain(domain);
             if (!messageCache[code]) {
                 messageCache[code] = ProzaRestClient.getMessage(domain, code);
             }
             return messageCache[code];
-        }
+        });
     }
 
     static _getToegelatenOperaties(domain) {
