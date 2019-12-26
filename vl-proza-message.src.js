@@ -177,7 +177,7 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
             editor.selection.select(editor.getBody(), true);
             editor.selection.collapse(false);
             editor.bodyElement.classList.add('vl-typography');
-            this._buttonElement.remove();
+            this._buttonElement.hidden = true;
             editor.on('keydown', (e) => {
                 if (e.keyCode === 27) {
                     while (editor.undoManager.hasUndo()) {
@@ -197,7 +197,7 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
 
     __stopWysiwyg(editor) {
         editor.destroy();
-        this._element.appendChild(this._getEditButtonTemplate());
+        this._buttonElement.hidden = false;
         this.__wrapWysiwygElement();
     }
 

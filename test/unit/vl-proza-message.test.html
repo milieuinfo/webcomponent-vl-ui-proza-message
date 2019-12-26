@@ -210,7 +210,7 @@
           prozaMessageEditButton(message).click();
           const editor = tinyMCE.activeEditor;
           editor.on('init', () => {
-            should.not.exist(prozaMessageEditButton(message));
+            prozaMessageEditButton(message).hidden.should.to.be.true
             editor.destroy();
             done();
           });
