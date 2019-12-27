@@ -7,7 +7,7 @@ import '/node_modules/tinymce/tinymce.min.js';
 /**
  * VlProzaMessage
  * @class
- * @classdesc
+ * @classdesc De vl-proza-message webcomponent kan gebruikt worden om teksten te laten beheren door de business. De edit modus wordt geactiveerd door op het potlood icoon te klikken. De edit modus kan gedactiveerd worden door op enter te duwen of een focus te geven aan een ander element op de pagina. Wanneer de gebruiker op escape klikt zal de edit modus afgesloten worden en zullen de wijzigingen ongedaan gemaakt worden.
  *
  * @extends VlElement
  *
@@ -202,25 +202,48 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
     }
 
     __processKeydownEvent(e) {
-        const editor = this._activeWysiwygEditor;
-        if (e.keyCode === 27) {
-            while (editor.undoManager.hasUndo()) {
-                editor.undoManager.undo();
-            }
-            this.__stopWysiwyg(editor);
+        if (this.__isEscapeKey(e)) {
+            this.__undoAllWysiwygChanges();
+            this.__stopWysiwyg();
         }
-        if (e.keyCode === 13 && !e.shiftKey) {
+        if (this.__isEnterKey(e) && !this.__isShiftKey(e)) {
+            this.__undoWysiwygChange();
+            this.__stopWysiwyg();
+        }
+    }
+
+    __isEscapeKey(e) {
+        return e.keyCode === 27;
+    }
+
+    __isEnterKey(e) {
+        return e.keyCode === 13;
+    }
+
+    __isShiftKey(e) {
+        return e.shiftKey;
+    }
+
+    __undoWysiwygChange() {
+        const editor = this._activeWysiwygEditor;
+        if (editor.undoManager.hasUndo()) {
             editor.undoManager.undo();
-            this.__stopWysiwyg(editor);
+        }
+    }
+
+    __undoAllWysiwygChanges() {
+        const editor = this._activeWysiwygEditor;
+        while (editor.undoManager.hasUndo()) {
+            editor.undoManager.undo();
         }
     }
 
     __processBlurEvent() {
-        const editor = this._activeWysiwygEditor;
-        this.__stopWysiwyg(editor);
+        this.__stopWysiwyg();
     }
 
-    __stopWysiwyg(editor) {
+    __stopWysiwyg() {
+        const editor = this._activeWysiwygEditor;
         editor.destroy();
         this.__showWysiwygButton();
         this.__wrapWysiwygElement();
