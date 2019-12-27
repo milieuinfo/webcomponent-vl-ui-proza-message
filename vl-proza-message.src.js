@@ -1,4 +1,4 @@
-import { VlElement, define, awaitScript } from '/node_modules/vl-ui-core/vl-core.js';
+import { VlElement, define } from '/node_modules/vl-ui-core/vl-core.js';
 import '/node_modules/vl-ui-button/vl-button.js';
 import '/node_modules/vl-ui-icon/vl-icon.js';
 import '/node_modules/vl-ui-typography/vl-typography.js';
