@@ -12,6 +12,12 @@
 </head>
 
 <body>
+  <test-fixture id="vl-proza-message-fixture">
+    <template>
+      <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
+    </template>
+  </test-fixture>
+
   <test-fixture id="vl-proza-messages-fixture">
     <template>
       <div>
@@ -30,9 +36,11 @@
       const should = chai.should();
       const sandbox = sinon.createSandbox();
 
-      setup(() => {
+      setup((done) => {
         fetchMock.mock('proza/domein/foo/bar', { code: "bar", tekst: "foobar" });
         fetchMock.mock('proza/domein/foo/toegelatenoperaties', { update: true });
+
+        customElements.whenDefined('vl-proza-message').then(() => done());
       });
 
       teardown(() => {
@@ -43,7 +51,7 @@
       });
 
       function prozaMessageContent(message) {
-        return message.shadowRoot.querySelector('#content').textContent;
+        return prozaWysiwygElement(message).textContent;
       }
 
       function prozaMessageEditButton(message) {
@@ -52,6 +60,14 @@
 
       function prozaMessageEditButtonIcon(button) {
         return button.querySelector('[is="vl-icon"]').getAttribute('icon');
+      }
+
+      function prozaWysiwygElement(message) {
+        return message.querySelector('#wysiwyg');
+      }
+
+      function prozaTypographyElement(message) {
+        return message.querySelector('vl-typography');
       }
 
       test('toont een bericht', () => {
@@ -143,6 +159,177 @@
         return fetchMock.flush(true).then(() => {
           return awaitUntil(() => {
             return prozaMessageContent(proza.querySelector('#message-1')) === 'barbar';
+          });
+        });
+      });
+
+      test('bevat een bereikbaar wysiwyg element met eigen stijl dat door TinyMCE gebruikt kan worden', () => {
+        const message = fixture('vl-proza-message-fixture');
+        const wysiwyg = prozaWysiwygElement(message);
+        should.exist(wysiwyg);
+        wysiwyg.style.should.not.be.undefined;
+      });
+
+      test('zodra een proza domein code opgehaald werd zal het wysiwyg element in lees modus verplaatst worden naar een vl-typography element zodat de wysiwyg stijl toegepast wordt', () => {
+        const message = fixture('vl-proza-message-fixture');
+        let typography = prozaTypographyElement(message);
+        should.not.exist(typography);
+        return fetchMock.flush(true).then(() => {
+          typography = prozaTypographyElement(message);
+          const wysiwyg = prozaWysiwygElement(typography);
+          should.exist(typography);
+          should.exist(wysiwyg);
+        });
+      });
+
+      test('zodra de bewerk modus geactiveerd wordt zal het wysiwyg element verplaatst worden zodat het door TinyMCE gebruikt kan worden', () => {
+        const message = fixture('vl-proza-message-fixture');
+        let typography = prozaTypographyElement(message);
+        let wysiwyg = prozaWysiwygElement(message);
+        should.not.exist(typography);
+        should.exist(wysiwyg);
+        return fetchMock.flush(true).then(() => {
+          typography = prozaTypographyElement(message);
+          wysiwyg = prozaWysiwygElement(typography);
+          should.exist(typography);
+          should.exist(wysiwyg);
+          prozaMessageEditButton(message).click();
+          typography = prozaTypographyElement(message);
+          wysiwyg = prozaWysiwygElement(message);
+          should.not.exist(typography);
+          should.exist(wysiwyg);
+        });
+      });
+
+      test('bij het klikken op de bewerk knop zal de bewerk modus geactiveerd worden', () => {
+        sandbox.spy(tinyMCE, 'init');
+        const message = fixture('vl-proza-message-fixture');
+        return fetchMock.flush(true).then(() => {
+          prozaMessageEditButton(message).click();
+          assert(tinyMCE.init.called);
+        });
+      });
+
+      test('bij het klikken op de bewerk knop zal na het activeren van de bewerk modus de bewerk knop verwijderd worden', (done) => {
+        sandbox.spy(tinyMCE, 'init');
+        const message = fixture('vl-proza-message-fixture');
+        fetchMock.flush(true).then(() => {
+          prozaMessageEditButton(message).click();
+          const editor = tinyMCE.activeEditor;
+          editor.on('init', () => {
+            prozaMessageEditButton(message).hidden.should.to.be.true
+            editor.destroy();
+            done();
+          });
+        });
+      });
+
+      test('bij het klikken op de bewerk knop krijgt de geactiveerde wysiwyg focus', (done) => {
+        sandbox.spy(tinyMCE, 'init');
+        const message = fixture('vl-proza-message-fixture');
+        fetchMock.flush(true).then(() => {
+          prozaMessageEditButton(message).click();
+          const editor = tinyMCE.activeEditor;
+          sandbox.spy(editor, 'focus');
+          editor.on('init', () => {
+            assert(editor.focus.called);
+            editor.destroy();
+            done();
+          });
+        });
+      });
+
+      test('bij het klikken op de bewerk knop krijgt de geactiveerde wysiwyg de typography class zodat in de bewerk modus zodat de wysiwyg stijl toegepast wordt', (done) => {
+        sandbox.spy(tinyMCE, 'init');
+        const message = fixture('vl-proza-message-fixture');
+        fetchMock.flush(true).then(() => {
+          prozaMessageEditButton(message).click();
+          const editor = tinyMCE.activeEditor;
+          editor.on('init', () => {
+            const wysiwyg = prozaWysiwygElement(message);
+            wysiwyg.classList.contains('vl-typography').should.to.be.true;
+            editor.destroy();
+            done();
+          });
+        });
+      });
+
+      test('een escape toets zal de bewerk modus deactiveren en de wijzigingen ongedaan maken', (done) => {
+        const message = fixture('vl-proza-message-fixture');
+        fetchMock.flush(true).then(() => {
+          prozaMessageEditButton(message).click();
+          const editor = tinyMCE.activeEditor;
+          editor.on('init', () => {
+            sandbox.spy(editor, 'destroy');
+            const hasUndoStub = sandbox.stub(editor.undoManager, 'hasUndo');
+            hasUndoStub.onCall(0).returns(true);
+            hasUndoStub.onCall(1).returns(true);
+            hasUndoStub.onCall(2).returns(false);
+            sandbox.spy(editor.undoManager, 'undo');
+            editor.on('keydown', () => {
+              assert(editor.destroy.called);
+              assert(editor.undoManager.undo.calledTwice);
+              done();
+            });
+            editor.fire('keydown', {
+              keyCode: 27
+            });
+          });
+        });
+      });
+
+      test('een enter toets zal de bewerk modus deactiveren en de enter wijziging ongedaan maken', (done) => {
+        const message = fixture('vl-proza-message-fixture');
+        fetchMock.flush(true).then(() => {
+          prozaMessageEditButton(message).click();
+          const editor = tinyMCE.activeEditor;
+          editor.on('init', () => {
+            sandbox.spy(editor, 'destroy');
+            sandbox.spy(editor.undoManager, 'undo');
+            editor.on('keydown', () => {
+              assert(editor.destroy.called);
+              assert(editor.undoManager.undo.calledOnce);
+              done();
+            });
+            editor.fire('keydown', {
+              keyCode: 13
+            });
+          });
+        });
+      });
+
+      test('een enter toets in combinatie met de shift toets zal de bewerk modus niet deactiveren', (done) => {
+        const message = fixture('vl-proza-message-fixture');
+        fetchMock.flush(true).then(() => {
+          prozaMessageEditButton(message).click();
+          const editor = tinyMCE.activeEditor;
+          editor.on('init', () => {
+            sandbox.spy(editor, 'destroy');
+            editor.on('keydown', () => {
+              assert(editor.destroy.notCalled);
+              editor.destroy();
+              done();
+            });
+            editor.fire('keydown', {
+              keyCode: 13,
+              shiftKey: true
+            });
+          });
+        });
+      });
+
+      test('een wysiwyg blur zal de bewerk modus deactiveren', (done) => {
+        const message = fixture('vl-proza-message-fixture');
+        fetchMock.flush(true).then(() => {
+          prozaMessageEditButton(message).click();
+          const editor = tinyMCE.activeEditor;
+          editor.on('init', () => {
+            sandbox.spy(editor, 'destroy');
+            editor.on('blur', () => {
+              assert(editor.destroy.called);
+              done();
+            });
+            editor.fire('blur');
           });
         });
       });

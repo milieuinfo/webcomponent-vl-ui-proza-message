@@ -31,18 +31,16 @@
         const should = chai.should();
         const sandbox = sinon.createSandbox();
 
-        setup(() => {
-            fetchMock.mock('proza/domein/foo', [
-                {
-                    code: "bar",
-                    tekst: "foobar"
-                },
-                {
-                    code: "foo",
-                    tekst: "foofoo"
-                }
-            ]);
+        setup((done) => {
+            fetchMock.mock('proza/domein/foo', [{
+                code: "bar",
+                tekst: "foobar"
+            }, {
+                code: "foo",
+                tekst: "foofoo"
+            }]);
             fetchMock.mock('proza/domein/foo/toegelatenoperaties', { update: true });
+            customElements.whenDefined('vl-proza-message').then(() => done());
         });
 
         teardown(() => {
@@ -53,7 +51,7 @@
         });
 
         function prozaMessageContent(message) {
-            return message.shadowRoot.querySelector('#content').textContent;
+            return message.querySelector('#wysiwyg').textContent;
         }
 
         test('toont een bericht', () => {
