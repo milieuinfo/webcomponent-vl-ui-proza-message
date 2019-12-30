@@ -97,7 +97,7 @@
         return fetchMock.flush(true).then(() => {
           prozaMessageContent(proza.querySelector('#message-1')).should.equal('');
           prozaMessageContent(proza.querySelector('#message-2')).should.equal('');
-          assert(console.error.called);
+          console.error.should.be.called;
         });
       });
 
@@ -109,7 +109,7 @@
         return fetchMock.flush(true).then(() => {
           should.not.exist(prozaMessageEditButton(proza.querySelector('#message-1')));
           should.not.exist(prozaMessageEditButton(proza.querySelector('#message-2')));
-          assert(console.error.called);
+          console.error.should.be.called;
         });
       });
 

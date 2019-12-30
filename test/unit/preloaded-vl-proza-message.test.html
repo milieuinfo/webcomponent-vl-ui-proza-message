@@ -82,11 +82,12 @@
             return fetchMock.flush(true).then(() => {
                 prozaMessageContent(proza.querySelector('#message-1')).should.equal('');
                 prozaMessageContent(proza.querySelector('#message-2')).should.equal('');
-                assert(console.error.called);
+                console.error.should.be.called;
             });
         });
 
         test('een bericht wordt individueel opgehaald indien het niet in de preload cache gevonden kan worden', () => {
+            sandbox.spy(console, 'error');
             fetchMock.mock('proza/domein/foo', [
                 {
                     code: "bar",
@@ -100,6 +101,25 @@
                 return awaitUntil(() => {
                     return prozaMessageContent(proza.querySelector('#message-1')) === 'foobar' &&
                         prozaMessageContent(proza.querySelector('#message-2')) === 'foofoo';
+                }).then(() => {
+                    console.error.should.be.called;
+                });
+            });
+        });
+
+        test('een bericht wordt individueel opgehaald indien het preloaden fout is gelopen', () => {
+            sandbox.spy(console, 'error');
+            fetchMock.mock('proza/domein/foo', 404, { overwriteRoutes: true });
+            fetchMock.mock('proza/domein/foo/bar', { code: "bar", tekst: "foobar" });
+            fetchMock.mock('proza/domein/foo/foo', { code: "foo", tekst: "foofoo" });
+
+            const proza = fixture('vl-proza-preloaded-messages-fixture');
+            return fetchMock.flush(true).then(() => {
+                return awaitUntil(() => {
+                    return prozaMessageContent(proza.querySelector('#message-1')) === 'foobar' &&
+                        prozaMessageContent(proza.querySelector('#message-2')) === 'foofoo';
+                }).then(() => {
+                    console.error.should.be.called;
                 });
             });
         });

@@ -79,7 +79,12 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
     }
 
     static _getMessage(domain, code) {
-        return VlProzaMessagePreloader.getMessage(domain, code).catch(() => VlProzaMessage._getSingleMessage(domain, code));
+        return VlProzaMessagePreloader.getMessage(domain, code).catch(error => {
+                if (VlProzaMessagePreloader.isPreloaded(domain)) {
+                    console.error(`Bericht voor {domein: ${domain}, code: ${code}} kon niet opgevraagd worden uit de preload cache`, error);
+                }
+                throw error;
+            }).catch(() => VlProzaMessage._getSingleMessage(domain, code));
     }
 
     static _getSingleMessage(domain, code) {
