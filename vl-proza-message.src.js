@@ -1,11 +1,13 @@
-import {VlElement, define} from '/node_modules/vl-ui-core/vl-core.js';
+import { VlElement, define } from '/node_modules/vl-ui-core/vl-core.js';
 import '/node_modules/vl-ui-button/vl-button.js';
 import '/node_modules/vl-ui-icon/vl-icon.js';
+import '/node_modules/vl-ui-typography/vl-typography.js';
+import '/node_modules/tinymce/tinymce.min.js';
 
 /**
  * VlProzaMessage
  * @class
- * @classdesc
+ * @classdesc De vl-proza-message webcomponent kan gebruikt worden om teksten te laten beheren door de business. De edit modus wordt geactiveerd door op het potlood icoon te klikken. De edit modus kan gedactiveerd worden door op enter te duwen of een focus te geven aan een ander element op de pagina. Wanneer de gebruiker op escape klikt zal de edit modus afgesloten worden en zullen de wijzigingen ongedaan gemaakt worden.
  *
  * @extends VlElement
  *
@@ -23,17 +25,16 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
     }
 
     constructor() {
-        super(`
+        super();
+        this.appendChild(this.__createWysiwygElement());
+        this._shadow(`
             <style>
+                @import '../style.css';
                 @import '/node_modules/vl-ui-button/style.css';
                 @import '/node_modules/vl-ui-icon/style.css';
-                
-                :host > div {
-                    display: inline;
-                }
             </style>
             <div>
-                <span id="content"></span>
+                <slot></slot>
             </div>
         `);
     }
@@ -42,16 +43,26 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
         this.__processToegelatenOperaties();
     }
 
-    get _contentElement() {
-        return this._element.querySelector('#content');
+    get _wysiwygElement() {
+        return this.querySelector('#wysiwyg');
+    }
+
+    get _buttonElement() {
+        return this._shadow.querySelector('button');
+    }
+
+    get _typographyElement() {
+        return this.querySelector('vl-typography');
     }
 
     _getEditButtonTemplate() {
-        return this._template(`
+        const button = this._template(`
             <button is="vl-button-link" type="button">
                 <span is="vl-icon" icon="edit"></span>
             </button>
         `);
+        button.firstElementChild.addEventListener('click', () => this.__initWysiwyg());
+        return button;
     }
 
     _data_vl_domainChangedCallback() {
@@ -70,11 +81,35 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
         return this.dataset.vlCode;
     }
 
+    get _wysiwygConfig() {
+        return {
+            target: this._wysiwygElement,
+            menubar: false,
+            inline: true,
+            toolbar: false,
+            plugins: ['quickbars'],
+            quickbars_selection_toolbar: 'bold italic underline',
+            powerpaste_word_import: 'clean',
+            powerpaste_html_import: 'clean',
+            content_css: '/style.css',
+            verify_html: false,
+            forced_root_block: '',
+            suffix: '.min'
+        }
+    }
+
+    get _activeWysiwygEditor() {
+        return tinyMCE.activeEditor;
+    }
+
     _loadMessage() {
         if (this._domain && this._code) {
-            VlProzaMessage._getMessage(this._domain, this._code).then(message => this._contentElement.innerHTML = message);
+            VlProzaMessage._getMessage(this._domain, this._code).then(message => {
+                this._wysiwygElement.innerHTML = message;
+                this.__wrapWysiwygElement();
+            });
         } else {
-            this._contentElement.innerHTML = null;
+            this._wysiwygElement.innerHTML = null;
         }
     }
 
@@ -139,6 +174,115 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
         const toegelatenOperaties = await VlProzaMessage._getToegelatenOperaties(this._domain);
         if (toegelatenOperaties.update) {
             this._element.appendChild(this._getEditButtonTemplate());
+        }
+    }
+
+    __initWysiwyg() {
+        this.__unwrapWysiwygElement();
+        tinyMCE.baseURL = '/node_modules/tinymce';
+        tinyMCE.init(this._wysiwygConfig);
+        this._activeWysiwygEditor.on('init', () => {
+            this.__focusWysiwyg();
+            this.__configureWysiwygStyle();
+            this.__hideWysiwygButton();
+            this.__bindWysiwygEvents();
+        });
+    }
+
+    __focusWysiwyg() {
+        const editor = this._activeWysiwygEditor;
+        editor.focus();
+        editor.selection.select(editor.getBody(), true);
+        editor.selection.collapse(false);
+    }
+
+    __configureWysiwygStyle() {
+        this._activeWysiwygEditor.bodyElement.classList.add('vl-typography');
+    }
+
+    __bindWysiwygEvents() {
+        const editor = this._activeWysiwygEditor;
+        editor.on('keydown', (e) => this.__processKeydownEvent(e));
+        editor.on('blur', (e) => this.__processBlurEvent(e));
+    }
+
+    __processKeydownEvent(e) {
+        if (this.__isEscapeKey(e)) {
+            this.__undoAllWysiwygChanges();
+            this.__stopWysiwyg();
+        }
+        if (this.__isEnterKey(e) && !this.__isShiftKey(e)) {
+            this.__undoWysiwygChange();
+            this.__stopWysiwyg();
+        }
+    }
+
+    __isEscapeKey(e) {
+        return e.keyCode === 27;
+    }
+
+    __isEnterKey(e) {
+        return e.keyCode === 13;
+    }
+
+    __isShiftKey(e) {
+        return e.shiftKey;
+    }
+
+    __undoWysiwygChange() {
+        const editor = this._activeWysiwygEditor;
+        if (editor.undoManager.hasUndo()) {
+            editor.undoManager.undo();
+        }
+    }
+
+    __undoAllWysiwygChanges() {
+        const editor = this._activeWysiwygEditor;
+        while (editor.undoManager.hasUndo()) {
+            editor.undoManager.undo();
+        }
+    }
+
+    __processBlurEvent() {
+        this.__stopWysiwyg();
+    }
+
+    __stopWysiwyg() {
+        const editor = this._activeWysiwygEditor;
+        editor.destroy();
+        this.__showWysiwygButton();
+        this.__wrapWysiwygElement();
+    }
+
+    __hideWysiwygButton() {
+        this._buttonElement.hidden = true;
+    }
+
+    __showWysiwygButton() {
+        this._buttonElement.hidden = false;
+    }
+
+    __createWysiwygElement() {
+        const div = document.createElement('div');
+        div.id = "wysiwyg";
+        div.style = "display: inline;";
+        return div;
+    }
+
+    __wrapWysiwygElement() {
+        if (!this._typographyElement) {
+            const typography = document.createElement('vl-typography');
+            typography.appendChild(this._wysiwygElement);
+            this.appendChild(typography);
+        }
+    }
+
+    __unwrapWysiwygElement() {
+        if (this._typographyElement) {
+            const typography = this._typographyElement;
+            const wysiwyg = typography.firstChild;
+            this.appendChild(wysiwyg);
+            typography.remove();
         }
     }
 }
@@ -259,7 +403,7 @@ class ProzaRestClient {
 
     static getMessages(domain) {
         return ProzaRestClient.__fetchJson(`proza/domein/${domain}`)
-            .then(messages => Object.assign({}, ...(messages.map(message => ({[message.code]: message.tekst})))))
+            .then(messages => Object.assign({}, ...(messages.map(message => ({ [message.code]: message.tekst })))))
             .catch(error => {
                 console.error(`Er is iets fout gelopen bij het ophalen van de Proza berichten voor domein ${domain}`, error);
                 return Promise.reject(error);

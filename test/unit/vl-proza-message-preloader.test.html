@@ -36,6 +36,10 @@
             ]);
         });
 
+        setup((done) => {
+            customElements.whenDefined('vl-proza-message').then(() => done());
+        });
+
         teardown(() => {
             fetchMock.restore();
             delete VlProzaMessagePreloader.__cache;
