@@ -116,7 +116,7 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
     static _getMessage(domain, code) {
         return VlProzaMessagePreloader.getMessage(domain, code).catch(error => {
                 if (VlProzaMessagePreloader.isPreloaded(domain)) {
-                    console.error(`Bericht voor {domein: ${domain}, code: ${code}} kon niet opgevraagd worden uit de preload cache`, error);
+                    console.warn(`Bericht voor {domein: ${domain}, code: ${code}} kon niet opgevraagd worden uit de preload cache`, error);
                 }
                 throw error;
             }).catch(() => VlProzaMessage._getSingleMessage(domain, code));

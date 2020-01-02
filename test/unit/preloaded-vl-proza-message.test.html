@@ -85,7 +85,7 @@
         });
 
         test('een bericht wordt individueel opgehaald indien het niet in de preload cache gevonden kan worden', () => {
-            sandbox.spy(console, 'error');
+            sandbox.spy(console, 'warn');
             fetchMock.mock('proza/domein/foo', [
                 {
                     code: "bar",
@@ -100,13 +100,13 @@
                     return prozaMessageContent(proza.querySelector('#message-1')) === 'foobar' &&
                         prozaMessageContent(proza.querySelector('#message-2')) === 'foofoo';
                 }).then(() => {
-                    console.error.should.be.called;
+                    console.warn.should.be.called;
                 });
             });
         });
 
         test('een bericht wordt individueel opgehaald indien het preloaden fout is gelopen', () => {
-            sandbox.spy(console, 'error');
+            sandbox.spy(console, 'warn');
             fetchMock.mock('proza/domein/foo', 404, { overwriteRoutes: true });
             fetchMock.mock('proza/domein/foo/bar', { code: "bar", tekst: "foobar" });
             fetchMock.mock('proza/domein/foo/foo', { code: "foo", tekst: "foofoo" });
@@ -117,7 +117,7 @@
                     return prozaMessageContent(proza.querySelector('#message-1')) === 'foobar' &&
                         prozaMessageContent(proza.querySelector('#message-2')) === 'foofoo';
                 }).then(() => {
-                    console.error.should.be.called;
+                    console.warn.should.be.called;
                 });
             });
         });
