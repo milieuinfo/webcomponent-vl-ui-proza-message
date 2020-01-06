@@ -27,7 +27,7 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
     constructor() {
         super();
         this.appendChild(this.__createWysiwygElement());
-        this._shadow(`
+        this.shadow(`
             <style>
                 @import '../style.css';
                 @import '/node_modules/vl-ui-button/style.css';
