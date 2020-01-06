@@ -44,6 +44,15 @@
     font: icon !important;
 }
 
+[is="vl-button-link"] [is="vl-icon"] {
+    color: #ffaa33;
+    mix-blend-mode: difference;
+
+    &:hover {
+        color: #ffc44f;
+    }
+}
+
 .tox-pop {
     line-height: 1.4rem !important;
 }
