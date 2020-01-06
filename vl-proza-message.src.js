@@ -2,6 +2,8 @@ import { VlElement, define } from '/node_modules/vl-ui-core/vl-core.js';
 import '/node_modules/vl-ui-button/vl-button.js';
 import '/node_modules/vl-ui-icon/vl-icon.js';
 import '/node_modules/vl-ui-typography/vl-typography.js';
+import '/node_modules/vl-ui-toaster/vl-toaster.js';
+import '/node_modules/vl-ui-alert/vl-alert.js';
 import '/node_modules/tinymce/tinymce.min.js';
 
 /**
@@ -37,6 +39,9 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
                 <slot></slot>
             </div>
         `);
+        if (! document.querySelector("#vl-proza-message-toaster")) {
+        	document.body.appendChild(this._template(`<div id="vl-proza-message-toaster" is="vl-toaster" top-right></div>`));
+        }
     }
 
     connectedCallback() {
@@ -233,6 +238,12 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
     		VlProzaMessage._putInCache(this._domain, this._code, Promise.resolve(message));
     		this.__stopWysiwyg();
     	}).catch((error) => {
+    		const alert = this._template(`
+	    		<vl-alert type="error" icon="alert-triangle" title="Technische storing" closable>
+	              <p>Uw wijziging kon niet bewaard worden. Probeer het later opnieuw of neem contact op met de helpdesk als het probleem zich blijft voordoen.</p>
+	            </vl-alert>
+    		`).cloneNode(true);
+    		document.querySelector("#vl-proza-message-toaster").push(alert);
     	});
     }
     
