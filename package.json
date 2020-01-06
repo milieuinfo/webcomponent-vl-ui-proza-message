@@ -66,7 +66,7 @@
     "np": "3.0.4",
     "replace": "^1.1.1",
     "selenium-webdriver": "4.0.0-alpha.5",
-    "sinon": "7.5.0",
+    "sinon": "8.0.2",
     "sinon-chai": "^3.3.0",
     "uglify-es": "github:mishoo/UglifyJS2#harmony",
     "vl-ui-util": "^3.2.2",
