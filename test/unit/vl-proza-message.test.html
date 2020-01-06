@@ -37,8 +37,8 @@
       const sandbox = sinon.createSandbox();
 
       setup((done) => {
-        fetchMock.mock('proza/domein/foo/bar', { code: "bar", tekst: "foobar" });
-        fetchMock.mock('proza/domein/foo/toegelatenoperaties', { update: true });
+        fetchMock.get('proza/domein/foo/bar', { code: "bar", tekst: "foobar" });
+        fetchMock.get('proza/domein/foo/toegelatenoperaties', { update: true });
 
         customElements.whenDefined('vl-proza-message').then(() => done());
       });
@@ -131,6 +131,7 @@
 
       test('haalt het bericht en de toegelaten operaties maar 1 keer op indien deze al in de cache zitten', () => {
         fixture('vl-proza-messages-fixture');
+		debugger;
         return fetchMock.flush(true).then(() => {
           fetchMock.calls('proza/domein/foo/bar').length.should.equal(1);
           fetchMock.calls('proza/domein/foo/toegelatenoperaties').length.should.equal(1);
@@ -279,6 +280,7 @@
       });
 
       test('een enter toets zal de bewerk modus deactiveren en de enter wijziging ongedaan maken', (done) => {
+        fetchMock.put('/proza/domein/foo/bar', { code: "bar", tekst: "nieuwe proza message" });
         const message = fixture('vl-proza-message-fixture');
         fetchMock.flush(true).then(() => {
           prozaMessageEditButton(message).click();
@@ -286,11 +288,20 @@
           editor.on('init', () => {
             sandbox.spy(editor, 'destroy');
             sandbox.spy(editor.undoManager, 'undo');
-            editor.on('keydown', () => {
-              assert(editor.destroy.called);
-              assert(editor.undoManager.undo.calledOnce);
-              done();
+            editor.on('keydown', (event) => {
+				fetchMock.flush(true).then(() => {
+				  expect(fetchMock.lastCall()[0]).to.equal("/proza/domein/foo/bar");
+				  expect(fetchMock.lastCall()[1].method).to.equal("PUT");
+				  expect(fetchMock.lastCall()[1].body).to.equal("nieuwe proza message");
+	              assert(editor.destroy.called);
+	    	      assert(editor.undoManager.undo.calledOnce);
+				  VlProzaMessage.__getMessageCacheForDomain("foo")["bar"].then(tekst => {
+					  expect(tekst).to.equal("nieuwe proza message");
+		   	    	  done();
+				  });
+				});
             });
+			editor.setContent("nieuwe proza message");
             editor.fire('keydown', {
               keyCode: 13
             });
@@ -319,6 +330,7 @@
       });
 
       test('een wysiwyg blur zal de bewerk modus deactiveren', (done) => {
+        fetchMock.put('/proza/domein/foo/bar', { code: "bar", tekst: "nieuwe proza message" });
         const message = fixture('vl-proza-message-fixture');
         fetchMock.flush(true).then(() => {
           prozaMessageEditButton(message).click();
@@ -326,9 +338,18 @@
           editor.on('init', () => {
             sandbox.spy(editor, 'destroy');
             editor.on('blur', () => {
-              assert(editor.destroy.called);
-              done();
+			  fetchMock.flush(true).then(() => {
+				  expect(fetchMock.lastCall()[0]).to.equal("/proza/domein/foo/bar");
+				  expect(fetchMock.lastCall()[1].method).to.equal("PUT");
+				  expect(fetchMock.lastCall()[1].body).to.equal("nieuwe proza message");
+	              assert(editor.destroy.called);
+				  VlProzaMessage.__getMessageCacheForDomain("foo")["bar"].then(tekst => {
+					  expect(tekst).to.equal("nieuwe proza message");
+    		          done();
+				  });
+			  });
             });
+			editor.setContent("nieuwe proza message");
             editor.fire('blur');
           });
         });

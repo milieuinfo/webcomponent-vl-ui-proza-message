@@ -9,6 +9,7 @@
     "pretest": "npm install chromedriver --chromedriver-force-download",
     "test": "npm run test:unit && npm run test:e2e",
     "test:unit": "wct --config-file ./wct.local.conf.json",
+    "test:unit-chrome": "wct -p -l chrome test/unit/*.test.html --npm",
     "test:e2e": "npm run test:server:start && npm run test:e2e:chrome && npm run test:e2e:firefox",
     "test:e2e:grid": "npm run test:server:start && npm run test:e2e:chrome:grid && npm run test:e2e:firefox:grid",
     "test:grid": "wct --config-file ./wct.docker.conf.json && npm run test:e2e:grid",
@@ -69,7 +70,7 @@
     "sinon": "7.5.0",
     "sinon-chai": "^3.3.0",
     "uglify-es": "github:mishoo/UglifyJS2#harmony",
-    "vl-ui-util": "^3.0.16",
+    "vl-ui-util": "^3.1.0",
     "wct-browser-legacy": "1.0.2",
     "web-component-tester": "6.9.2",
     "yargs": "15.0.2"
