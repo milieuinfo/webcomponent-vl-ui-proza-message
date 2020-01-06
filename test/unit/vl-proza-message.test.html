@@ -131,7 +131,6 @@
 
       test('haalt het bericht en de toegelaten operaties maar 1 keer op indien deze al in de cache zitten', () => {
         fixture('vl-proza-messages-fixture');
-		debugger;
         return fetchMock.flush(true).then(() => {
           fetchMock.calls('proza/domein/foo/bar').length.should.equal(1);
           fetchMock.calls('proza/domein/foo/toegelatenoperaties').length.should.equal(1);
@@ -299,6 +298,39 @@
 					  expect(tekst).to.equal("nieuwe proza message");
 		   	    	  done();
 				  });
+				});
+            });
+			editor.setContent("nieuwe proza message");
+            editor.fire('keydown', {
+              keyCode: 13
+            });
+          });
+        });
+      });
+
+      test('als het bewaren van een proza message mislukt wordt de editor modus beeindigd en een error message getoond', (done) => {
+        fetchMock.put('/proza/domein/foo/bar', 404);
+        const message = fixture('vl-proza-message-fixture');
+        fetchMock.flush(true).then(() => {
+          prozaMessageEditButton(message).click();
+          const editor = tinyMCE.activeEditor;
+          editor.on('init', () => {
+            sandbox.spy(editor, 'destroy');
+            sandbox.spy(editor.undoManager, 'undo');
+            editor.on('keydown', (event) => {
+				fetchMock.flush(true).then(() => {
+                   debugger;
+				   setTimeout(() => {
+                      should.exist(document.querySelector("#vl-proza-message-toaster"));
+                      should.exist(document.querySelector("#vl-proza-message-toaster vl-alert"));
+					  expect(document.querySelector("#vl-proza-message-toaster vl-alert").getAttribute("type")).to.equal("error");
+					  expect(document.querySelector("#vl-proza-message-toaster vl-alert").getAttribute("title")).to.equal("Technische storing");
+                      should.exist(document.querySelector("#vl-proza-message-toaster vl-alert p"));
+					  expect(document.querySelector("#vl-proza-message-toaster vl-alert p").textContent).to.equal("Uw wijziging kon niet bewaard worden. Probeer het later opnieuw of neem contact op met de helpdesk als het probleem zich blijft voordoen.");
+					  assert(editor.undoManager.undo.calledTwice);
+					  assert(editor.destroy.called);
+					  done();
+				   }, 0);
 				});
             });
 			editor.setContent("nieuwe proza message");

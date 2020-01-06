@@ -39,9 +39,14 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
                 <slot></slot>
             </div>
         `);
-        if (! document.querySelector("#vl-proza-message-toaster")) {
-        	document.body.appendChild(this._template(`<div id="vl-proza-message-toaster" is="vl-toaster" top-right></div>`));
+        const id = "vl-proza-message-toaster";
+        if (document.getElementById(id) == null) {
+        	const toaster = document.createElement('div', {is: 'vl-toaster'});
+        	toaster.setAttribute("top-right", "");
+        	toaster.setAttribute("id", id);
+        	document.body.appendChild(toaster);
         }
+        this._toaster = document.getElementById(id);
     }
 
     connectedCallback() {
@@ -243,7 +248,8 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
 	              <p>Uw wijziging kon niet bewaard worden. Probeer het later opnieuw of neem contact op met de helpdesk als het probleem zich blijft voordoen.</p>
 	            </vl-alert>
     		`).cloneNode(true);
-    		document.querySelector("#vl-proza-message-toaster").push(alert);
+    		this._toaster.push(alert.firstElementChild);
+    		this.__cancel();
     	});
     }
     
