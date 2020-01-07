@@ -266,9 +266,11 @@
                     hasUndoStub.onCall(1).returns(true);
                     hasUndoStub.onCall(2).returns(false);
                     sandbox.spy(editor.undoManager, 'undo');
+					const callsBeforeEscape = fetchMock.calls().length;
                     editor.on('keydown', () => {
                         assert(editor.destroy.called);
                         assert(editor.undoManager.undo.calledTwice);
+						expect(fetchMock.calls().length).to.equal(callsBeforeEscape);
                         done();
                     });
                     editor.fire('keydown', {
@@ -278,7 +280,7 @@
             });
         });
 
-        test('een enter toets zal de bewerk modus deactiveren en de enter wijziging ongedaan maken', (done) => {
+        test('een enter toets zal de bewerk modus deactiveren en de enter wijziging ongedaan maken en de wijziging persisteren', (done) => {
             fetchMock.put('/proza/domein/foo/bar', {code: "bar", tekst: "nieuwe proza message"});
             const message = fixture('vl-proza-message-fixture');
             fetchMock.flush(true).then(() => {
@@ -319,7 +321,6 @@
                     sandbox.spy(editor.undoManager, 'undo');
                     editor.on('keydown', (event) => {
                         fetchMock.flush(true).then(() => {
-                            debugger;
                             setTimeout(() => {
                                 should.exist(document.querySelector("#vl-proza-message-toaster"));
                                 should.exist(document.querySelector("#vl-proza-message-toaster vl-alert"));
@@ -361,7 +362,7 @@
             });
         });
 
-        test('een wysiwyg blur zal de bewerk modus deactiveren', (done) => {
+        test('een wysiwyg blur zal de bewerk modus deactiveren en de wijziging persisteren', (done) => {
             fetchMock.put('/proza/domein/foo/bar', {code: "bar", tekst: "nieuwe proza message"});
             const message = fixture('vl-proza-message-fixture');
             fetchMock.flush(true).then(() => {

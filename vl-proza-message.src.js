@@ -29,7 +29,7 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
     constructor() {
         super();
         this.appendChild(this.__createWysiwygElement());
-        this._shadow(`
+        this.shadow(`
             <style>
                 @import '../style.css';
                 @import '/node_modules/vl-ui-button/style.css';
@@ -39,14 +39,18 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
                 <slot></slot>
             </div>
         `);
-        const id = "vl-proza-message-toaster";
+        this._toaster = this.__initProzaMessageToaster();
+    }
+    
+    __initProzaMessageToaster() {
+    	const id = "vl-proza-message-toaster";
         if (document.getElementById(id) == null) {
         	const toaster = document.createElement('div', {is: 'vl-toaster'});
         	toaster.setAttribute("top-right", "");
-        	toaster.setAttribute("id", id);
+        	toaster.id = id;
         	document.body.appendChild(toaster);
         }
-        this._toaster = document.getElementById(id);
+        return document.getElementById(id);
     }
 
     connectedCallback() {
@@ -128,21 +132,28 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
     	if (messageCache[code]) {
     		return messageCache[code];
     	} else {
-    		return VlProzaMessagePreloader.getMessage(domain, code).catch(error => {
-    			if (VlProzaMessagePreloader.isPreloaded(domain)) {
-    				console.warn(`Bericht voor {domein: ${domain}, code: ${code}} kon niet opgevraagd worden uit de preload cache`, error);
-    			}
-    			throw error;
-    		}).catch(() => { 
-    			const messageCache = VlProzaMessage.__getMessageCacheForDomain(domain);
-    			if (!messageCache[code]) {
-    				VlProzaMessage._putInCache(domain, code, ProzaRestClient.getMessage(domain, code));
-    			}
-    			return messageCache[code];
+    		return VlProzaMessage.__getMessageFromPreloaderCache(domain, code).catch(() => { 
+    			return VlProzaMessage.__getSingleMessage(domain, code);
     		});
     	}
     }
+    
+    static __getMessageFromPreloaderCache(domain, code) {
+    	return VlProzaMessagePreloader.getMessage(domain, code).catch(error => {
+			if (VlProzaMessagePreloader.isPreloaded(domain)) {
+				console.warn(`Bericht voor {domein: ${domain}, code: ${code}} kon niet opgevraagd worden uit de preload cache`, error);
+			}
+			throw error;
+		});
+    }
 
+    static __getSingleMessage(domain, code) {
+		const messageCache = VlProzaMessage.__getMessageCacheForDomain(domain);
+		if (!messageCache[code]) {
+			VlProzaMessage._putInCache(domain, code, ProzaRestClient.getMessage(domain, code));
+		}
+		return messageCache[code];
+    }
     
     static _putInCache(domain, code, messagePromise) {
     	VlProzaMessage.__getMessageCacheForDomain(domain)[code] = messagePromise;
@@ -243,14 +254,22 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
     		VlProzaMessage._putInCache(this._domain, this._code, Promise.resolve(message));
     		this.__stopWysiwyg();
     	}).catch((error) => {
-    		const alert = this._template(`
-	    		<vl-alert type="error" icon="alert-triangle" title="Technische storing" closable>
-	              <p>Uw wijziging kon niet bewaard worden. Probeer het later opnieuw of neem contact op met de helpdesk als het probleem zich blijft voordoen.</p>
-	            </vl-alert>
-    		`).cloneNode(true);
-    		this._toaster.push(alert.firstElementChild);
+    		this.__showErrorAlert();
     		this.__cancel();
     	});
+    }
+
+    __showErrorAlert() {
+		const alert = this.__getProzaSaveErrorAlertTemplate().cloneNode(true);
+		this._toaster.push(alert.firstElementChild);
+    }
+    
+    __getProzaSaveErrorAlertTemplate() {
+    	return this._template(`
+			<vl-alert type="error" icon="alert-triangle" title="Technische storing" closable>
+          		<p>Uw wijziging kon niet bewaard worden. Probeer het later opnieuw of neem contact op met de helpdesk als het probleem zich blijft voordoen.</p>
+        	</vl-alert>
+    	`);
     }
     
     __cancel() {
@@ -429,10 +448,10 @@ export class VlProzaMessagePreloader extends VlElement(HTMLElement) {
 }
 
 class ProzaRestClient {
-    static saveMessage(domain, code, tekst) {
+    static saveMessage(domain, code, text) {
     	return fetch(`proza/domein/${domain}/${code}`, {
     		method: 'PUT',
-    		body: tekst
+    		body: text
     	})
     	.then(response => ProzaRestClient.__handleError(response))
     	.then(message => message.tekst)
@@ -468,7 +487,7 @@ class ProzaRestClient {
     }
 
     static __fetchJson(url) {
-        return fetch(url).then(response => ProzaRestClient.__handleError(response));
+        return fetch(url).then(ProzaRestClient.__handleError);
     }
     
     static __handleError(response) {
