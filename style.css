@@ -6443,6 +6443,10 @@ mark,
   text-decoration: none;
 }
 
+:host {
+  display: inline-block;
+}
+
 ::slotted(#wysiwyg) {
   display: inline-block !important;
   width: 100% !important;
