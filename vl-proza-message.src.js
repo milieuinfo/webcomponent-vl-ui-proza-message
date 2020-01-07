@@ -260,16 +260,16 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
     }
 
     __showErrorAlert() {
-		const alert = this._template(this.__getProzaSaveErrorAlert()).cloneNode(true);
+		const alert = this.__getProzaSaveErrorAlertTemplate().cloneNode(true);
 		this._toaster.push(alert.firstElementChild);
     }
     
-    __getProzaSaveErrorAlert() {
-    	return `
+    __getProzaSaveErrorAlertTemplate() {
+    	return this._template(`
 			<vl-alert type="error" icon="alert-triangle" title="Technische storing" closable>
           		<p>Uw wijziging kon niet bewaard worden. Probeer het later opnieuw of neem contact op met de helpdesk als het probleem zich blijft voordoen.</p>
         	</vl-alert>
-    	`
+    	`);
     }
     
     __cancel() {
