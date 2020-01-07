@@ -9,11 +9,7 @@
     "pretest": "npm install chromedriver --chromedriver-force-download",
     "test": "npm run test:unit && npm run test:e2e",
     "test:unit": "wct --config-file ./wct.local.conf.json",
-<<<<<<< HEAD
-    "test:unit-chrome": "wct -p -l chrome test/unit/*.test.html --npm",
-=======
     "test:unit:chrome": "wct -p -l chrome test/unit/*.test.html --npm",
->>>>>>> 764f1ba837fcf1bd08ef6010e301fd0bcb1bb446
     "test:e2e": "npm run test:server:start && npm run test:e2e:chrome && npm run test:e2e:firefox",
     "test:e2e:grid": "npm run test:server:start && npm run test:e2e:chrome:grid && npm run test:e2e:firefox:grid",
     "test:grid": "wct --config-file ./wct.docker.conf.json && npm run test:e2e:grid",
