@@ -17,6 +17,14 @@
             "code": "bar",
             "tekst": "foobar"
         });
+        fetchMock.put('/proza/domein/bar/foo', {
+            "code": "foo",
+            "tekst": "foobar"
+        });
+        fetchMock.put('/proza/domein/bar/bar', {
+            "code": "foo",
+            "tekst": "foobar"
+        });
         
         fetchMock.get('proza/domein/foo/fout', {
             "code": "bar",
