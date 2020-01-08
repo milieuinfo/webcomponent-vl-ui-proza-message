@@ -75,7 +75,7 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
                 <span is="vl-icon" icon="edit"></span>
             </button>
         `);
-        button.firstElementChild.addEventListener('click', () => this.__initWysiwyg());
+        button.firstElementChild.addEventListener('click', (event) => this.__initWysiwyg(event));
         return button;
     }
 
@@ -206,7 +206,8 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
         }
     }
 
-    __initWysiwyg() {
+    __initWysiwyg(event) {
+        event.stopPropagation();
         this.__unwrapWysiwygElement();
         tinyMCE.baseURL = '/node_modules/tinymce';
         tinyMCE.init(this._wysiwygConfig);
