@@ -414,6 +414,26 @@
             proza.classList.contains('vl-proza-message__block').should.to.be.false;
             proza.setAttribute('data-vl-block', '');
             proza.classList.contains('vl-proza-message__block').should.to.be.true;
+            proza.removeAttribute('data-vl-block');
+            proza.classList.contains('vl-proza-message__block').should.to.be.false;
+        });
+
+        test('zal op basis van de inhoud van het proza bericht het block attribuut automatisch toevoegen indien nodig', () => {
+            ["message", "<span>message</span>"].forEach((message) => {
+                let proza = fixture('vl-proza-message-fixture');
+                fetchMock.get('/proza/domein/foo/bar', {code: "bar", tekst: message}, {overwriteRoutes: true});
+                return fetchMock.flush(true).then(() => {
+                    expect(proza.getAttribute('data-vl-block')).to.be.null;
+
+                    ["<p>message</p>", "<table>message</table>", "<span style='display: block;'>message</span>", "<span style='display: inline-block;'>message</span>", "<span style='display: flex;'>message</span>", "<span style='display: grid;'>message</span>"].forEach((message) => {
+                        proza = fixture('vl-proza-message-fixture');
+                        fetchMock.get('/proza/domein/foo/bar', {code: "bar", tekst: message}, {overwriteRoutes: true});
+                        return fetchMock.flush(true).then(() => {
+                            expect(proza.getAttribute('data-vl-block')).not.to.be.null;
+                        });
+                    });
+                });
+            });
         });
     });
 </script>

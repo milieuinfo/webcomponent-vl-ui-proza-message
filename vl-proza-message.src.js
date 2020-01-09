@@ -90,7 +90,7 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
 
     _data_vl_blockChangedCallback(oldValue, newValue) {
         const blockClass = 'vl-proza-message__block';
-        if (newValue !== undefined) {
+        if (newValue != undefined) {
             this.classList.add(blockClass)
         } else {
             this.classList.remove(blockClass);
@@ -131,6 +131,9 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
             VlProzaMessage._getMessage(this._domain, this._code).then(message => {
                 this._wysiwygElement.innerHTML = message;
                 this.__wrapWysiwygElement();
+                if (this.__containsBlockElement(message)) {
+                    this.setAttribute('data-vl-block', '');
+                }
             });
         } else {
             this._wysiwygElement.innerHTML = null;
@@ -351,6 +354,12 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
             this.appendChild(wysiwyg);
             typography.remove();
         }
+    }
+
+    __containsBlockElement() {
+        return [... this._wysiwygElement.children].some((element) => {
+            return ['block', 'inline-block', 'flex', 'grid', 'table'].includes(window.getComputedStyle(element)['display']);
+        });
     }
 }
 
