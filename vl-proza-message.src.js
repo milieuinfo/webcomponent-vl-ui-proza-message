@@ -15,6 +15,7 @@ import '/node_modules/tinymce/tinymce.min.js';
  *
  * @property {string} data-vl-domain - Het Proza domein waarin het Proza bericht zit.
  * @property {string} data-vl-code - De code die het Proza bericht identificeert.
+ * @property {string} data-vl-block - Attribuut om aan te duiden dat de inhoud van het Proza bericht een block element is.
  *
  * @see {@link https://www.github.com/milieuinfo/webcomponent-vl-ui-proza-message/releases/latest|Release notes}
  * @see {@link https://www.github.com/milieuinfo/webcomponent-vl-ui-proza-message/issues|Issues}
@@ -23,7 +24,7 @@ import '/node_modules/tinymce/tinymce.min.js';
  */
 export class VlProzaMessage extends VlElement(HTMLElement) {
     static get _observedAttributes() {
-        return ['data-vl-domain', 'data-vl-code'];
+        return ['data-vl-domain', 'data-vl-code', 'data-vl-block'];
     }
 
     constructor() {
@@ -85,6 +86,15 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
 
     _data_vl_codeChangedCallback() {
         this._loadMessage();
+    }
+
+    _data_vl_blockChangedCallback(oldValue, newValue) {
+        const blockClass = 'vl-proza-message__block';
+        if (newValue !== undefined) {
+            this.classList.add(blockClass)
+        } else {
+            this.classList.remove(blockClass);
+        }
     }
 
     get _domain() {

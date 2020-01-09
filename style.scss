@@ -20,6 +20,11 @@
 
 :host {
     display: inline-block;
+    position: relative;
+}
+
+:host(:hover) {
+    box-shadow: 0px 0px 0px 1px inset rgba(255, 170, 51, 0.5);
 }
 
 ::slotted(#wysiwyg) {
@@ -38,6 +43,12 @@
 
 ::slotted(vl-typography) {
     display: inline;
+}
+
+:host(.vl-proza-message__block) [is="vl-button-link"] {
+    position: absolute;
+    right: 4px;
+    bottom: 2px;
 }
 
 [is="vl-button-link"] {

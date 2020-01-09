@@ -408,6 +408,13 @@
                 return button.click();
             });
         });
+
+        test('zal een class toevoegen wanneer het block attribuut aanwezig is', () => {
+            const proza = fixture('vl-proza-message-fixture');
+            proza.classList.contains('vl-proza-message__block').should.to.be.false;
+            proza.setAttribute('data-vl-block', '');
+            proza.classList.contains('vl-proza-message__block').should.to.be.true;
+        });
     });
 </script>
 </body>
