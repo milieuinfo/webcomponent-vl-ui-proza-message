@@ -95,7 +95,7 @@
 </head>
 
 <body>
-    <h1>vl-ui-proza-message demo</h1>
+    <h1 id="title">vl-ui-proza-message demo</h1>
     
     <div>
         <h2>Proza message</h2>
@@ -113,11 +113,11 @@
         <h2>Proza message waarvan updaten misgaat</h2>
         <pre>
             <code class="line-numbers language-markup">
-                &lt;vl-proza-message id=&quot;message-1&quot; data-vl-domain=&quot;foo&quot; data-vl-code=&quot;fout&quot;&gt;&lt;/vl-proza-message&gt;
+                &lt;vl-proza-message data-vl-domain=&quot;foo&quot; data-vl-code=&quot;fout&quot;&gt;&lt;/vl-proza-message&gt;
             </code>
         </pre>
         <div class="demo">
-            <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="fout"></vl-proza-message>
+            <vl-proza-message id="message-2" data-vl-domain="foo" data-vl-code="fout"></vl-proza-message>
         </div>
     </div>
 
@@ -132,8 +132,8 @@
         </pre>
         <div class="demo">
             <vl-proza-message-preloader id="preloader-1" data-vl-domain="bar"></vl-proza-message-preloader>
-            <vl-proza-message id="message-2" data-vl-domain="bar" data-vl-code="foo"></vl-proza-message>
-            <vl-proza-message id="message-3" data-vl-domain="bar" data-vl-code="bar"></vl-proza-message>
+            <vl-proza-message id="message-3" data-vl-domain="bar" data-vl-code="foo"></vl-proza-message>
+            <vl-proza-message id="message-4" data-vl-domain="bar" data-vl-code="bar"></vl-proza-message>
         </div>
     </div>
 
@@ -159,16 +159,16 @@
         <div class="demo">
             <button is="vl-button">foo</button>
             <button is="vl-button">
-                <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
+                <vl-proza-message id="message-5" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
             </button>
             <button is="vl-button" disabled>
-                <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
+                <vl-proza-message id="message-6" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
             </button>
             <button is="vl-button" error>
-                <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
+                <vl-proza-message id="message-7" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
             </button>
             <button is="vl-button" secondary>
-                <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
+                <vl-proza-message id="message-8" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
             </button>
         </div>
     </div>
@@ -181,7 +181,7 @@
             </code>
         </pre>
         <div class="demo">
-            <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="typography"></vl-proza-message>
+            <vl-proza-message id="message-9" data-vl-domain="foo" data-vl-code="typography"></vl-proza-message>
         </div>
     </div>
 
@@ -193,7 +193,7 @@
             </code>
         </pre>
         <div class="demo">
-            <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="titles"></vl-proza-message>
+            <vl-proza-message id="message-10" data-vl-domain="foo" data-vl-code="titles"></vl-proza-message>
         </div>
     </div>
 
@@ -205,7 +205,7 @@
             </code>
         </pre>
         <div class="demo">
-            <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="list"></vl-proza-message>
+            <vl-proza-message id="message-11" data-vl-domain="foo" data-vl-code="list"></vl-proza-message>
         </div>
     </div>
 
@@ -217,7 +217,7 @@
             </code>
         </pre>
         <div class="demo">
-            <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="markup"></vl-proza-message>
+            <vl-proza-message id="message-12" data-vl-domain="foo" data-vl-code="markup"></vl-proza-message>
         </div>
     </div>
 
@@ -229,7 +229,7 @@
             </code>
         </pre>
         <div class="demo">
-            <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="table"></vl-proza-message>
+            <vl-proza-message id="message-13" data-vl-domain="foo" data-vl-code="table"></vl-proza-message>
         </div>
     </div>
 </body>

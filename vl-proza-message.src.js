@@ -72,7 +72,7 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
 
     _getEditButtonTemplate() {
         const button = this._template(`
-            <button is="vl-button-link" type="button">
+            <button id="edit-button" is="vl-button-link" type="button">
                 <span is="vl-icon" icon="edit"></span>
             </button>
         `);
