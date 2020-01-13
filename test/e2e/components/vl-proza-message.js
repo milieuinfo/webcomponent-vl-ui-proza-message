@@ -14,7 +14,18 @@ class VlProzaMessage extends VlElement {
         }, 5000);
     }
 
-    async _clear() {
+    async getText() {
+        const wysiwyg = await this._getWysiwyg();
+        return this.driver.executeScript('return arguments[0].innerText', wysiwyg);
+    }
+
+    async shiftEnter() {
+        const wysiwyg = await this._getWysiwyg();
+        const shiftEnter = Key.chord(Key.SHIFT, Key.ENTER);
+        return wysiwyg.sendKeys(shiftEnter);
+    }
+
+    async clear() {
         const wysiwyg = await this._getWysiwyg();
         return this.driver.executeScript('return arguments[0].innerText = ""', wysiwyg);
     }
@@ -22,6 +33,11 @@ class VlProzaMessage extends VlElement {
     async exitEditMode() {
         const wysiwyg = await this._getWysiwyg();
         return wysiwyg.sendKeys(Key.ESCAPE);
+    }
+
+    async confirm() {
+        const wysiwyg = await this._getWysiwyg();
+        return wysiwyg.sendKeys(Key.ENTER);
     }
 
     async clickOnPencil() {
@@ -32,8 +48,18 @@ class VlProzaMessage extends VlElement {
 
     async type(text) {
         let input = await this._getWysiwyg();
-        await this._clear();
+        await this.clear();
         return input.sendKeys(text);
+    }
+    
+    async append(text) {
+        let input = await this._getWysiwyg();
+        return input.sendKeys(text);
+    }
+
+    async typeAndConfirm(text) {
+        await this.type(text);
+        return this.confirm();
     }
 
     async isEditable() {
