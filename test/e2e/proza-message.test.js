@@ -48,13 +48,24 @@ describe('vl-proza-message', async () => {
         await message.confirm();
         const text = await message.getText();
         assert.isTrue(text.indexOf('\n') > 0);
+        await message.clickOnPencil();
+        await message.clear();
+        await message.typeAndConfirm('foobar');
     });
 
     it('als de gebruiker tekst selecteert, verschijnt de WYSIWYG', async () => {
         const message = await vlProzaMessagePage.getMessageFirstDemo();
         await message.clickOnPencil();
-        
-    })
+        await message.selecteerAlleTekst();
+        await message.waitUntilTinyMceIsPresent();
+        await message.exitEditMode();
+    });
 
-
+    it('als de gebruiker buiten het tekstveld klikt, sluit de bewerkmodus', async () => {
+        const message = await vlProzaMessagePage.getMessageFirstDemo();
+        await message.clickOnPencil();
+        await assert.eventually.isTrue(message.isEditable());
+        await message.blur();
+        await assert.eventually.isFalse(message.isEditable());
+    });
 });

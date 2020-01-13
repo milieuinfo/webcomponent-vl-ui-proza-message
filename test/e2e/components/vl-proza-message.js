@@ -1,6 +1,5 @@
 const { VlElement } = require('vl-ui-core');
-const { By, until, Key, Actions } = require('selenium-webdriver');
-const { assert } = require('vl-ui-core').Test;
+const { By, Key } = require('selenium-webdriver');
 
 class VlProzaMessage extends VlElement {
 
@@ -29,7 +28,7 @@ class VlProzaMessage extends VlElement {
         const wysiwyg = await this._getWysiwyg();
         return this.driver.executeScript('return arguments[0].innerText = ""', wysiwyg);
     }
- 
+
     async exitEditMode() {
         const wysiwyg = await this._getWysiwyg();
         return wysiwyg.sendKeys(Key.ESCAPE);
@@ -51,7 +50,7 @@ class VlProzaMessage extends VlElement {
         await this.clear();
         return input.sendKeys(text);
     }
-    
+
     async append(text) {
         let input = await this._getWysiwyg();
         return input.sendKeys(text);
@@ -66,6 +65,26 @@ class VlProzaMessage extends VlElement {
         const wysiwyg = await this._getWysiwyg();
         const contentEditable = await wysiwyg.getAttribute('contenteditable');
         return contentEditable == 'true';
+    }
+
+    async selecteerAlleTekst() {
+        const input = await this._getWysiwyg();
+        const actions = this.driver.actions({bridge: true});
+        return await actions.doubleClick(input).perform();
+    }
+
+    async isTinyMcePresent() {
+        return (await this.driver.findElements(By.css('.tox-pop'))).length > 0;
+    }
+
+    async waitUntilTinyMceIsPresent() {
+        return this.driver.wait(async () => {
+            return await this.isTinyMcePresent();
+        }, 3000);
+    }
+
+    async blur() {
+        return (await this.driver.findElement(By.css('#title'))).click();
     }
 }
 
