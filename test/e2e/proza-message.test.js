@@ -47,6 +47,12 @@ describe('vl-proza-message', async () => {
         await message.append('break');
         await message.confirm();
         const text = await message.getText();
+        assert.isTrue(text.indexOf('\n') > 0);
+    });
+
+    it('als de gebruiker tekst selecteert, verschijnt de WYSIWYG', async () => {
+        const message = await vlProzaMessagePage.getMessageFirstDemo();
+        await message.clickOnPencil();
         
     })
 
