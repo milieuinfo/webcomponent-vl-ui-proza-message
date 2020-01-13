@@ -14,8 +14,7 @@ class VlProzaMessage extends VlElement {
     }
 
     async getText() {
-        const wysiwyg = await this._getWysiwyg();
-        return this.driver.executeScript('return arguments[0].innerText', wysiwyg);
+        return (await this._getWysiwyg()).getAttribute('innerText');
     }
 
     async shiftEnter() {
