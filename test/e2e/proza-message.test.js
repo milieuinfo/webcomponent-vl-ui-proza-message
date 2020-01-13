@@ -1,7 +1,6 @@
 
 const { assert, driver } = require('vl-ui-core').Test;
 const VlProzaMessagePage = require('./pages/vl-proza-message.page');
-const { Key } = require('selenium-webdriver');
 
 describe('vl-proza-message', async () => {
     const vlProzaMessagePage = new VlProzaMessagePage(driver);
@@ -14,6 +13,15 @@ describe('vl-proza-message', async () => {
         const message = await vlProzaMessagePage.getMessageFirstDemo();
         await message.clickOnPencil();
         await assert.eventually.isTrue(message.isEditable());
+        await message.exitEditMode();
+    });
+
+    it('als de gebruiker op de escape-toets drukt, worden de wijzigingen niet bewaard', async () => {
+        const message = await vlProzaMessagePage.getMessageFirstDemo();
+        await message.clickOnPencil()
+        await message.type('decibel')
+        const text = await (await message._getWysiwyg()).getText();
+        assert.equal(text, 'foobar');
     });
 
 
