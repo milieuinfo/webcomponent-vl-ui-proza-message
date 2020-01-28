@@ -215,8 +215,13 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
     async __processToegelatenOperaties() {
         const toegelatenOperaties = await VlProzaMessage._getToegelatenOperaties(this._domain);
         if (toegelatenOperaties.update) {
-            this._element.appendChild(this._getEditButtonTemplate());
+            this.__setupUpdatableMessage();
         }
+    }
+
+    __setupUpdatableMessage() {
+        this._element.classList.add('vl-proza-message-updatable');
+        this._element.appendChild(this._getEditButtonTemplate());
     }
 
     __initWysiwyg(event) {
