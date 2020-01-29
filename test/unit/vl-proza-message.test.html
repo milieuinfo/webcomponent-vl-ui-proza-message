@@ -229,6 +229,8 @@
             return fetchMock.flush(true).then(() => {
                 prozaMessageEditButton(message).click();
                 assert(tinyMCE.init.called);
+                const editor = tinyMCE.activeEditor;
+                editor.destroy();
             });
         });
 
