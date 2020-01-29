@@ -9,38 +9,39 @@ describe('vl-proza-message', async () => {
         return vlProzaMessagePage.load();
     });
 
-    it('de tekst word aanpasbaar als ik op het potlood klik', async () => {
+    it('als gebruiker kan ik een tekst wijzigen door op het potlood te klikken', async () => {
         const message = await vlProzaMessagePage.getMessageFirstDemo();
-        await message.clickOnPencil();
+        await message.edit();
         await assert.eventually.isTrue(message.isEditable());
-        await message.exitEditMode();
+        await message.cancel();
     });
 
-    it('als de gebruiker op de escape-toets drukt, worden de wijzigingen niet bewaard', async () => {
+    it('als gebruiker kan ik op de escape-toets drukken om mijn wijzigingen te annuleren', async () => {
         const message = await vlProzaMessagePage.getMessageFirstDemo();
-        await message.clickOnPencil()
+        await assert.eventually.equal(message.getText(), 'foobar');
+        await message.edit()
         await message.clear();
         await message.type('decibel')
-        await message.exitEditMode();
-        const text = await message.getText();
-        assert.equal(text, 'foobar');
+        await message.cancel();
+        await assert.eventually.equal(message.getText(), 'foobar');
     });
 
-    it('als de gebruiker op de enter-toets drukt, worden de wijzigingen bewaard', async () => {
+    it('als de gebruiker kan ik op de enter-toets drukken om mijn wijzigingen te bewaren', async () => {
         const message = await vlProzaMessagePage.getMessageFirstDemo();
-        await message.clickOnPencil();
+        await message.edit();
         await message.clear();
-        await message.typeAndConfirm('decibel');
-        const text = await message.getText();
-        assert.equal(text, 'decibel');
-        await message.clickOnPencil();
+        await message.type('decibel');
+        await message.confirm();
+        await assert.eventually.equal(message.getText(), 'decibel');
+        await message.edit();
         await message.clear();
-        await message.typeAndConfirm('foobar');
+        await message.type('foobar');
+        await message.confirm();
     });
 
-    it('als de gebruiker enter+shift invoert, dan word er een line-break toegevoegd', async () => {
+    it('als gebruiker kan ik enter+shift invoeren om een line-break toe te voegen', async () => {
         const message = await vlProzaMessagePage.getMessageFirstDemo();
-        await message.clickOnPencil();
+        await message.edit();
         await message.clear();
         await message.type('line');
         await message.shiftEnter();
@@ -48,24 +49,29 @@ describe('vl-proza-message', async () => {
         await message.confirm();
         const text = await message.getText();
         assert.isTrue(text.indexOf('\n') > 0);
-        await message.clickOnPencil();
+        await message.edit();
         await message.clear();
-        await message.typeAndConfirm('foobar');
+        await message.type('foobar');
+        await message.confirm();
     });
 
-    it('als de gebruiker tekst selecteert, verschijnt de WYSIWYG', async () => {
+    it('als gebruiker kan ik WYSIWYG stijl toevoegen aan de tekst door tekst te selecteren', async () => {
         const message = await vlProzaMessagePage.getMessageFirstDemo();
-        await message.clickOnPencil();
-        await message.selecteerAlleTekst();
-        await message.waitUntilTinyMceIsPresent();
-        await message.exitEditMode();
+        await message.edit();
+        await message.selectAllText();
+        await message.waitUntilWysiwygPresent();
+        await message.cancel();
     });
 
-    it('als de gebruiker buiten het tekstveld klikt, sluit de bewerkmodus', async () => {
+    it('als gebruiker kan ik buiten het tekstveld klikken om de bewerk modus te sluiten en mijn wijzigingen te bewaren', async () => {
         const message = await vlProzaMessagePage.getMessageFirstDemo();
-        await message.clickOnPencil();
+        await assert.eventually.equal(message.getText(), 'foobar');
+        await message.edit();
+        await message.clear();
+        await message.type('decibel');
         await assert.eventually.isTrue(message.isEditable());
         await message.blur();
         await assert.eventually.isFalse(message.isEditable());
+        await assert.eventually.equal(message.getText(), 'decibel');
     });
 });

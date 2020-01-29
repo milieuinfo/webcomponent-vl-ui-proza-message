@@ -2,6 +2,9 @@ const { VlElement } = require('vl-ui-core');
 const { By, Key } = require('selenium-webdriver');
 
 class VlProzaMessage extends VlElement {
+    async _getEditButton() {
+        return this.shadowRoot.findElement(By.css('#edit-button'));
+    }
 
     async _getWysiwyg() {
         return this.findElement(By.css('#wysiwyg'));
@@ -10,7 +13,7 @@ class VlProzaMessage extends VlElement {
     async _waitUntilEditable() {
         return this.driver.wait(async () => {
             return this.isEditable();
-        }, 5000);
+        });
     }
 
     async getText() {
@@ -28,7 +31,7 @@ class VlProzaMessage extends VlElement {
         return this.driver.executeScript('return arguments[0].innerText = ""', wysiwyg);
     }
 
-    async exitEditMode() {
+    async cancel() {
         const wysiwyg = await this._getWysiwyg();
         return wysiwyg.sendKeys(Key.ESCAPE);
     }
@@ -38,8 +41,8 @@ class VlProzaMessage extends VlElement {
         return wysiwyg.sendKeys(Key.ENTER);
     }
 
-    async clickOnPencil() {
-        const pencilButton = await this.shadowRoot.findElement(By.css('#edit-button'));
+    async edit() {
+        const pencilButton = await this._getEditButton();
         await pencilButton.click();
         return this._waitUntilEditable();
     }
@@ -55,31 +58,25 @@ class VlProzaMessage extends VlElement {
         return input.sendKeys(text);
     }
 
-    async typeAndConfirm(text) {
-        await this.type(text);
-        return this.confirm();
-    }
-
     async isEditable() {
         const wysiwyg = await this._getWysiwyg();
-        const contentEditable = await wysiwyg.getAttribute('contenteditable');
-        return contentEditable == 'true';
+        return wysiwyg.hasAttribute('contenteditable');
     }
 
-    async selecteerAlleTekst() {
+    async selectAllText() {
         const input = await this._getWysiwyg();
         const actions = this.driver.actions({bridge: true});
         return await actions.doubleClick(input).perform();
     }
 
-    async isTinyMcePresent() {
-        return (await this.driver.findElements(By.css('.tox-pop'))).length > 0;
+    async isWysiwygPresent() {
+        return (await this.driver.findElement(By.css('.tox-pop'))).isDisplayed();
     }
 
-    async waitUntilTinyMceIsPresent() {
+    async waitUntilWysiwygPresent() {
         return this.driver.wait(async () => {
-            return await this.isTinyMcePresent();
-        }, 3000);
+            return await this.isWysiwygPresent();
+        });
     }
 
     async blur() {

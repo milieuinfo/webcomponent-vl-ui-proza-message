@@ -1,6 +1,5 @@
 const VlProzaMessage = require('../components/vl-proza-message');
 const { Page, Config } = require('vl-ui-core');
-const { By } = require('selenium-webdriver');
 
 class VlProzaMessagePage extends Page {
     async _getProzaMessage(selector) {
