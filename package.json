@@ -1,6 +1,6 @@
 {
   "name": "vl-ui-proza-message",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "main": "index.js",
   "description": "Component om een proza message te tonen en inline te updaten",
   "scripts": {
