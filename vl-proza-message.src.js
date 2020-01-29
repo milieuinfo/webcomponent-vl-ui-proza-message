@@ -4,7 +4,7 @@ import '/node_modules/vl-ui-icon/vl-icon.js';
 import '/node_modules/vl-ui-typography/vl-typography.js';
 import '/node_modules/vl-ui-toaster/vl-toaster.js';
 import '/node_modules/vl-ui-alert/vl-alert.js';
-import '/node_modules/tinymce/tinymce.min.js';
+import '/dist/tinymce.min.js';
 
 /**
  * VlProzaMessage
@@ -117,8 +117,7 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
             powerpaste_html_import: 'clean',
             content_css: '../style.css',
             verify_html: false,
-            forced_root_block: '',
-            suffix: '.min'
+            forced_root_block: ''
         }
     }
 
@@ -228,11 +227,11 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
         event.stopPropagation();
         this.__unwrapWysiwygElement();
         tinyMCE.baseURL = '/node_modules/tinymce';
+        this.__hideWysiwygButton();
         tinyMCE.init(this._wysiwygConfig);
         this._activeWysiwygEditor.on('init', () => {
             this.__focusWysiwyg();
             this.__configureWysiwygStyle();
-            this.__hideWysiwygButton();
             this.__bindWysiwygEvents();
         });
     }
