@@ -67,6 +67,10 @@
             return message.shadowRoot.querySelector('button');
         }
 
+        function prozaMessageUpdatableClass(message) {
+            return message.shadowRoot.querySelector('.vl-proza-message--updatable');
+        }
+
         function prozaMessageEditButtonIcon(button) {
             return button.querySelector('[is="vl-icon"]').getAttribute('icon');
         }
@@ -92,15 +96,19 @@
         test('bevat de mogelijkheid om de content te wijzigen indien de wijzig operatie toegelaten is', () => {
             const proza = fixture('vl-proza-messages-fixture');
             return fetchMock.flush(true).then(() => {
-                const button1 = prozaMessageEditButton(proza.querySelector('#message-1'));
+                const message1 = proza.querySelector('#message-1');
+                const button1 = prozaMessageEditButton(message1);
                 const icon1 = prozaMessageEditButtonIcon(button1);
                 should.exist(button1);
                 icon1.should.equal('edit');
+                should.exist(prozaMessageUpdatableClass(message1));
 
-                const button2 = prozaMessageEditButton(proza.querySelector('#message-2'));
+                const message2 = proza.querySelector('#message-2');
+                const button2 = prozaMessageEditButton(message2);
                 const icon2 = prozaMessageEditButtonIcon(button2);
                 should.exist(button2);
                 icon2.should.equal('edit');
+                should.exist(prozaMessageUpdatableClass(message2));
             });
         });
 
@@ -109,8 +117,13 @@
 
             const proza = fixture('vl-proza-messages-fixture');
             return fetchMock.flush(true).then(() => {
-                should.not.exist(prozaMessageEditButton(proza.querySelector('#message-1')));
-                should.not.exist(prozaMessageEditButton(proza.querySelector('#message-2')));
+                const message1 = proza.querySelector('#message-1');
+                should.not.exist(prozaMessageEditButton(message1));
+                should.not.exist(prozaMessageUpdatableClass(message1));
+
+                const message2 = proza.querySelector('#message-2');
+                should.not.exist(prozaMessageEditButton(message2));
+                should.not.exist(prozaMessageUpdatableClass(message2));
             });
         });
 
