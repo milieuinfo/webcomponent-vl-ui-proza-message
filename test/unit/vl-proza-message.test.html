@@ -36,8 +36,17 @@
     </template>
 </test-fixture>
 
+<test-fixture id="vl-proza-message-blur">
+    <template>
+    	<div>
+		    <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
+		    <div id="to-have-blur-on-proza-message"></div>
+    	</div>
+    </template>
+</test-fixture>
+
 <script type="module">
-    import {VlProzaMessage, VlProzaMessagePreloader} from '../../vl-proza-message.src.js';
+    import {VlProzaMessage, VlProzaMessagePreloader, ProzaRestClient} from '../../vl-proza-message.src.js';
     import {awaitUntil} from 'vl-ui-core/vl-core';
     import fetchMock from 'fetch-mock/esm/client.mjs';
 
@@ -450,6 +459,34 @@
                 });
             });
         });
+
+        test('Als de active editor al weg is tegen dat een save van een proza message gelukt is, is de proza component daartegen bestand', (done) => {
+            const message = fixture('vl-proza-message-fixture');
+            fetchMock.flush(true).then(() => {
+                prozaMessageEditButton(message).click();
+                const editor = tinyMCE.activeEditor;
+                editor.on('init', () => {
+					should.not.exist(prozaTypographyElement(message));
+					awaitUntil(() => prozaTypographyElement(message)).then(() => {
+						VlProzaMessage.__getMessageCacheForDomain("foo")["bar"].then(msg => {
+							expect(msg.tekst).to.equal("nieuwe proza message");
+							done();
+						});			 
+					});
+					const saveMessageStub = sandbox.stub(ProzaRestClient, "saveMessage");
+					const saveMessagePromise = new Promise(function(resolve, reject) {
+						awaitUntil(() => tinyMCE.activeEditor).then(() => {
+							tinyMCE.activeEditor.destroy();
+  							resolve({code: "bar", tekst: "nieuwe proza message"});
+						});
+					}); 
+					saveMessageStub.returns(saveMessagePromise);
+                    editor.setContent("nieuwe proza message");
+					editor.fire("blur");
+                });
+            });
+        });
+
     });
 </script>
 </body>
