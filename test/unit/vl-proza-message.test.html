@@ -97,10 +97,10 @@
             return fetchMock.flush(true).then(() => {
                 const message = element.querySelector('#message-1');
                 const button = prozaMessageEditButton(message);
- 				window.addEventListener('beforeunload', function(event) {
-					throw new Error("Link mag niet gevolgd worden");
-      			});
-		        return button.click();
+                window.addEventListener('beforeunload', function(event) {
+                    throw new Error("Link mag niet gevolgd worden");
+		});
+                return button.click();
             });
         });
 
