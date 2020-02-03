@@ -74,6 +74,9 @@
             fetchMock.restore();
             delete VlProzaMessage.__cache;
             delete VlProzaMessagePreloader.__cache;
+			if (tinyMCE.activeEditor) {
+				tinyMCE.activeEditor.destroy();
+			}
         });
 
         function prozaMessageContent(message) {
