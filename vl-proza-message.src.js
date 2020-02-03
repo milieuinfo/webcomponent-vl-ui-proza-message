@@ -310,21 +310,23 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
 
     __undoWysiwygChange() {
         const editor = this._activeWysiwygEditor;
-        if (editor.undoManager.hasUndo()) {
+        if (editor && editor.undoManager.hasUndo()) {
             editor.undoManager.undo();
         }
     }
 
     __undoAllWysiwygChanges() {
         const editor = this._activeWysiwygEditor;
-        while (editor.undoManager.hasUndo()) {
+        while (editor && editor.undoManager.hasUndo()) {
             editor.undoManager.undo();
         }
     }
 
     __stopWysiwyg() {
         const editor = this._activeWysiwygEditor;
-        editor.destroy();
+        if (editor) {
+        	editor.destroy();
+        }
         this.__showWysiwygButton();
         this.__wrapWysiwygElement();
     }
@@ -472,7 +474,7 @@ export class VlProzaMessagePreloader extends VlElement(HTMLElement) {
     }
 }
 
-class ProzaRestClient {
+export class ProzaRestClient {
     static saveMessage(domain, code, text) {
     	return fetch(`proza/domein/${domain}/${code}`, {
     		method: 'PUT',
