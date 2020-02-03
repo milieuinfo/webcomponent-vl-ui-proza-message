@@ -35,7 +35,15 @@
         </button>
     </template>
 </test-fixture>
-
+  
+<test-fixture id="vl-proza-message-inside-link">
+    <template>
+        <a href="http://www.google.be">
+            <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
+        </button>
+    </template>
+</test-fixture>
+  
 <test-fixture id="vl-proza-message-blur">
     <template>
     	<div>
@@ -43,7 +51,7 @@
 		    <div id="to-have-blur-on-proza-message"></div>
     	</div>
     </template>
-</test-fixture>
+</text-fixture>
 
 <script type="module">
     import {VlProzaMessage, VlProzaMessagePreloader, ProzaRestClient} from '../../vl-proza-message.src.js';
@@ -91,6 +99,19 @@
         function prozaTypographyElement(message) {
             return message.querySelector('vl-typography');
         }
+
+        test('de default behavior van het klikken op de bewerk knop binnen een link wordt gestopt', () => {
+            const element = fixture('vl-proza-message-inside-link');
+            return fetchMock.flush(true).then(() => {
+                const message = element.querySelector('#message-1');
+                const button = prozaMessageEditButton(message);
+                window.addEventListener('beforeunload', function(event) {
+                    throw new Error("Link mag niet gevolgd worden");
+		});
+                return button.click();
+            });
+        });
+
 
         test('toont een bericht', () => {
             const proza = fixture('vl-proza-messages-fixture');
@@ -460,7 +481,7 @@
             });
         });
 
-        test('Als de active editor al weg is tegen dat een save van een proza message gelukt is, is de proza component daartegen bestand', (done) => {
+        test('is bestand tegen een save wanneer de actieve editor al weg is', (done) => {
             const message = fixture('vl-proza-message-fixture');
             fetchMock.flush(true).then(() => {
                 prozaMessageEditButton(message).click();
@@ -486,7 +507,6 @@
                 });
             });
         });
-
     });
 </script>
 </body>

@@ -225,6 +225,7 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
 
     __initWysiwyg(event) {
         event.stopPropagation();
+        event.preventDefault();
         this.__unwrapWysiwygElement();
         tinyMCE.baseURL = '/node_modules/tinymce';
         this.__hideWysiwygButton();
