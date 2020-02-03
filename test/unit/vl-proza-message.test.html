@@ -35,7 +35,7 @@
         </button>
     </template>
 </test-fixture>
-
+  
 <test-fixture id="vl-proza-message-inside-link">
     <template>
         <a href="http://www.google.be">
@@ -43,10 +43,18 @@
         </button>
     </template>
 </test-fixture>
+  
+<test-fixture id="vl-proza-message-blur">
+    <template>
+    	<div>
+		    <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
+		    <div id="to-have-blur-on-proza-message"></div>
+    	</div>
+    </template>
+</text-fixture>
 
 <script type="module">
-
-    import {VlProzaMessage, VlProzaMessagePreloader} from '../../vl-proza-message.src.js';
+    import {VlProzaMessage, VlProzaMessagePreloader, ProzaRestClient} from '../../vl-proza-message.src.js';
     import {awaitUntil} from 'vl-ui-core/vl-core';
     import fetchMock from 'fetch-mock/esm/client.mjs';
 
@@ -66,6 +74,9 @@
             fetchMock.restore();
             delete VlProzaMessage.__cache;
             delete VlProzaMessagePreloader.__cache;
+			if (tinyMCE.activeEditor) {
+				tinyMCE.activeEditor.destroy();
+			}
         });
 
         function prozaMessageContent(message) {
@@ -473,6 +484,32 @@
             });
         });
 
+        test('is bestand tegen een save wanneer de actieve editor al weg is', (done) => {
+            const message = fixture('vl-proza-message-fixture');
+            fetchMock.flush(true).then(() => {
+                prozaMessageEditButton(message).click();
+                const editor = tinyMCE.activeEditor;
+                editor.on('init', () => {
+					should.not.exist(prozaTypographyElement(message));
+					awaitUntil(() => prozaTypographyElement(message)).then(() => {
+						VlProzaMessage.__getMessageCacheForDomain("foo")["bar"].then(msg => {
+							expect(msg.tekst).to.equal("nieuwe proza message");
+							done();
+						});			 
+					});
+					const saveMessageStub = sandbox.stub(ProzaRestClient, "saveMessage");
+					const saveMessagePromise = new Promise(function(resolve, reject) {
+						awaitUntil(() => tinyMCE.activeEditor).then(() => {
+							tinyMCE.activeEditor.destroy();
+  							resolve({code: "bar", tekst: "nieuwe proza message"});
+						});
+					}); 
+					saveMessageStub.returns(saveMessagePromise);
+					editor.setContent("nieuwe proza message");
+					editor.fire("blur");
+                });
+            });
+        });
     });
 </script>
 </body>
