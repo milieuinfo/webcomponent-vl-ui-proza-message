@@ -1,5 +1,5 @@
 
-const { assert, driver } = require('vl-ui-core').Test;
+const { assert, driver } = require('vl-ui-core').Test.Setup;
 const VlProzaMessagePage = require('./pages/vl-proza-message.page');
 
 describe('vl-proza-message', async () => {

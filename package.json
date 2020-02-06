@@ -1,31 +1,47 @@
 {
   "name": "vl-ui-proza-message",
   "version": "0.0.12",
-  "main": "index.js",
+  "main": "./src/index.js",
+  "exports": {
+    "require": "./index.js",
+    "import": "./src/index.js",
+    "node": "./index.js",
+    "default": "./index.js"
+  },
   "description": "Component om een proza message te tonen en inline te updaten",
   "scripts": {
     "prepare": "npm update --dev vl-ui-util && npm run prepare:util",
     "prepare:util": "npm explore vl-ui-util -- npm run util",
     "test": "npm run test:unit && npm run test:e2e",
     "test:unit": "wct --config-file ./wct.local.conf.json",
-    "test:unit:chrome": "wct -p -l chrome test/unit/*.test.html --npm",
     "test:e2e": "npm run test:server:start && npm run test:e2e:chrome && npm run test:e2e:firefox",
     "test:e2e:grid": "npm run test:server:start && npm run test:e2e:chrome:grid && npm run test:e2e:firefox:grid",
     "test:grid": "wct --config-file ./wct.docker.conf.json && npm run test:e2e:grid",
     "posttest:e2e": "pkill -f http-server",
-    "test:e2e:chrome": "mocha --chrome ",
-    "test:e2e:chrome:grid": "mocha  --chrome --grid",
+    "test:e2e:chrome": "mocha --chrome",
+    "test:e2e:chrome:grid": "mocha --chrome --grid",
     "test:e2e:firefox": "mocha --firefox",
     "test:e2e:firefox:grid": "mocha --firefox --grid",
     "test:e2e:opera": "mocha --opera",
     "test:e2e:safari": "mocha --safari",
     "test:server:start": "http-server &",
     "release": "np",
-    "release:prepare": "npm run release:prepare:build && npm run release:prepare:imports && npm run release:prepare:css && npm run release:prepare:commit",
-    "release:prepare:build": "minify *.src.js > vl-proza-message.js",
-    "release:prepare:imports": "replace '/dist/tinymce.min.js' '/node_modules/vl-ui-proza-message/dist/tinymce.min.js' vl-proza-message.js",
-    "release:prepare:css": "replace '\\.\\./style.css' '/node_modules/vl-ui-proza-message/style.css' vl-proza-message.js",
-    "release:prepare:commit": "git add -f vl-proza-message.js && git commit --amend --no-edit && git pull",
+    "release:prepare": "npm run release:prepare:build && npm run release:prepare:commit",
+    "release:prepare:build": "npm run release:prepare:build:es6 && npm run release:prepare:build:es6:min && npm run release:prepare:build:node",
+    "release:prepare:build:es6": "npm run release:prepare:build:es6:copy && npm run release:prepare:build:es6:replace",
+    "release:prepare:build:es6:copy": "cp -R -f ./src/*.src.js ./vl-proza-message.js",
+    "release:prepare:build:es6:replace": "replace '\\.\\./style.css' '/node_modules/vl-ui-proza-message/style.css' vl-proza-message.js",
+    "release:prepare:build:es6:min": "npm run release:prepare:build:es6:min:copy && npm run release:prepare:build:es6:min:explode && npm run release:prepare:build:es6:min:minify",
+    "release:prepare:build:es6:min:copy": "cp -R -f ./src/*.src.js ./vl-proza-message.tmp.min.js",
+    "release:prepare:build:es6:min:explode": "npm explore vl-ui-util -- npm run explode -- --fileName=vl-proza-message.tmp.min.js",
+    "release:prepare:build:es6:min:minify": "minify ./vl-proza-message.tmp.min.js > ./vl-proza-message.min.js && rm -rf vl-proza-message.tmp.min.js",
+    "release:prepare:build:node": "npm run release:prepare:build:node:copy && npm run release:prepare:build:node:replace && npm run release:prepare:build:node:explode",
+    "release:prepare:build:node:copy": "cp -R -f ./src/*.src.js .",
+    "release:prepare:build:node:replace": "npm run release:prepare:build:node:replace:src && npm run release:prepare:build:node:replace:dist",
+    "release:prepare:build:node:replace:src": "replace  '/node_modules/vl-ui-(.*)/vl-(.*).js' 'vl-ui-$2' vl-proza-message.src.js",
+    "release:prepare:build:node:replace:dist": "replace  '/node_modules/(.*)/vl-(.*).js' 'vl-ui-$2.js' vl-proza-message.src.js",
+    "release:prepare:build:node:explode": "npm explore vl-ui-util -- npm run explode -- --fileName=vl-proza-message.src.js",
+    "release:prepare:commit": "git add -f . && git commit --amend --no-edit && git pull",
     "release:testless": "np --yolo",
     "demo": "http-server"
   },
@@ -40,19 +56,19 @@
   },
   "homepage": "https://github.com/milieuinfo/webcomponent-vl-proza-message#readme",
   "dependencies": {
-    "tinymce": "5.1.5",
-    "vl-ui-alert": "^1.3.9",
-    "vl-ui-button": "^2.0.0",
-    "vl-ui-core": "^3.1.1",
-    "vl-ui-icon": "^2.1.1",
+    "tinymce": "^5.1.5",
+    "vl-ui-alert": "^2.0.0",
+    "vl-ui-button": "^3.0.0",
+    "vl-ui-core": "^4.0.0",
+    "vl-ui-icon": "^3.0.0",
     "vl-ui-toaster": "^1.0.9",
-    "vl-ui-typography": "^1.0.1"
+    "vl-ui-typography": "^1.0.7"
   },
   "peerDependencies": {
     "tinymce": "5.1.5",
     "vl-ui-alert": "^1.3.9",
     "vl-ui-button": "^1.3.2",
-    "vl-ui-core": "^3.1.1",
+    "vl-ui-core": "^4.0.0",
     "vl-ui-icon": "^2.1.1",
     "vl-ui-toaster": "^1.0.9",
     "vl-ui-typography": "^1.0.1"
@@ -60,7 +76,7 @@
   "devDependencies": {
     "@govflanders/vl-ui-typography": "^3.9.1",
     "@govflanders/vl-ui-util": "^3.9.1",
-    "vl-ui-util": "^3.4.4"
+    "vl-ui-util": "^4.0.1"
   },
   "publishConfig": {
     "registry": "http://artifactory-pr-build.lb.cumuli.be:8081/artifactory/api/npm/acd-npm/"
