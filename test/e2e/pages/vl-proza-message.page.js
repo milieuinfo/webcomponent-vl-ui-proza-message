@@ -1,5 +1,5 @@
 const VlProzaMessage = require('../components/vl-proza-message');
-const { Page, Config } = require('vl-ui-core');
+const { Page, Config } = require('vl-ui-core').Test;
 
 class VlProzaMessagePage extends Page {
     async _getProzaMessage(selector) {
