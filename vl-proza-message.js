@@ -115,7 +115,7 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
             quickbars_selection_toolbar: 'bold italic underline',
             powerpaste_word_import: 'clean',
             powerpaste_html_import: 'clean',
-            content_css: '/node_modules/vl-ui-proza-message/style.css',
+            content_css: '../style.css',
             verify_html: false,
             forced_root_block: ''
         }
