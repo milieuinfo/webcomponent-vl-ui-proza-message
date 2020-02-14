@@ -44,7 +44,7 @@
     "release:prepare:build:es6": "npm run release:prepare:build:es6:copy && npm run release:prepare:build:es6:replace",
     "release:prepare:build:es6:copy": "cp -R -f ./src/*.src.js ./vl-proza-message.js",
     "release:prepare:build:es6:replace": "npm run release:prepare:build:es6:replace:css && npm run release:prepare:build:es6:replace:dist && npm run release:prepare:build:es6:replace:src",
-    "release:prepare:build:es6:replace:css": "replace '\\.\\./style.css' '/node_modules/vl-ui-proza-message/style.css' vl-proza-message.js",
+    "release:prepare:build:es6:replace:css": "replace \"'/style.css'\" \"'/node_modules/vl-ui-proza-message/style.css'\" vl-proza-message.js",
     "release:prepare:build:es6:replace:dist": "replace \"import ['\\\"]/dist/(.*)['\\\"]\" \"import '/node_modules/vl-ui-proza-message/dist/\\$1'\" vl-proza-message.js",
     "release:prepare:build:es6:replace:src": "replace \"from ['\\\"]/src/(.*)['\\\"]\" \"from '/node_modules/vl-ui-proza-message/src/\\$1'\" vl-proza-message.js",
     "release:prepare:build:es6:min": "npm run release:prepare:build:es6:min:copy && npm run release:prepare:build:es6:min:explode && npm run release:prepare:build:es6:min:minify",
@@ -66,25 +66,25 @@
   },
   "dependencies": {
     "tinymce": "^5.1.5",
-    "vl-ui-alert": "^2.0.0",
-    "vl-ui-button": "^3.0.0",
+    "vl-ui-alert": "^2.0.1",
+    "vl-ui-button": "^3.0.1",
     "vl-ui-core": "^4.0.0",
-    "vl-ui-icon": "^3.0.0",
-    "vl-ui-toaster": "^2.0.1",
-    "vl-ui-typography": "^2.0.0"
+    "vl-ui-icon": "^3.0.1",
+    "vl-ui-toaster": "^2.0.2",
+    "vl-ui-typography": "^2.0.1"
   },
   "peerDependencies": {
     "tinymce": "5.1.5",
-    "vl-ui-alert": "^2.0.0",
-    "vl-ui-button": "^3.0.0",
+    "vl-ui-alert": "^2.0.1",
+    "vl-ui-button": "^3.0.1",
     "vl-ui-core": "^4.0.0",
-    "vl-ui-icon": "^3.0.0",
-    "vl-ui-toaster": "^2.0.1",
-    "vl-ui-typography": "^2.0.0"
+    "vl-ui-icon": "^3.0.1",
+    "vl-ui-toaster": "^2.0.2",
+    "vl-ui-typography": "^2.0.1"
   },
   "devDependencies": {
     "@govflanders/vl-ui-typography": "^3.9.1",
     "@govflanders/vl-ui-util": "^3.9.1",
-    "vl-ui-util": "^4.0.1"
+    "vl-ui-util": "^4.0.3"
   }
 }
