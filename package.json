@@ -1,6 +1,6 @@
 {
   "name": "vl-ui-proza-message",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "Component om een proza message te tonen en inline te updaten",
   "author": "DIDM",
   "license": "MIT",
