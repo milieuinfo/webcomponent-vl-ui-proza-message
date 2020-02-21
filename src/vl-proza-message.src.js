@@ -45,7 +45,7 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
     
     __initProzaMessageToaster() {
         const toaster = this.__addToasterElement();
-        this.__addToasterLink();
+        this.__addToasterStyle();
         return toaster;
     }
 
@@ -57,7 +57,7 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
         return document.getElementById(id);
     }
 
-    __addToasterLink() {
+    __addToasterStyle() {
         const id = 'vl-proza-message-toaster-style';
         if (!document.getElementById(id)) {
             document.head.innerHTML += `
