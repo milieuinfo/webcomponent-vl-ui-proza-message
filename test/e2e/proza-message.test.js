@@ -74,4 +74,6 @@ describe('vl-proza-message', async () => {
 //        await assert.eventually.isFalse(message.isEditable());
 //        await assert.eventually.equal(message.getText(), 'decibel');
 //    });
+
+        // TODO variant met toaster foutmelding e2e introductie
 });
