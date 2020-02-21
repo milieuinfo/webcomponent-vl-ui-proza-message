@@ -44,12 +44,27 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
     }
     
     __initProzaMessageToaster() {
-    	const id = "vl-proza-message-toaster";
-        if (document.getElementById(id) == null) {
-        	const toaster = document.createElement('div', {is: 'vl-toaster'});
-        	toaster.setAttribute("top-right", "");
-        	toaster.id = id;
-        	document.body.appendChild(toaster);
+        const toaster = this.__addToasterElement();
+        this.__addToasterLink();
+        return toaster;
+    }
+
+    __addToasterElement() {
+        const id = 'vl-proza-message-toaster';
+        if (!document.getElementById(id)) {
+            document.body.innerHTML += `<div is='vl-toaster' top-right id=${id}></div>`;
+        }
+        return document.getElementById(id);
+    }
+
+    __addToasterLink() {
+        const id = 'vl-proza-message-toaster-style';
+        if (!document.getElementById(id)) {
+            document.head.innerHTML += `
+                <style id=${id}>
+                    @import '/node_modules/vl-ui-toaster/style.css';
+                </style>
+            `;
         }
         return document.getElementById(id);
     }
