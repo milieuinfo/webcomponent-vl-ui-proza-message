@@ -8,7 +8,7 @@
     <script src="/node_modules/sinon/pkg/sinon.js"></script>
     <script src="/node_modules/sinon-chai/lib/sinon-chai.js"></script>
 
-    <script type="module" src="../../src/vl-proza-message.src.js"></script>
+    <script type="module" src="../../src/vl-proza-message.js"></script>
 </head>
 
 <body>
@@ -30,8 +30,8 @@
 </test-fixture>
 
 <script type="module">
-    import {VlProzaMessage, VlProzaMessagePreloader} from '../../src/vl-proza-message.src.js';
-    import {awaitUntil} from 'vl-ui-core/vl-core';
+    import {VlProzaMessage, VlProzaMessagePreloader} from '../../src/vl-proza-message.js';
+    import {awaitUntil} from 'vl-ui-core/dist/vl-core';
     import fetchMock from 'fetch-mock/esm/client.mjs';
 
     suite('preloaded vl-proza-message', () => {
