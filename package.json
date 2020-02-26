@@ -62,8 +62,8 @@
     "vl-ui-typography": "^3.0.0"
   },
   "devDependencies": {
-    "@govflanders/vl-ui-typography": "^3.9.1",
     "@govflanders/vl-ui-util": "^3.9.1",
+    "@govflanders/vl-ui-typography": "^3.9.1",
     "vl-ui-util": "^5.0.7"
   }
 }
