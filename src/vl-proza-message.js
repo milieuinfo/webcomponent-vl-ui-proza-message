@@ -52,7 +52,7 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
     __addToasterElement() {
         const id = 'vl-proza-message-toaster';
         if (!document.getElementById(id)) {
-            document.body.innerHTML += `<div is='vl-toaster' top-right id=${id}></div>`;
+            document.body.appendChild(this._template(`<div is='vl-toaster' top-right id=${id}></div>`));
         }
         return document.getElementById(id);
     }
@@ -60,11 +60,11 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
     __addToasterStyle() {
         const id = 'vl-proza-message-toaster-style';
         if (!document.getElementById(id)) {
-            document.head.innerHTML += `
+            document.head.appendChild(this._template(`
                 <style id=${id}>
                     @import '/node_modules/vl-ui-toaster/dist/style.css';
                 </style>
-            `;
+            `));
         }
         return document.getElementById(id);
     }
