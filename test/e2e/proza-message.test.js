@@ -9,6 +9,10 @@ describe('vl-proza-message', async () => {
         return vlProzaMessagePage.load();
     });
 
+    it("Dummy test om de browsers te sluiten", () => {
+    	assert.isTrue(true);
+    });
+    
 //    it('als gebruiker kan ik een tekst wijzigen door op het potlood te klikken', async () => {
 //        const message = await vlProzaMessagePage.getMessageFirstDemo();
 //        await message.edit();
