@@ -1,5 +1,7 @@
 const VlProzaMessage = require('../components/vl-proza-message');
+const { VlAlert } = require('vl-ui-alert').Test;
 const { Page, Config } = require('vl-ui-core').Test;
+const { By } = require('vl-ui-core').Test.Setup;
 
 class VlProzaMessagePage extends Page {
     async _getProzaMessage(selector) {
@@ -12,6 +14,14 @@ class VlProzaMessagePage extends Page {
 
     async getMessageWithError() {
         return this._getProzaMessage('#message-2');
+    }
+
+    async getAlert() {
+        const document = await this.driver.executeScript("return document;");
+        const alert = await document.findElement(By.css('vl-alert'));
+        if (alert) {
+            return await new VlAlert(this.driver, alert);
+        }
     }
 
     async getFirstMessageWithPreloading() {

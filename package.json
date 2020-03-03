@@ -45,16 +45,16 @@
   },
   "dependencies": {
     "tinymce": "^5.1.5",
-    "vl-ui-alert": "^3.0.0",
+    "vl-ui-alert": "^3.0.1",
     "vl-ui-button": "^4.0.0",
-    "vl-ui-core": "^5.0.1",
+    "vl-ui-core": "^5.0.3",
     "vl-ui-icon": "^4.0.0",
     "vl-ui-toaster": "^3.0.0",
     "vl-ui-typography": "^3.0.0"
   },
   "peerDependencies": {
     "tinymce": "5.1.5",
-    "vl-ui-alert": "^3.0.0",
+    "vl-ui-alert": "^3.0.1",
     "vl-ui-button": "^4.0.0",
     "vl-ui-core": "^5.0.1",
     "vl-ui-icon": "^4.0.0",
