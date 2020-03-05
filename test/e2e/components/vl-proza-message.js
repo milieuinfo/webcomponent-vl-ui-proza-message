@@ -20,6 +20,23 @@ class VlProzaMessage extends VlElement {
         return (await this._getWysiwyg()).getAttribute('innerText');
     }
 
+    async hasBoldStyle() {
+        return this._hasStyleElement('strong');
+    }
+
+    async hasItalicStyle() {
+        return this._hasStyleElement('em');
+    }
+
+    async hasUnderlineStyle() {
+        return this._hasStyleElement('span[style="text-decoration: underline;"]');
+    }
+
+    async _hasStyleElement(selector) {
+        const wysiwyg = await this._getWysiwyg();
+        return wysiwyg.findElement(By.css(selector)).then(() => true).catch(() => false);
+    }
+
     async shiftEnter() {
         const wysiwyg = await this._getWysiwyg();
         const shiftEnter = Key.chord(Key.SHIFT, Key.ENTER);
@@ -71,12 +88,6 @@ class VlProzaMessage extends VlElement {
 
     async isWysiwygPresent() {
         return (await this.driver.findElement(By.css('.tox-pop'))).isDisplayed();
-    }
-
-    async waitUntilWysiwygPresent() {
-        return this.driver.wait(async () => {
-            return await this.isWysiwygPresent();
-        });
     }
 
     async blur() {

@@ -8,18 +8,26 @@ describe('vl-proza-message', async () => {
         return vlProzaMessagePage.load();
     });
     
-    it('als gebruiker kan ik een tekst wijzigen door op het potlood te klikken', async () => {
+    it('als gebruiker kan ik een tekst editeerbaar maken door op het potlood te klikken', async () => {
         const message = await vlProzaMessagePage.getMessageFirstDemo();
         await message.edit();
         await assert.eventually.isTrue(message.isEditable());
         await message.cancel();
     });
 
+    it('als gebruiker kan ik een tekst verwijderen', async () => {
+        const message = await vlProzaMessagePage.getMessageFirstDemo();
+        await message.edit();
+        await message.clear();
+        await message.confirm();
+        await assert.eventually.equal(message.getText(), '');
+        await _resetMessage(message);
+    });
+
     it('als gebruiker kan ik op de escape-toets drukken om mijn wijzigingen te annuleren', async () => {
         const message = await vlProzaMessagePage.getMessageFirstDemo();
         await assert.eventually.equal(message.getText(), 'foobar');
         await message.edit();
-        await message.clear();
         await message.type('decibel');
         await message.cancel();
         await assert.eventually.equal(message.getText(), 'foobar');
@@ -28,45 +36,64 @@ describe('vl-proza-message', async () => {
     it('als de gebruiker kan ik op de enter-toets drukken om mijn wijzigingen te bewaren', async () => {
         const message = await vlProzaMessagePage.getMessageFirstDemo();
         await message.edit();
-        await message.clear();
         await message.type('decibel');
         await message.confirm();
         await assert.eventually.equal(message.getText(), 'decibel');
-        await message.edit();
-        await message.clear();
-        await message.type('foobar');
-        await message.confirm();
+        await _resetMessage(message);
     });
 
     it('als gebruiker kan ik enter+shift invoeren om een line-break toe te voegen', async () => {
         const message = await vlProzaMessagePage.getMessageFirstDemo();
         await message.edit();
-        await message.clear();
         await message.type('line');
         await message.shiftEnter();
         await message.append('break');
         await message.confirm();
-        const text = await message.getText();
-        assert.isTrue(text.indexOf('\n') > 0);
-        await message.edit();
-        await message.clear();
-        await message.type('foobar');
-        await message.confirm();
+        await assert.eventually.include(message.getText(), '\n');
+        await _resetMessage(message);
     });
 
-    it('als gebruiker kan ik WYSIWYG stijl toevoegen aan de tekst door tekst te selecteren', async () => {
+    it('als gebruiker kan ik bold stijl toevoegen aan de tekst door tekst te selecteren en dan de stijl knop te gebruiken', async () => {
         const message = await vlProzaMessagePage.getMessageFirstDemo();
+        await _enableWysiwyg(message);
+        await assert.eventually.isFalse(message.hasBoldStyle());
+        await vlProzaMessagePage.clickWysiwygBoldButton();
+        await message.confirm();
+        await assert.eventually.isTrue(message.hasBoldStyle());
+        await _resetMessage(message);
+    });
+
+    it('als gebruiker kan ik italic stijl toevoegen aan de tekst door tekst te selecteren en dan de stijl knop te gebruiken', async () => {
+        const message = await vlProzaMessagePage.getMessageFirstDemo();
+        await _enableWysiwyg(message);
+        await assert.eventually.isFalse(message.hasItalicStyle());
+        await vlProzaMessagePage.clickWysiwygItalicButton();
+        await message.confirm();
+        await assert.eventually.isTrue(message.hasItalicStyle());
+        await _resetMessage(message);
+    });
+
+    it('als gebruiker kan ik underline stijl toevoegen aan de tekst door tekst te selecteren en dan de stijl knop te gebruiken', async () => {
+        const message = await vlProzaMessagePage.getMessageFirstDemo();
+        await _enableWysiwyg(message);
+        await assert.eventually.isFalse(message.hasUnderlineStyle());
+        await vlProzaMessagePage.clickWysiwygUnderlineButton();
+        await message.confirm();
+        await assert.eventually.isTrue(message.hasUnderlineStyle());
+        await _resetMessage(message);
+    });
+
+    async function _enableWysiwyg(message) {
         await message.edit();
         await message.selectAllText();
-        await message.waitUntilWysiwygPresent();
-        await message.cancel();
-    });
+        await vlProzaMessagePage.waitUntilWysiwygOfMessageFirstDemoIsPresent();
+        await assert.eventually.isTrue(message.isWysiwygPresent());
+    }
 
     it('als gebruiker kan ik buiten het tekstveld klikken om de bewerk modus te sluiten en mijn wijzigingen te bewaren', async () => {
         const message = await vlProzaMessagePage.getMessageFirstDemo();
         await assert.eventually.equal(message.getText(), 'foobar');
         await message.edit();
-        await message.clear();
         await message.type('decibel');
         await assert.eventually.isTrue(message.isEditable());
         await message.blur();
@@ -78,11 +105,18 @@ describe('vl-proza-message', async () => {
         const message = await vlProzaMessagePage.getMessageWithError();
         await assert.eventually.equal(message.getText(), 'update zal fout gaan');
         await message.edit();
-        await message.clear();
         await message.type('decibel');
         await message.confirm();
-        const alert = await vlProzaMessagePage.getAlert();
+        const toaster = await vlProzaMessagePage.getToaster();
+        await assert.eventually.lengthOf(toaster.getAlerts(), 1);
+        const alert = (await toaster.getAlerts())[0];
         await assert.eventually.isTrue(alert.isWarning());
         await assert.eventually.equal(alert.getTitle(), 'Technische storing');
     });
+
+    async function _resetMessage(message) {
+        await message.edit();
+        await message.type('foobar');
+        await message.confirm();
+    }
 });

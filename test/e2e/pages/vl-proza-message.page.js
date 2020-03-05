@@ -1,7 +1,6 @@
 const VlProzaMessage = require('../components/vl-proza-message');
-const { VlAlert } = require('vl-ui-alert').Test;
+const { VlToaster } = require('vl-ui-toaster').Test;
 const { Page, Config } = require('vl-ui-core').Test;
-const { By } = require('vl-ui-core').Test.Setup;
 
 class VlProzaMessagePage extends Page {
     async _getProzaMessage(selector) {
@@ -16,12 +15,37 @@ class VlProzaMessagePage extends Page {
         return this._getProzaMessage('#message-2');
     }
 
-    async getAlert() {
-        const document = await this.driver.executeScript("return document;");
-        const alert = await document.findElement(By.css('vl-alert'));
-        if (alert) {
-            return await new VlAlert(this.driver, alert);
+    async getToaster() {
+        const toaster = await this.driver.executeScript(
+            `return document.querySelector('[is="vl-toaster"]')`);
+        if (toaster) {
+            return await new VlToaster(this.driver, toaster);
         }
+    }
+
+    async clickWysiwygBoldButton() {
+        return this._clickWysiwygButton('Bold');
+    }
+
+    async clickWysiwygItalicButton() {
+        return this._clickWysiwygButton('Italic');
+    }
+
+    async clickWysiwygUnderlineButton() {
+        return this._clickWysiwygButton('Underline');
+    }
+
+    async _clickWysiwygButton(title) {
+        const wysiwygBoldButton = await this.driver.executeScript(
+            `return document.querySelector('.tox-tbtn[title="${title}"]');`);
+        return wysiwygBoldButton.click();
+    }
+
+    async waitUntilWysiwygOfMessageFirstDemoIsPresent() {
+        const message = await this.getMessageFirstDemo();
+        return this.driver.wait(async () => {
+            return await message.isWysiwygPresent();
+        });
     }
 
     async getFirstMessageWithPreloading() {
