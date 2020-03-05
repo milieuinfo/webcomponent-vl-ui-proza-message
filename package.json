@@ -46,18 +46,18 @@
   "dependencies": {
     "tinymce": "^5.1.5",
     "vl-ui-alert": "^3.0.1",
-    "vl-ui-button": "^4.0.0",
+    "vl-ui-button": "github:milieuinfo/webcomponent-vl-ui-button#E2E_fix_getIcon",
     "vl-ui-core": "^5.0.3",
-    "vl-ui-icon": "^4.0.0",
+    "vl-ui-icon": "^4.0.1",
     "vl-ui-toaster": "^3.0.1",
     "vl-ui-typography": "^3.0.0"
   },
   "peerDependencies": {
     "tinymce": "5.1.5",
     "vl-ui-alert": "^3.0.1",
-    "vl-ui-button": "^4.0.0",
+    "vl-ui-button": "github:milieuinfo/webcomponent-vl-ui-button#E2E_fix_getIcon",
     "vl-ui-core": "^5.0.1",
-    "vl-ui-icon": "^4.0.0",
+    "vl-ui-icon": "^4.0.1",
     "vl-ui-toaster": "^3.0.1",
     "vl-ui-typography": "^3.0.0"
   },

@@ -1,9 +1,10 @@
 const { VlElement } = require('vl-ui-core').Test;
+const { VlButton } = require('vl-ui-button').Test;
 const { By, Key } = require('selenium-webdriver');
 
 class VlProzaMessage extends VlElement {
-    async _getEditButton() {
-        return this.shadowRoot.findElement(By.css('#edit-button'));
+    async getEditButton() {
+        return new VlButton(this.driver, await this.shadowRoot.findElement(By.css('#edit-button')));
     }
 
     async _getWysiwyg() {
@@ -59,7 +60,7 @@ class VlProzaMessage extends VlElement {
     }
 
     async edit() {
-        const pencilButton = await this._getEditButton();
+        const pencilButton = await this.getEditButton();
         await pencilButton.click();
         return this._waitUntilEditable();
     }

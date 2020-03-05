@@ -7,7 +7,15 @@ describe('vl-proza-message', async () => {
     before(() => {
         return vlProzaMessagePage.load();
     });
-    
+
+    it('als gebruiker kan ik een potlood zien bij een proza component', async () => {
+        const message = await vlProzaMessagePage.getMessageFirstDemo();
+        const button = await message.getEditButton();
+        await assert.eventually.isTrue(button.hasIcon());
+        const icon = await button.getIcon();
+        await assert.eventually.equal(icon.getType(), 'edit');
+    });
+
     it('als gebruiker kan ik een tekst editeerbaar maken door op het potlood te klikken', async () => {
         const message = await vlProzaMessagePage.getMessageFirstDemo();
         await message.edit();
