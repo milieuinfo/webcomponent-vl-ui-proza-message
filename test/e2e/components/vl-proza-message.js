@@ -1,6 +1,7 @@
 const { VlElement } = require('vl-ui-core').Test;
 const { VlButton } = require('vl-ui-button').Test;
-const { By, Key } = require('selenium-webdriver');
+const { By } = require('vl-ui-core').Test.Setup;
+const { Key } = require('selenium-webdriver');
 
 class VlProzaMessage extends VlElement {
     async getEditButton() {

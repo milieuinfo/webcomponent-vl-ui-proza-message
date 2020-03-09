@@ -1,6 +1,7 @@
 const VlProzaMessage = require('../components/vl-proza-message');
 const { VlToaster } = require('vl-ui-toaster').Test;
 const { Page, Config } = require('vl-ui-core').Test;
+const { By } = require('vl-ui-core').Test.Setup;
 
 class VlProzaMessagePage extends Page {
     async _getProzaMessage(selector) {
@@ -16,10 +17,9 @@ class VlProzaMessagePage extends Page {
     }
 
     async getToaster() {
-        const toaster = await this.driver.executeScript(
-            `return document.querySelector('[is="vl-toaster"]')`);
+        const toaster = await this.driver.findElement(By.css('[is="vl-toaster"]'));
         if (toaster) {
-            return await new VlToaster(this.driver, toaster);
+            return new VlToaster(this.driver, toaster);
         }
     }
 
@@ -36,8 +36,7 @@ class VlProzaMessagePage extends Page {
     }
 
     async _clickWysiwygButton(title) {
-        const wysiwygBoldButton = await this.driver.executeScript(
-            `return document.querySelector('.tox-tbtn[title="${title}"]');`);
+        const wysiwygBoldButton = await this.driver.findElement(By.css(`.tox-tbtn[title="${title}"]`));
         return wysiwygBoldButton.click();
     }
 
