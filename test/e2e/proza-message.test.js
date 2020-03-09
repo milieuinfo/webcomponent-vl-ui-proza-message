@@ -105,7 +105,6 @@ describe('vl-proza-message', async () => {
         await message.edit();
         await message.selectAllText();
         await vlProzaMessagePage.waitUntilWysiwygOfMessageFirstDemoIsPresent();
-        await assert.eventually.isTrue(message.isWysiwygPresent());
     }
 
     it('als gebruiker kan ik buiten het tekstveld klikken om de bewerk modus te sluiten en mijn wijzigingen te bewaren', async () => {
