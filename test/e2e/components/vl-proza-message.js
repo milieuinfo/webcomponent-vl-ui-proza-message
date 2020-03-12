@@ -1,9 +1,11 @@
 const { VlElement } = require('vl-ui-core').Test;
-const { By, Key } = require('selenium-webdriver');
+const { VlButton } = require('vl-ui-button').Test;
+const { By } = require('vl-ui-core').Test.Setup;
+const { Key } = require('selenium-webdriver');
 
 class VlProzaMessage extends VlElement {
-    async _getEditButton() {
-        return this.shadowRoot.findElement(By.css('#edit-button'));
+    async getEditButton() {
+        return new VlButton(this.driver, await this.shadowRoot.findElement(By.css('#edit-button')));
     }
 
     async _getWysiwyg() {
@@ -18,6 +20,23 @@ class VlProzaMessage extends VlElement {
 
     async getText() {
         return (await this._getWysiwyg()).getAttribute('innerText');
+    }
+
+    async hasBoldStyle() {
+        return this._hasStyleElement('strong');
+    }
+
+    async hasItalicStyle() {
+        return this._hasStyleElement('em');
+    }
+
+    async hasUnderlineStyle() {
+        return this._hasStyleElement('span[style="text-decoration: underline;"]');
+    }
+
+    async _hasStyleElement(selector) {
+        const wysiwyg = await this._getWysiwyg();
+        return wysiwyg.findElement(By.css(selector)).then(() => true).catch(() => false);
     }
 
     async shiftEnter() {
@@ -42,7 +61,7 @@ class VlProzaMessage extends VlElement {
     }
 
     async edit() {
-        const pencilButton = await this._getEditButton();
+        const pencilButton = await this.getEditButton();
         await pencilButton.click();
         return this._waitUntilEditable();
     }
@@ -73,15 +92,34 @@ class VlProzaMessage extends VlElement {
         return (await this.driver.findElement(By.css('.tox-pop'))).isDisplayed();
     }
 
-    async waitUntilWysiwygPresent() {
+    async blur() {
+        return (await this.driver.findElement(By.css('#title'))).click();
+    }
+
+    async clickWysiwygBoldButton() {
+        return this._clickWysiwygButton('Bold');
+    }
+
+    async clickWysiwygItalicButton() {
+        return this._clickWysiwygButton('Italic');
+    }
+
+    async clickWysiwygUnderlineButton() {
+        return this._clickWysiwygButton('Underline');
+    }
+
+    async _clickWysiwygButton(title) {
+        await this.waitUntilWysiwygIsPresent();
+        const wysiwygBoldButton = await this.driver.findElement(By.css(`.tox-tbtn[title="${title}"]`));
+        return wysiwygBoldButton.click();
+    }
+
+    async waitUntilWysiwygIsPresent() {
         return this.driver.wait(async () => {
             return await this.isWysiwygPresent();
         });
     }
 
-    async blur() {
-        return (await this.driver.findElement(By.css('#title'))).click();
-    }
 }
 
 module.exports = VlProzaMessage;

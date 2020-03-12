@@ -45,25 +45,25 @@
   },
   "dependencies": {
     "tinymce": "^5.1.5",
-    "vl-ui-alert": "^3.0.0",
-    "vl-ui-button": "^4.0.0",
-    "vl-ui-core": "^5.0.1",
-    "vl-ui-icon": "^4.0.0",
-    "vl-ui-toaster": "^3.0.0",
+    "vl-ui-alert": "^3.0.1",
+    "vl-ui-button": "^5.0.1",
+    "vl-ui-core": "^5.0.3",
+    "vl-ui-icon": "^4.0.1",
+    "vl-ui-toaster": "^3.0.1",
     "vl-ui-typography": "^3.0.0"
   },
   "peerDependencies": {
     "tinymce": "5.1.5",
-    "vl-ui-alert": "^3.0.0",
-    "vl-ui-button": "^4.0.0",
+    "vl-ui-alert": "^3.0.1",
+    "vl-ui-button": "^5.0.1",
     "vl-ui-core": "^5.0.1",
-    "vl-ui-icon": "^4.0.0",
-    "vl-ui-toaster": "^3.0.0",
+    "vl-ui-icon": "^4.0.1",
+    "vl-ui-toaster": "^3.0.1",
     "vl-ui-typography": "^3.0.0"
   },
   "devDependencies": {
     "@govflanders/vl-ui-util": "^3.9.1",
     "@govflanders/vl-ui-typography": "^3.9.1",
-    "vl-ui-util": "^5.0.7"
+    "vl-ui-util": "^5.0.8"
   }
 }

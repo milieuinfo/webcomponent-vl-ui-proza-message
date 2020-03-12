@@ -1,5 +1,7 @@
 const VlProzaMessage = require('../components/vl-proza-message');
+const { VlToaster } = require('vl-ui-toaster').Test;
 const { Page, Config } = require('vl-ui-core').Test;
+const { By } = require('vl-ui-core').Test.Setup;
 
 class VlProzaMessagePage extends Page {
     async _getProzaMessage(selector) {
@@ -12,6 +14,13 @@ class VlProzaMessagePage extends Page {
 
     async getMessageWithError() {
         return this._getProzaMessage('#message-2');
+    }
+
+    async getToaster() {
+        const toaster = await this.driver.findElement(By.css('[is="vl-toaster"]'));
+        if (toaster) {
+            return new VlToaster(this.driver, toaster);
+        }
     }
 
     async getFirstMessageWithPreloading() {
