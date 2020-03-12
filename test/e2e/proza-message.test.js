@@ -67,7 +67,7 @@ describe('vl-proza-message', async () => {
         message = await vlProzaMessagePage.getMessageFirstDemo();
         await message.edit();
         await message.selectAllText();
-        await vlProzaMessagePage.waitUntilWysiwygOfMessageFirstDemoIsPresent();
+        await message.waitUntilWysiwygIsPresent();
         await assert.eventually.isTrue(message.isWysiwygPresent());
         await message.confirm();
     });
@@ -76,7 +76,7 @@ describe('vl-proza-message', async () => {
         message = await vlProzaMessagePage.getMessageFirstDemo();
         await enableWysiwyg(message);
         await assert.eventually.isFalse(message.hasBoldStyle());
-        await vlProzaMessagePage.clickWysiwygBoldButton();
+        await message.clickWysiwygBoldButton();
         await message.confirm();
         await assert.eventually.isTrue(message.hasBoldStyle());
     });
@@ -85,7 +85,7 @@ describe('vl-proza-message', async () => {
         message = await vlProzaMessagePage.getMessageFirstDemo();
         await enableWysiwyg(message);
         await assert.eventually.isFalse(message.hasItalicStyle());
-        await vlProzaMessagePage.clickWysiwygItalicButton();
+        await message.clickWysiwygItalicButton();
         await message.confirm();
         await assert.eventually.isTrue(message.hasItalicStyle());
     });
@@ -94,7 +94,7 @@ describe('vl-proza-message', async () => {
         message = await vlProzaMessagePage.getMessageFirstDemo();
         await enableWysiwyg(message);
         await assert.eventually.isFalse(message.hasUnderlineStyle());
-        await vlProzaMessagePage.clickWysiwygUnderlineButton();
+        await message.clickWysiwygUnderlineButton();
         await message.confirm();
         await assert.eventually.isTrue(message.hasUnderlineStyle());
     });
@@ -102,7 +102,7 @@ describe('vl-proza-message', async () => {
     async function enableWysiwyg(message) {
         await message.edit();
         await message.selectAllText();
-        await vlProzaMessagePage.waitUntilWysiwygOfMessageFirstDemoIsPresent();
+        await message.waitUntilWysiwygIsPresent();
     }
 
     it('als gebruiker kan ik buiten het tekstveld klikken om de bewerk modus te sluiten en mijn wijzigingen te bewaren', async () => {

@@ -23,30 +23,6 @@ class VlProzaMessagePage extends Page {
         }
     }
 
-    async clickWysiwygBoldButton() {
-        return this._clickWysiwygButton('Bold');
-    }
-
-    async clickWysiwygItalicButton() {
-        return this._clickWysiwygButton('Italic');
-    }
-
-    async clickWysiwygUnderlineButton() {
-        return this._clickWysiwygButton('Underline');
-    }
-
-    async _clickWysiwygButton(title) {
-        const wysiwygBoldButton = await this.driver.findElement(By.css(`.tox-tbtn[title="${title}"]`));
-        return wysiwygBoldButton.click();
-    }
-
-    async waitUntilWysiwygOfMessageFirstDemoIsPresent() {
-        const message = await this.getMessageFirstDemo();
-        return this.driver.wait(async () => {
-            return await message.isWysiwygPresent();
-        });
-    }
-
     async getFirstMessageWithPreloading() {
         return this._getProzaMessage('#message-3');
     }

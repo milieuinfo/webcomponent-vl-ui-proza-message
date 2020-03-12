@@ -95,6 +95,31 @@ class VlProzaMessage extends VlElement {
     async blur() {
         return (await this.driver.findElement(By.css('#title'))).click();
     }
+
+    async clickWysiwygBoldButton() {
+        return this._clickWysiwygButton('Bold');
+    }
+
+    async clickWysiwygItalicButton() {
+        return this._clickWysiwygButton('Italic');
+    }
+
+    async clickWysiwygUnderlineButton() {
+        return this._clickWysiwygButton('Underline');
+    }
+
+    async _clickWysiwygButton(title) {
+        await this.waitUntilWysiwygIsPresent();
+        const wysiwygBoldButton = await this.driver.findElement(By.css(`.tox-tbtn[title="${title}"]`));
+        return wysiwygBoldButton.click();
+    }
+
+    async waitUntilWysiwygIsPresent() {
+        return this.driver.wait(async () => {
+            return await this.isWysiwygPresent();
+        });
+    }
+
 }
 
 module.exports = VlProzaMessage;
