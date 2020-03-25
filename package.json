@@ -47,7 +47,7 @@
     "tinymce": "^5.1.5",
     "vl-ui-alert": "^3.0.1",
     "vl-ui-button": "^5.0.1",
-    "vl-ui-core": "^5.0.3",
+    "vl-ui-core": "^5.1.1",
     "vl-ui-icon": "^4.0.1",
     "vl-ui-toaster": "^3.0.1",
     "vl-ui-typography": "^3.0.0"
@@ -64,6 +64,6 @@
   "devDependencies": {
     "@govflanders/vl-ui-typography": "^3.9.1",
     "@govflanders/vl-ui-util": "^3.9.1",
-    "vl-ui-util": "^5.0.10"
+    "vl-ui-util": "5.0.10"
   }
 }
