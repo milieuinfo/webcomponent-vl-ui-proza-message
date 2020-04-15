@@ -110,7 +110,7 @@
                 const button = prozaMessageEditButton(message);
                 window.addEventListener('beforeunload', function(event) {
                     throw new Error("Link mag niet gevolgd worden");
-		});
+		        });
                 return button.click();
             });
         });
@@ -120,8 +120,7 @@
             const proza = fixture('vl-proza-messages-fixture');
             return fetchMock.flush(true).then(() => {
                 return awaitUntil(() => {
-                    return prozaMessageContent(proza.querySelector('#message-1')) === 'foobar' &&
-                        prozaMessageContent(proza.querySelector('#message-2')) === 'foobar';
+                    return prozaMessageContent(proza.querySelector('#message-1')) === 'foobar' && prozaMessageContent(proza.querySelector('#message-2')) === 'foobar';
                 });
             });
         });
@@ -193,9 +192,9 @@
         });
 
         test('het aanpassen van het data-vl-code attribuut zal ervoor zorgen dat het bericht voor die code getoond wordt', () => {
-            fetchMock.mock('proza/domein/foo/foo', {code: "foo", tekst: "foofoo"});
-
             const proza = fixture('vl-proza-messages-fixture');
+            fetchMock.restore();
+            fetchMock.mock('proza/domein/foo/foo', {code: "foo", tekst: "foofoo"});
             const message1 = proza.querySelector('#message-1');
             message1.dataset.vlCode = 'foo';
             return fetchMock.flush(true).then(() => {
@@ -206,9 +205,9 @@
         });
 
         test('het aanpassen van het data-vl-domain attribuut zal ervoor zorgen dat het bericht voor dat domein getoond wordt', () => {
-            fetchMock.mock('proza/domein/bar/bar', {code: "bar", tekst: "barbar"});
-
             const proza = fixture('vl-proza-messages-fixture');
+            fetchMock.restore();
+            fetchMock.mock('proza/domein/bar/bar', {code: "bar", tekst: "barbar"});
             const message1 = proza.querySelector('#message-1');
             message1.dataset.vlDomain = 'bar';
             return fetchMock.flush(true).then(() => {
