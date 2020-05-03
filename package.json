@@ -56,7 +56,7 @@
     "tinymce": "5.2.2",
     "vl-ui-alert": "^3.0.1",
     "vl-ui-button": "^5.0.1",
-    "vl-ui-core": "^5.0.1",
+    "vl-ui-core": "^5.1.2",
     "vl-ui-icon": "^5.0.0",
     "vl-ui-toaster": "^3.0.1",
     "vl-ui-typography": "^3.0.0"
@@ -64,6 +64,6 @@
   "devDependencies": {
     "@govflanders/vl-ui-typography": "^3.9.1",
     "@govflanders/vl-ui-util": "^3.9.1",
-    "vl-ui-util": "^5.1.6"
+    "vl-ui-util": "github:milieuinfo/webcomponent-vl-ui-util#deleted-demo-code"
   }
 }
