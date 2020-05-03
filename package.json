@@ -48,7 +48,7 @@
     "vl-ui-alert": "^3.0.1",
     "vl-ui-button": "^5.0.1",
     "vl-ui-core": "^5.1.2",
-    "vl-ui-icon": "^4.0.1",
+    "vl-ui-icon": "^5.0.0",
     "vl-ui-toaster": "^3.0.1",
     "vl-ui-typography": "^3.0.0"
   },
@@ -57,7 +57,7 @@
     "vl-ui-alert": "^3.0.1",
     "vl-ui-button": "^5.0.1",
     "vl-ui-core": "^5.0.1",
-    "vl-ui-icon": "^4.0.1",
+    "vl-ui-icon": "^5.0.0",
     "vl-ui-toaster": "^3.0.1",
     "vl-ui-typography": "^3.0.0"
   },
