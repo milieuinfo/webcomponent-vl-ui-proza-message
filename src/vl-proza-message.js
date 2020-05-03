@@ -88,7 +88,7 @@ export class VlProzaMessage extends VlElement(HTMLElement) {
     _getEditButtonTemplate() {
         const button = this._template(`
             <button id="edit-button" is="vl-button-link" type="button">
-                <span is="vl-icon" icon="edit"></span>
+                <span is="vl-icon" data-vl-icon="edit"></span>
             </button>
         `);
         button.firstElementChild.addEventListener('click', (event) => this.__initWysiwyg(event));
