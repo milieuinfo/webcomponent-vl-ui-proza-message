@@ -31,8 +31,8 @@
 
 <script type="module">
     import {VlProzaMessage, VlProzaMessagePreloader} from '../../src/vl-proza-message.js';
-    import {awaitUntil} from 'vl-ui-core/dist/vl-core';
-    import fetchMock from 'fetch-mock/esm/client.mjs';
+    import {awaitUntil} from '../../node_modules/vl-ui-core/dist/vl-core';
+    import fetchMock from '../../node_modules/fetch-mock/esm/client.mjs';
 
     suite('preloaded vl-proza-message', () => {
       const sandbox = sinon.createSandbox();
