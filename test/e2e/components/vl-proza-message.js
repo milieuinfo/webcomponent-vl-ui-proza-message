@@ -93,7 +93,7 @@ class VlProzaMessage extends VlElement {
   }
 
   async blur() {
-    return (await this.driver.findElement(By.css('#title'))).click();
+    return (await this.driver.findElement(By.css('body'))).click();
   }
 
   async clickWysiwygBoldButton() {
