@@ -13,86 +13,86 @@
 
     <script>
         fetchMock.get('proza/domein/foo/bar', {
-            "code": "bar",
-            "tekst": "foobar"
+          'code': 'bar',
+          'tekst': 'foobar',
         });
         fetchMock.put('/proza/domein/foo/bar', {
-            "code": "bar",
-            "tekst": "foobar"
+          'code': 'bar',
+          'tekst': 'foobar',
         });
         fetchMock.put('/proza/domein/bar/foo', {
-            "code": "foo",
-            "tekst": "foobar"
+          'code': 'foo',
+          'tekst': 'foobar',
         });
         fetchMock.put('/proza/domein/bar/bar', {
-            "code": "foo",
-            "tekst": "foobar"
+          'code': 'foo',
+          'tekst': 'foobar',
         });
 
         fetchMock.get('proza/domein/foo/fout', {
-            "code": "bar",
-            "tekst": "update zal fout gaan"
+          'code': 'bar',
+          'tekst': 'update zal fout gaan',
         });
         fetchMock.put('/proza/domein/foo/fout', 404);
 
         fetchMock.get('proza/domein/foo/list', {
-            "code": "list",
-            "tekst": "<ul><li>Lorem ipsum dolor sit amet.</li><li>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</li><li>Sublist<ul><li>Lorem ipsum dolor sit.</li><li>Lorem ipsum.</li></ul></li><li>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ea, neque.</li></ul><ul><li><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt utlabore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamcolaboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit involuptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecatcupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt utlabore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamcolaboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit involuptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecatcupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p></li><li><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt utlabore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamcolaboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit involuptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecatcupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt utlabore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamcolaboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit involuptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecatcupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p></li></ul><ol><li>Lorem ipsum dolor sit.</li><li>Lorem ipsum dolor sit amet, consectetur.</li><li>Sublist<ol><li>Lorem dolor sit.</li><li>Lorem ipsum.</li></ol></li><li>Lorem ipsum.</li></ol><ul><li>Ordered list inside unordered list<ol><li>Lorem dolor sit.</li><li>Ordered list inside ordered list<ol><li>Lorem ipsum dolor sit amet.</li></ol></li></ol></li></ul>"
+          'code': 'list',
+          'tekst': '<ul><li>Lorem ipsum dolor sit amet.</li><li>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</li><li>Sublist<ul><li>Lorem ipsum dolor sit.</li><li>Lorem ipsum.</li></ul></li><li>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ea, neque.</li></ul><ul><li><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt utlabore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamcolaboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit involuptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecatcupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt utlabore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamcolaboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit involuptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecatcupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p></li><li><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt utlabore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamcolaboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit involuptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecatcupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt utlabore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamcolaboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit involuptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecatcupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p></li></ul><ol><li>Lorem ipsum dolor sit.</li><li>Lorem ipsum dolor sit amet, consectetur.</li><li>Sublist<ol><li>Lorem dolor sit.</li><li>Lorem ipsum.</li></ol></li><li>Lorem ipsum.</li></ol><ul><li>Ordered list inside unordered list<ol><li>Lorem dolor sit.</li><li>Ordered list inside ordered list<ol><li>Lorem ipsum dolor sit amet.</li></ol></li></ol></li></ul>',
         });
         fetchMock.put('/proza/domein/foo/list', {
-            "code": "list",
-            "tekst": "<ul><li>Lorem ipsum dolor sit amet.</li><li>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</li><li>Sublist<ul><li>Lorem ipsum dolor sit.</li><li>Lorem ipsum.</li></ul></li><li>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ea, neque.</li></ul><ul><li><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt utlabore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamcolaboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit involuptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecatcupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt utlabore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamcolaboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit involuptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecatcupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p></li><li><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt utlabore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamcolaboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit involuptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecatcupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt utlabore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamcolaboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit involuptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecatcupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p></li></ul><ol><li>Lorem ipsum dolor sit.</li><li>Lorem ipsum dolor sit amet, consectetur.</li><li>Sublist<ol><li>Lorem dolor sit.</li><li>Lorem ipsum.</li></ol></li><li>Lorem ipsum.</li></ol><ul><li>Ordered list inside unordered list<ol><li>Lorem dolor sit.</li><li>Ordered list inside ordered list<ol><li>Lorem ipsum dolor sit amet.</li></ol></li></ol></li></ul>"
+          'code': 'list',
+          'tekst': '<ul><li>Lorem ipsum dolor sit amet.</li><li>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</li><li>Sublist<ul><li>Lorem ipsum dolor sit.</li><li>Lorem ipsum.</li></ul></li><li>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ea, neque.</li></ul><ul><li><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt utlabore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamcolaboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit involuptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecatcupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt utlabore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamcolaboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit involuptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecatcupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p></li><li><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt utlabore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamcolaboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit involuptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecatcupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt utlabore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamcolaboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit involuptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecatcupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p></li></ul><ol><li>Lorem ipsum dolor sit.</li><li>Lorem ipsum dolor sit amet, consectetur.</li><li>Sublist<ol><li>Lorem dolor sit.</li><li>Lorem ipsum.</li></ol></li><li>Lorem ipsum.</li></ol><ul><li>Ordered list inside unordered list<ol><li>Lorem dolor sit.</li><li>Ordered list inside ordered list<ol><li>Lorem ipsum dolor sit amet.</li></ol></li></ol></li></ul>',
         });
 
         fetchMock.get('proza/domein/foo/markup', {
-            "code": "markup",
-            "tekst": "<p><strong>strong-tag</strong></p><p><b>b-tag</b></p><p><em>em-tag</em></p><p><i>i-tag</i></p><p><strike>strike-tag</strike></p><p><s>s-tag</s></p><p><mark>mark-tag</mark></p><p><code>code-tag</code></p><p><pre>pre-tag</pre></p><p><hr/></p><p><blockquote>Lorem ipsum dolor sit amet.</blockquote></p>"
+          'code': 'markup',
+          'tekst': '<p><strong>strong-tag</strong></p><p><b>b-tag</b></p><p><em>em-tag</em></p><p><i>i-tag</i></p><p><strike>strike-tag</strike></p><p><s>s-tag</s></p><p><mark>mark-tag</mark></p><p><code>code-tag</code></p><p><pre>pre-tag</pre></p><p><hr/></p><p><blockquote>Lorem ipsum dolor sit amet.</blockquote></p>',
         });
         fetchMock.put('/proza/domein/foo/markup', {
-            "code": "markup",
-            "tekst": "<p><strong>strong-tag</strong></p><p><b>b-tag</b></p><p><em>em-tag</em></p><p><i>i-tag</i></p><p><strike>strike-tag</strike></p><p><s>s-tag</s></p><p><mark>mark-tag</mark></p><p><code>code-tag</code></p><p><pre>pre-tag</pre></p><p><hr/></p><p><blockquote>Lorem ipsum dolor sit amet.</blockquote></p>"
+          'code': 'markup',
+          'tekst': '<p><strong>strong-tag</strong></p><p><b>b-tag</b></p><p><em>em-tag</em></p><p><i>i-tag</i></p><p><strike>strike-tag</strike></p><p><s>s-tag</s></p><p><mark>mark-tag</mark></p><p><code>code-tag</code></p><p><pre>pre-tag</pre></p><p><hr/></p><p><blockquote>Lorem ipsum dolor sit amet.</blockquote></p>',
         });
 
         fetchMock.get('proza/domein/foo/table', {
-            "code": "table",
-            "tekst": "<table><caption>table title</caption><thead><tr><th>head 1</th><th>head 2</th><th>head 3</th></tr></thead><tbody><tr><td>item 1</td><td>item 2</td><td>item 3</td></tr><tr><td>item 1</td><td>item 2</td><td>item 3</td></tr><tr><td>item 1</td><td>item 2</td><td>item 3</td></tr></tbody></table>"
+          'code': 'table',
+          'tekst': '<table><caption>table title</caption><thead><tr><th>head 1</th><th>head 2</th><th>head 3</th></tr></thead><tbody><tr><td>item 1</td><td>item 2</td><td>item 3</td></tr><tr><td>item 1</td><td>item 2</td><td>item 3</td></tr><tr><td>item 1</td><td>item 2</td><td>item 3</td></tr></tbody></table>',
         });
         fetchMock.put('/proza/domein/foo/table', {
-            "code": "table",
-            "tekst": "<table><caption>table title</caption><thead><tr><th>head 1</th><th>head 2</th><th>head 3</th></tr></thead><tbody><tr><td>item 1</td><td>item 2</td><td>item 3</td></tr><tr><td>item 1</td><td>item 2</td><td>item 3</td></tr><tr><td>item 1</td><td>item 2</td><td>item 3</td></tr></tbody></table>"
+          'code': 'table',
+          'tekst': '<table><caption>table title</caption><thead><tr><th>head 1</th><th>head 2</th><th>head 3</th></tr></thead><tbody><tr><td>item 1</td><td>item 2</td><td>item 3</td></tr><tr><td>item 1</td><td>item 2</td><td>item 3</td></tr><tr><td>item 1</td><td>item 2</td><td>item 3</td></tr></tbody></table>',
         });
 
         fetchMock.get('proza/domein/foo/titles', {
-            "code": "titles",
-            "tekst": "<h1>Heading 1</h1><h2>Heading 2</h2><h3>Heading 3</h3><h4>Heading 4</h4><h5>Heading 5</h5><h6>Heading 6</h6>"
+          'code': 'titles',
+          'tekst': '<h1>Heading 1</h1><h2>Heading 2</h2><h3>Heading 3</h3><h4>Heading 4</h4><h5>Heading 5</h5><h6>Heading 6</h6>',
         });
         fetchMock.put('/proza/domein/foo/titles', {
-            "code": "titles",
-            "tekst": "<h1>Heading 1</h1><h2>Heading 2</h2><h3>Heading 3</h3><h4>Heading 4</h4><h5>Heading 5</h5><h6>Heading 6</h6>"
+          'code': 'titles',
+          'tekst': '<h1>Heading 1</h1><h2>Heading 2</h2><h3>Heading 3</h3><h4>Heading 4</h4><h5>Heading 5</h5><h6>Heading 6</h6>',
         });
 
         fetchMock.get('proza/domein/foo/typography', {
-            "code": "typography",
-            "tekst": "<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod <a href='#'>tempor incididunt</a> ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p><p>Lorem dolor sit amet, consectetur adipisicing elit. Deleniti, in.</p>"
+          'code': 'typography',
+          'tekst': '<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod <a href=\'#\'>tempor incididunt</a> ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p><p>Lorem dolor sit amet, consectetur adipisicing elit. Deleniti, in.</p>',
         });
         fetchMock.put('/proza/domein/foo/typography', {
-            "code": "typography",
-            "tekst": "<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod <a href='#'>tempor incididunt</a> ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p><p>Lorem dolor sit amet, consectetur adipisicing elit. Deleniti, in.</p>"
+          'code': 'typography',
+          'tekst': '<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod <a href=\'#\'>tempor incididunt</a> ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p><p>Lorem dolor sit amet, consectetur adipisicing elit. Deleniti, in.</p>',
         });
 
         fetchMock.get('proza/domein/bar', [{
-            "code": "foo",
-            "tekst": "barfoo"
+          'code': 'foo',
+          'tekst': 'barfoo',
         }, {
-            "code": "bar",
-            "tekst": "barbar"
+          'code': 'bar',
+          'tekst': 'barbar',
         }]);
 
         fetchMock.get(/proza\/domein\/.*\/toegelatenoperaties/, {
-            "create": true,
-            "read": true,
-            "update": true,
-            "delete": true
+          'create': true,
+          'read': true,
+          'update': true,
+          'delete': true,
         });
     </script>
 </head>
