@@ -148,10 +148,12 @@ export class VlProzaMessage extends vlElement(HTMLElement) {
         this.__wrapWysiwygElement();
         if (this.__containsBlockElement(message)) {
           this.setAttribute('data-vl-block', '');
+          this.dispatchEvent(new CustomEvent('message-loaded'));
         }
       });
     } else {
       this._wysiwygElement.innerHTML = null;
+      this.dispatchEvent(new CustomEvent('message-loaded'));
     }
   }
 
@@ -381,7 +383,8 @@ export class VlProzaMessage extends vlElement(HTMLElement) {
 
   __containsBlockElement() {
     return [...this._wysiwygElement.children].some((element) => {
-      return ['block', 'inline-block', 'flex', 'grid', 'table'].includes(window.getComputedStyle(element)['display']);
+      return ['block', 'inline-block', 'flex', 'grid', 'table'].includes(
+          window.getComputedStyle(element)['display']);
     });
   }
 }
@@ -444,7 +447,8 @@ export class VlProzaMessagePreloader extends vlElement(HTMLElement) {
       if (message) {
         return message;
       } else {
-        throw Error(`Bericht voor {domein: ${domain}, code: ${code}} niet gevonden`);
+        throw Error(
+            `Bericht voor {domein: ${domain}, code: ${code}} niet gevonden`);
       }
     });
   }
