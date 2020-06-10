@@ -12,7 +12,6 @@ import '/lib/tinymce.min.js';
  * @classdesc De vl-proza-message webcomponent kan gebruikt worden om teksten te laten beheren door de business. De edit modus wordt geactiveerd door op het potlood icoon te klikken. De edit modus kan gedactiveerd worden door op enter te duwen of een focus te geven aan een ander element op de pagina. Wanneer de gebruiker op escape klikt zal de edit modus afgesloten worden en zullen de wijzigingen ongedaan gemaakt worden.
  *
  * @extends HTMLElement
- * @mixin vlElement
  *
  * @property {string} data-vl-domain - Het Proza domein waarin het Proza bericht zit.
  * @property {string} data-vl-code - De code die het Proza bericht identificeert.
@@ -392,7 +391,6 @@ export class VlProzaMessage extends vlElement(HTMLElement) {
  * @classdesc
  *
  * @extends HTMLElement
- * @mixin vlElement
  *
  * @property {string} data-vl-domain - Het Proza domein waarin de Proza berichten zitten.
  *
