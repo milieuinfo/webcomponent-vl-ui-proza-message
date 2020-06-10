@@ -33,7 +33,7 @@ export class VlProzaMessage extends vlElement(HTMLElement) {
     this.appendChild(this.__createWysiwygElement());
     this.shadow(`
         <style>
-            @import /node_modules/vl-ui-proza-message/dist/style.css;
+            @import '/node_modules/vl-ui-proza-message/dist/style.css';
             @import '/node_modules/vl-ui-button/dist/style.css';
             @import '/node_modules/vl-ui-icon/dist/style.css';
         </style>
@@ -131,7 +131,7 @@ export class VlProzaMessage extends vlElement(HTMLElement) {
       quickbars_selection_toolbar: 'bold italic underline',
       powerpaste_word_import: 'clean',
       powerpaste_html_import: 'clean',
-      content_css: /node_modules/vl-ui-proza-message/dist/style.css,
+      content_css: '/node_modules/vl-ui-proza-message/dist/style.css',
       verify_html: false,
       forced_root_block: '',
     };

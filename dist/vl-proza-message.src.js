@@ -1,9 +1,9 @@
-import {vlElement, define} from vl-ui-core;
-import vl-ui-button;
-import vl-ui-icon;
-import vl-ui-typography;
-import vl-ui-toaster;
-import vl-ui-alert;
+import {vlElement, define} from 'vl-ui-core';
+import 'vl-ui-button';
+import 'vl-ui-icon';
+import 'vl-ui-typography';
+import 'vl-ui-toaster';
+import 'vl-ui-alert';
 import 'vl-ui-proza-message/lib/tinymce.min.js';
 
 /**
