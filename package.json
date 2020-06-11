@@ -44,7 +44,7 @@
     "demo": "http-server"
   },
   "dependencies": {
-    "tinymce": "5.3.1",
+    "tinymce": "5.3.2",
     "vl-ui-alert": "^3.0.5",
     "vl-ui-button": "^5.0.5",
     "vl-ui-core": "^5.5.4",
@@ -53,7 +53,7 @@
     "vl-ui-typography": "^3.0.4"
   },
   "peerDependencies": {
-    "tinymce": "5.3.1",
+    "tinymce": "5.3.2",
     "vl-ui-alert": "^3.0.5",
     "vl-ui-button": "^5.0.5",
     "vl-ui-core": "^5.5.4",
