@@ -62,7 +62,7 @@ export class VlProzaMessage extends vlElement(HTMLElement) {
     if (!document.getElementById(id)) {
       document.head.appendChild(this._template(`
         <style id=${id}>
-            @import '/node_modules/vl-ui-toaster/dist/style.css';
+          @import '/node_modules/vl-ui-toaster/dist/style.css';
         </style>
     `));
     }
@@ -87,10 +87,10 @@ export class VlProzaMessage extends vlElement(HTMLElement) {
 
   _getEditButtonTemplate() {
     const button = this._template(`
-            <button id="edit-button" is="vl-button-link" type="button">
-                <span is="vl-icon" data-vl-icon="edit"></span>
-            </button>
-        `);
+      <button id="edit-button" is="vl-button-link" type="button">
+        <span is="vl-icon" data-vl-icon="edit"></span>
+      </button>
+    `);
     button.firstElementChild.addEventListener('click', (event) => this.__initWysiwyg(event));
     return button;
   }
@@ -300,9 +300,9 @@ export class VlProzaMessage extends vlElement(HTMLElement) {
 
   __getProzaSaveErrorAlertTemplate() {
     return this._template(`
-        <vl-alert type="error" icon="alert-triangle" title="Technische storing" closable>
-            <p>Uw wijziging kon niet bewaard worden. Probeer het later opnieuw of neem contact op met de helpdesk als het probleem zich blijft voordoen.</p>
-        </vl-alert>
+      <vl-alert type="error" icon="alert-triangle" title="Technische storing" closable>
+        <p>Uw wijziging kon niet bewaard worden. Probeer het later opnieuw of neem contact op met de helpdesk als het probleem zich blijft voordoen.</p>
+      </vl-alert>
     `);
   }
 

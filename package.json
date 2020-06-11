@@ -45,25 +45,25 @@
   },
   "dependencies": {
     "tinymce": "5.3.2",
-    "vl-ui-alert": "^3.0.1",
-    "vl-ui-button": "^5.0.1",
-    "vl-ui-core": "^5.5.1",
-    "vl-ui-icon": "^5.0.0",
-    "vl-ui-toaster": "^3.0.1",
-    "vl-ui-typography": "^3.0.0"
+    "vl-ui-alert": "^3.0.5",
+    "vl-ui-button": "^5.0.5",
+    "vl-ui-core": "^5.5.4",
+    "vl-ui-icon": "^5.1.0",
+    "vl-ui-toaster": "^3.0.6",
+    "vl-ui-typography": "^3.0.4"
   },
   "peerDependencies": {
     "tinymce": "5.3.2",
-    "vl-ui-alert": "^3.0.1",
-    "vl-ui-button": "^5.0.1",
-    "vl-ui-core": "^5.5.1",
-    "vl-ui-icon": "^5.0.0",
-    "vl-ui-toaster": "^3.0.1",
-    "vl-ui-typography": "^3.0.0"
+    "vl-ui-alert": "^3.0.5",
+    "vl-ui-button": "^5.0.5",
+    "vl-ui-core": "^5.5.4",
+    "vl-ui-icon": "^5.1.0",
+    "vl-ui-toaster": "^3.0.6",
+    "vl-ui-typography": "^3.0.3"
   },
   "devDependencies": {
-    "@govflanders/vl-ui-typography": "^3.9.1",
-    "@govflanders/vl-ui-util": "^3.9.1",
-    "vl-ui-util": "^5.2.3"
+    "@govflanders/vl-ui-typography": "^3.9.2",
+    "@govflanders/vl-ui-util": "^3.9.2",
+    "vl-ui-util": "^5.2.4"
   }
 }
