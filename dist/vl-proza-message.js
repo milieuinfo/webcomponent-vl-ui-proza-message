@@ -12,7 +12,6 @@ import '/node_modules/vl-ui-proza-message/lib/tinymce.min.js';
  * @classdesc De vl-proza-message webcomponent kan gebruikt worden om teksten te laten beheren door de business. De edit modus wordt geactiveerd door op het potlood icoon te klikken. De edit modus kan gedactiveerd worden door op enter te duwen of een focus te geven aan een ander element op de pagina. Wanneer de gebruiker op escape klikt zal de edit modus afgesloten worden en zullen de wijzigingen ongedaan gemaakt worden.
  *
  * @extends HTMLElement
- * @mixin vlElement
  *
  * @property {string} data-vl-domain - Het Proza domein waarin het Proza bericht zit.
  * @property {string} data-vl-code - De code die het Proza bericht identificeert.
@@ -63,7 +62,7 @@ export class VlProzaMessage extends vlElement(HTMLElement) {
     if (!document.getElementById(id)) {
       document.head.appendChild(this._template(`
         <style id=${id}>
-            @import '/node_modules/vl-ui-toaster/dist/style.css';
+          @import '/node_modules/vl-ui-toaster/dist/style.css';
         </style>
     `));
     }
@@ -88,10 +87,10 @@ export class VlProzaMessage extends vlElement(HTMLElement) {
 
   _getEditButtonTemplate() {
     const button = this._template(`
-            <button id="edit-button" is="vl-button-link" type="button">
-                <span is="vl-icon" data-vl-icon="edit"></span>
-            </button>
-        `);
+      <button id="edit-button" is="vl-button-link" type="button">
+        <span is="vl-icon" data-vl-icon="edit"></span>
+      </button>
+    `);
     button.firstElementChild.addEventListener('click', (event) => this.__initWysiwyg(event));
     return button;
   }
@@ -301,9 +300,9 @@ export class VlProzaMessage extends vlElement(HTMLElement) {
 
   __getProzaSaveErrorAlertTemplate() {
     return this._template(`
-        <vl-alert type="error" icon="alert-triangle" title="Technische storing" closable>
-            <p>Uw wijziging kon niet bewaard worden. Probeer het later opnieuw of neem contact op met de helpdesk als het probleem zich blijft voordoen.</p>
-        </vl-alert>
+      <vl-alert type="error" icon="alert-triangle" title="Technische storing" closable>
+        <p>Uw wijziging kon niet bewaard worden. Probeer het later opnieuw of neem contact op met de helpdesk als het probleem zich blijft voordoen.</p>
+      </vl-alert>
     `);
   }
 
@@ -392,7 +391,6 @@ export class VlProzaMessage extends vlElement(HTMLElement) {
  * @classdesc
  *
  * @extends HTMLElement
- * @mixin vlElement
  *
  * @property {string} data-vl-domain - Het Proza domein waarin de Proza berichten zitten.
  *
