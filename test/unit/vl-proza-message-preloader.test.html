@@ -11,14 +11,14 @@
 
 <body>
 <test-fixture id="vl-proza-message-preloader-fixture">
-    <template>
-        <vl-proza-message-preloader id="preloader" data-vl-domain="foo"></vl-proza-message-preloader>
-    </template>
+  <template>
+    <vl-proza-message-preloader id="preloader" data-vl-domain="foo"></vl-proza-message-preloader>
+  </template>
 </test-fixture>
 
 <script type="module">
     import {VlProzaMessagePreloader} from '../../src/vl-proza-message.js';
-    import fetchMock from '/fetch-mock/esm/client.mjs';
+    import fetchMock from '../../node_modules/fetch-mock/esm/client.js';
 
     suite('vl-proza-message-preloader', () => {
       setup(() => {
@@ -43,35 +43,38 @@
         delete VlProzaMessagePreloader.__cache;
       });
 
-      test('berichten zijn beschikbaar', () => {
+      test('berichten zijn beschikbaar', (done) => {
         fixture('vl-proza-message-preloader-fixture');
-        return VlProzaMessagePreloader.getMessage('foo', 'bar').then((message) => {
-          message.should.equal('foobar');
+        VlProzaMessagePreloader.getMessage('foo', 'bar').then((message) => {
+          assert.equal(message, 'foobar');
 
-          return VlProzaMessagePreloader.getMessage('foo', 'foo').then((message) => {
-            message.should.equal('foofoo');
+          VlProzaMessagePreloader.getMessage('foo', 'foo').then((message) => {
+            assert.equal(message, 'foofoo');
+            done();
           });
         });
       });
 
-      test('het opvragen van een bericht geeft een rejected Promise terug indien het domein niet preloaded werd', () => {
-        return VlProzaMessagePreloader.getMessage('foo', 'bar')
+      test('het opvragen van een bericht geeft een rejected Promise terug indien het domein niet preloaded werd', (done) => {
+        VlProzaMessagePreloader.getMessage('foo', 'bar')
             .then(() => assert(false))
             .catch((error) => {
-              error.message.should.equal('Berichten voor domein foo zijn niet preloaded');
+              assert.equal(error.message, 'Berichten voor domein foo zijn niet preloaded');
+              done();
             });
       });
 
-      test('het opvragen van een bericht geeft een rejected Promise terug indien het domein preloaded werd maar de code niet teruggevonden kan worden', () => {
+      test('het opvragen van een bericht geeft een rejected Promise terug indien het domein preloaded werd maar de code niet teruggevonden kan worden', (done) => {
         fixture('vl-proza-message-preloader-fixture');
-        return VlProzaMessagePreloader.getMessage('foo', 'abc')
+        VlProzaMessagePreloader.getMessage('foo', 'abc')
             .then(() => assert(false))
             .catch((error) => {
-              error.message.should.equal('Bericht voor {domein: foo, code: abc} niet gevonden');
+              assert.equal(error.message, 'Bericht voor {domein: foo, code: abc} niet gevonden');
+              done();
             });
       });
 
-      test('het aanpassen van het data-vl-domein attribuut zal ervoor zorgen dat dat domein ingeladen wordt', () => {
+      test('het aanpassen van het data-vl-domein attribuut zal ervoor zorgen dat dat domein ingeladen wordt', (done) => {
         fetchMock.mock('proza/domein/bar', [
           {
             code: 'foo',
@@ -81,8 +84,9 @@
 
         const preloader = fixture('vl-proza-message-preloader-fixture');
         preloader.dataset.vlDomain = 'bar';
-        return VlProzaMessagePreloader.getMessage('bar', 'foo').then((message) => {
-          message.should.equal('barfoo');
+        VlProzaMessagePreloader.getMessage('bar', 'foo').then((message) => {
+          assert.equal(message, 'barfoo');
+          done();
         });
       });
     });

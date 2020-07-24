@@ -13,50 +13,50 @@
 </head>
 
 <body>
-<test-fixture id="vl-proza-message-fixture">
+  <test-fixture id="vl-proza-message-fixture">
     <template>
+      <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="vl-proza-messages-fixture">
+    <template>
+      <div>
         <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
+        <vl-proza-message id="message-2" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
+      </div>
     </template>
-</test-fixture>
+  </test-fixture>
 
-<test-fixture id="vl-proza-messages-fixture">
+  <test-fixture id="vl-proza-message-inside-button">
     <template>
-        <div>
-            <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
-            <vl-proza-message id="message-2" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
-        </div>
+      <button is="vl-button">
+        <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
+      </button>
     </template>
-</test-fixture>
+  </test-fixture>
+    
+  <test-fixture id="vl-proza-message-inside-link">
+    <template>
+      <a href="http://www.google.be">
+        <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
+      </a>
+    </template>
+  </test-fixture>
+    
+  <test-fixture id="vl-proza-message-blur">
+    <template>
+      <div>
+        <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
+        <div id="to-have-blur-on-proza-message"></div>
+      </div>
+    </template>
+  </test-fixture>
 
-<test-fixture id="vl-proza-message-inside-button">
-    <template>
-        <button is="vl-button">
-            <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
-        </button>
-    </template>
-</test-fixture>
-  
-<test-fixture id="vl-proza-message-inside-link">
-    <template>
-        <a href="http://www.google.be">
-            <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
-        </a>
-    </template>
-</test-fixture>
-  
-<test-fixture id="vl-proza-message-blur">
-    <template>
-    	<div>
-		    <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
-		    <div id="to-have-blur-on-proza-message"></div>
-    	</div>
-    </template>
-</test-fixture>
-
-<script type="module">
+  <script type="module">
     import {VlProzaMessage, VlProzaMessagePreloader, ProzaRestClient} from '../../src/vl-proza-message.js';
     import {awaitUntil} from 'vl-ui-core/dist/vl-core';
-    import fetchMock from '/fetch-mock/esm/client.mjs';
+    import fetchMock from '../../node_modules/fetch-mock/esm/client.js';
 
     suite('vl-proza-message', () => {
       const should = chai.should();
@@ -79,190 +79,166 @@
         }
       });
 
-      function prozaMessageContent(message) {
-        return prozaWysiwygElement(message).textContent;
-      }
-
-      function prozaMessageEditButton(message) {
-        return message.shadowRoot.querySelector('button');
-      }
-
-      function prozaMessageUpdatableClass(message) {
+      const prozaMessageUpdatableClass = (message) => {
         return message.shadowRoot.querySelector('.vl-proza-message--updatable');
-      }
+      };
 
-      function prozaMessageEditButtonIcon(button) {
-        return button.querySelector('[is="vl-icon"]').getAttribute('icon');
-      }
-
-      function prozaWysiwygElement(message) {
-        return message.querySelector('#wysiwyg');
-      }
-
-      function prozaTypographyElement(message) {
-        return message.querySelector('vl-typography');
-      }
-
-      test('de default behavior van het klikken op de bewerk knop binnen een link wordt gestopt', () => {
+      test('de default behavior van het klikken op de bewerk knop binnen een link wordt gestopt', (done) => {
         const element = fixture('vl-proza-message-inside-link');
-        return fetchMock.flush(true).then(() => {
+        fetchMock.flush(true).then(() => {
           const message = element.querySelector('#message-1');
-          const button = prozaMessageEditButton(message);
+          const button = message._buttonElement;
           window.addEventListener('beforeunload', function(event) {
             throw new Error('Link mag niet gevolgd worden');
           });
-          return button.click();
+          button.click();
+          setTimeout(() => done());
         });
       });
 
-
-      test('toont een bericht', () => {
+      test('toont een bericht', (done) => {
         const proza = fixture('vl-proza-messages-fixture');
-        return fetchMock.flush(true).then(() => {
-          return awaitUntil(() => {
-            return prozaMessageContent(proza.querySelector('#message-1')) === 'foobar' && prozaMessageContent(proza.querySelector('#message-2')) === 'foobar';
-          });
+        fetchMock.flush(true).then(() => {
+          awaitUntil(() => {
+            return proza.querySelector('#message-1')._wysiwygElement.textContent === 'foobar' && proza.querySelector('#message-2')._wysiwygElement.textContent === 'foobar';
+          }).then(() => done());
         });
       });
 
-      test('bevat de mogelijkheid om de content te wijzigen indien de wijzig operatie toegelaten is', () => {
+      test('bevat de mogelijkheid om de content te wijzigen indien de wijzig operatie toegelaten is', (done) => {
         const proza = fixture('vl-proza-messages-fixture');
-        return fetchMock.flush(true).then(() => {
+        fetchMock.flush(true).then(() => {
           const message1 = proza.querySelector('#message-1');
-          const button1 = prozaMessageEditButton(message1);
-          const icon1 = prozaMessageEditButtonIcon(button1);
-          should.exist(button1);
-          icon1.should.equal('edit');
+          const icon1 = message1._buttonElement.querySelector('[is="vl-icon"]');
+          should.exist(message1._buttonElement);
+          assert.equal(icon1.getAttribute('icon'), 'edit');
           should.exist(prozaMessageUpdatableClass(message1));
 
           const message2 = proza.querySelector('#message-2');
-          const button2 = prozaMessageEditButton(message2);
-          const icon2 = prozaMessageEditButtonIcon(button2);
-          should.exist(button2);
-          icon2.should.equal('edit');
+          const icon2 = message2._buttonElement.querySelector('[is="vl-icon"]');
+          should.exist(message2._buttonElement);
+          assert.equal(icon2.getAttribute('icon'), 'edit');
           should.exist(prozaMessageUpdatableClass(message2));
+          done();
         });
       });
 
-      test('bevat niet de mogelijkheid om de content te wijzigen indien de wijzig operatie niet toegelaten is', () => {
+      test('bevat niet de mogelijkheid om de content te wijzigen indien de wijzig operatie niet toegelaten is', (done) => {
         fetchMock.mock('proza/domein/foo/toegelatenoperaties', {update: false}, {overwriteRoutes: true});
 
         const proza = fixture('vl-proza-messages-fixture');
-        return fetchMock.flush(true).then(() => {
+        fetchMock.flush(true).then(() => {
           const message1 = proza.querySelector('#message-1');
-          should.not.exist(prozaMessageEditButton(message1));
+          should.not.exist(message1._buttonElement);
           should.not.exist(prozaMessageUpdatableClass(message1));
 
           const message2 = proza.querySelector('#message-2');
-          should.not.exist(prozaMessageEditButton(message2));
+          should.not.exist(message2._buttonElement);
           should.not.exist(prozaMessageUpdatableClass(message2));
+          done();
         });
       });
 
-      test('er wordt een error gelogd indien er iets fout loopt bij het ophalen van een proza bericht', () => {
+      test('er wordt een error gelogd indien er iets fout loopt bij het ophalen van een proza bericht', (done) => {
         sandbox.spy(console, 'error');
         fetchMock.mock('proza/domein/foo/bar', 404, {overwriteRoutes: true});
 
         const proza = fixture('vl-proza-messages-fixture');
-        return fetchMock.flush(true).then(() => {
-          prozaMessageContent(proza.querySelector('#message-1')).should.equal('');
-          prozaMessageContent(proza.querySelector('#message-2')).should.equal('');
+        fetchMock.flush(true).then(() => {
+          assert.equal(proza.querySelector('#message-1')._wysiwygElement.textContent, '');
+          assert.equal(proza.querySelector('#message-2')._wysiwygElement.textContent, '');
           console.error.should.be.called;
+          done();
         });
       });
 
-      test('er wordt een error gelogd indien er iets fout loopt bij het ophalen van de toegelaten operaties', () => {
+      test('er wordt een error gelogd indien er iets fout loopt bij het ophalen van de toegelaten operaties', (done) => {
         sandbox.spy(console, 'error');
         fetchMock.mock('proza/domein/foo/toegelatenoperaties', 404, {overwriteRoutes: true});
 
         const proza = fixture('vl-proza-messages-fixture');
-        return fetchMock.flush(true).then(() => {
-          should.not.exist(prozaMessageEditButton(proza.querySelector('#message-1')));
-          should.not.exist(prozaMessageEditButton(proza.querySelector('#message-2')));
-          console.error.should.be.called;
+        fetchMock.flush(true).then(() => {
+          should.not.exist(proza.querySelector('#message-1')._buttonElement);
+          should.not.exist(proza.querySelector('#message-2')._buttonElement);
+          assert(console.error.called);
+          done();
         });
       });
 
-      test('haalt het bericht en de toegelaten operaties maar 1 keer op indien deze al in de cache zitten', () => {
+      test('haalt het bericht en de toegelaten operaties maar 1 keer op indien deze al in de cache zitten', (done) => {
         fixture('vl-proza-messages-fixture');
-        return fetchMock.flush(true).then(() => {
-          fetchMock.calls('proza/domein/foo/bar').length.should.equal(1);
-          fetchMock.calls('proza/domein/foo/toegelatenoperaties').length.should.equal(1);
+        fetchMock.flush(true).then(() => {
+          assert.lengthOf(fetchMock.calls('proza/domein/foo/bar'), 1);
+          assert.lengthOf(fetchMock.calls('proza/domein/foo/toegelatenoperaties'), 1);
+          done();
         });
       });
 
-      test('het aanpassen van het data-vl-code attribuut zal ervoor zorgen dat het bericht voor die code getoond wordt', () => {
+      test('het aanpassen van het data-vl-code attribuut zal ervoor zorgen dat het bericht voor die code getoond wordt', (done) => {
         const proza = fixture('vl-proza-messages-fixture');
         fetchMock.restore();
         fetchMock.mock('proza/domein/foo/foo', {code: 'foo', tekst: 'foofoo'});
         const message1 = proza.querySelector('#message-1');
         message1.dataset.vlCode = 'foo';
-        return fetchMock.flush(true).then(() => {
-          return awaitUntil(() => {
-            return prozaMessageContent(proza.querySelector('#message-1')) === 'foofoo';
-          });
+        fetchMock.flush(true).then(() => {
+          awaitUntil(() => {
+            return proza.querySelector('#message-1')._wysiwygElement.textContent === 'foofoo';
+          }).then(() => done());
         });
       });
 
-      test('het aanpassen van het data-vl-domain attribuut zal ervoor zorgen dat het bericht voor dat domein getoond wordt', () => {
+      test('het aanpassen van het data-vl-domain attribuut zal ervoor zorgen dat het bericht voor dat domein getoond wordt', (done) => {
         const proza = fixture('vl-proza-messages-fixture');
         fetchMock.restore();
         fetchMock.mock('proza/domein/bar/bar', {code: 'bar', tekst: 'barbar'});
         const message1 = proza.querySelector('#message-1');
         message1.dataset.vlDomain = 'bar';
-        return fetchMock.flush(true).then(() => {
-          return awaitUntil(() => {
-            return prozaMessageContent(proza.querySelector('#message-1')) === 'barbar';
-          });
+        fetchMock.flush(true).then(() => {
+          awaitUntil(() => {
+            return proza.querySelector('#message-1')._wysiwygElement.textContent === 'barbar';
+          }).then(() => done());
         });
       });
 
       test('bevat een bereikbaar wysiwyg element met eigen stijl dat door TinyMCE gebruikt kan worden', () => {
         const message = fixture('vl-proza-message-fixture');
-        const wysiwyg = prozaWysiwygElement(message);
-        should.exist(wysiwyg);
-        wysiwyg.style.should.not.be.undefined;
+        should.exist(message._wysiwygElement);
+        assert.isDefined(message._wysiwygElement.style);
       });
 
-      test('zodra een proza domein code opgehaald werd zal het wysiwyg element in lees modus verplaatst worden naar een vl-typography element zodat de wysiwyg stijl toegepast wordt', () => {
+      test('zodra een proza domein code opgehaald werd zal het wysiwyg element in lees modus verplaatst worden naar een vl-typography element zodat de wysiwyg stijl toegepast wordt', (done) => {
         const message = fixture('vl-proza-message-fixture');
-        let typography = prozaTypographyElement(message);
-        should.not.exist(typography);
-        return fetchMock.flush(true).then(() => {
-          typography = prozaTypographyElement(message);
-          const wysiwyg = prozaWysiwygElement(typography);
-          should.exist(typography);
-          should.exist(wysiwyg);
+        should.not.exist(message._typographyElement);
+        fetchMock.flush(true).then(() => {
+          should.exist(message._typographyElement);
+          should.exist(message._wysiwygElement);
+          done();
         });
       });
 
-      test('zodra de bewerk modus geactiveerd wordt zal het wysiwyg element verplaatst worden zodat het door TinyMCE gebruikt kan worden', () => {
+      test('zodra de bewerk modus geactiveerd wordt zal het wysiwyg element verplaatst worden zodat het door TinyMCE gebruikt kan worden', (done) => {
         const message = fixture('vl-proza-message-fixture');
-        let typography = prozaTypographyElement(message);
-        let wysiwyg = prozaWysiwygElement(message);
-        should.not.exist(typography);
-        should.exist(wysiwyg);
-        return fetchMock.flush(true).then(() => {
-          typography = prozaTypographyElement(message);
-          wysiwyg = prozaWysiwygElement(typography);
-          should.exist(typography);
-          should.exist(wysiwyg);
-          prozaMessageEditButton(message).click();
-          typography = prozaTypographyElement(message);
-          wysiwyg = prozaWysiwygElement(message);
-          should.not.exist(typography);
-          should.exist(wysiwyg);
+        should.not.exist(message._typographyElement);
+        should.exist(message._wysiwygElement);
+        fetchMock.flush(true).then(() => {
+          should.exist(message._typographyElement);
+          should.exist(message._wysiwygElement);
+          message._buttonElement.click();
+          should.not.exist(message._typographyElement);
+          should.exist(message._wysiwygElement);
+          done();
         });
       });
 
-      test('bij het klikken op de bewerk knop zal de bewerk modus geactiveerd worden', () => {
+      test('bij het klikken op de bewerk knop zal de bewerk modus geactiveerd worden', (done) => {
         sandbox.spy(tinyMCE, 'init');
         const message = fixture('vl-proza-message-fixture');
-        return fetchMock.flush(true).then(() => {
-          prozaMessageEditButton(message).click();
+        fetchMock.flush(true).then(() => {
+          message._buttonElement.click();
           assert(tinyMCE.init.called);
           const editor = tinyMCE.activeEditor;
           editor.destroy();
+          done();
         });
       });
 
@@ -270,10 +246,10 @@
         sandbox.spy(tinyMCE, 'init');
         const message = fixture('vl-proza-message-fixture');
         fetchMock.flush(true).then(() => {
-          prozaMessageEditButton(message).click();
+          message._buttonElement.click();
           const editor = tinyMCE.activeEditor;
           editor.on('init', () => {
-            prozaMessageEditButton(message).hidden.should.to.be.true;
+            assert.isTrue(message._buttonElement.hidden);
             editor.destroy();
             done();
           });
@@ -284,7 +260,7 @@
         sandbox.spy(tinyMCE, 'init');
         const message = fixture('vl-proza-message-fixture');
         fetchMock.flush(true).then(() => {
-          prozaMessageEditButton(message).click();
+          message._buttonElement.click();
           const editor = tinyMCE.activeEditor;
           sandbox.spy(editor, 'focus');
           editor.on('init', () => {
@@ -299,11 +275,10 @@
         sandbox.spy(tinyMCE, 'init');
         const message = fixture('vl-proza-message-fixture');
         fetchMock.flush(true).then(() => {
-          prozaMessageEditButton(message).click();
+          message._buttonElement.click();
           const editor = tinyMCE.activeEditor;
           editor.on('init', () => {
-            const wysiwyg = prozaWysiwygElement(message);
-            wysiwyg.classList.contains('vl-typography').should.to.be.true;
+            assert.isTrue(message._wysiwygElement.classList.contains('vl-typography'));
             editor.destroy();
             done();
           });
@@ -313,7 +288,7 @@
       test('een escape toets zal de bewerk modus deactiveren en de wijzigingen ongedaan maken', (done) => {
         const message = fixture('vl-proza-message-fixture');
         fetchMock.flush(true).then(() => {
-          prozaMessageEditButton(message).click();
+          message._buttonElement.click();
           const editor = tinyMCE.activeEditor;
           editor.on('init', () => {
             sandbox.spy(editor, 'destroy');
@@ -326,7 +301,7 @@
             editor.on('keydown', () => {
               assert(editor.destroy.called);
               assert(editor.undoManager.undo.calledTwice);
-              expect(fetchMock.calls().length).to.equal(callsBeforeEscape);
+              assert.lengthOf(fetchMock.calls(), callsBeforeEscape);
               done();
             });
             editor.fire('keydown', {
@@ -340,20 +315,20 @@
         fetchMock.put('/proza/domein/foo/bar', {code: 'bar', tekst: 'nieuwe proza message'});
         const message = fixture('vl-proza-message-fixture');
         fetchMock.flush(true).then(() => {
-          prozaMessageEditButton(message).click();
+          message._buttonElement.click();
           const editor = tinyMCE.activeEditor;
           editor.on('init', () => {
             sandbox.spy(editor, 'destroy');
             sandbox.spy(editor.undoManager, 'undo');
             editor.on('keydown', (event) => {
               fetchMock.flush(true).then(() => {
-                expect(fetchMock.lastCall()[0]).to.equal('/proza/domein/foo/bar');
-                expect(fetchMock.lastCall()[1].method).to.equal('PUT');
-                expect(fetchMock.lastCall()[1].body).to.equal('nieuwe proza message');
+                assert.equal(fetchMock.lastCall()[0], '/proza/domein/foo/bar');
+                assert.equal(fetchMock.lastCall()[1].method, 'PUT');
+                assert.equal(fetchMock.lastCall()[1].body, 'nieuwe proza message');
                 assert(editor.destroy.called);
                 assert(editor.undoManager.undo.calledOnce);
                 VlProzaMessage.__getMessageCacheForDomain('foo')['bar'].then((tekst) => {
-                  expect(tekst).to.equal('nieuwe proza message');
+                  assert.equal(tekst, 'nieuwe proza message');
                   done();
                 });
               });
@@ -370,7 +345,7 @@
         fetchMock.put('/proza/domein/foo/bar', 404);
         const message = fixture('vl-proza-message-fixture');
         fetchMock.flush(true).then(() => {
-          prozaMessageEditButton(message).click();
+          message._buttonElement.click();
           const editor = tinyMCE.activeEditor;
           editor.on('init', () => {
             sandbox.spy(editor, 'destroy');
@@ -380,10 +355,10 @@
                 setTimeout(() => {
                   should.exist(document.querySelector('#vl-proza-message-toaster'));
                   should.exist(document.querySelector('#vl-proza-message-toaster vl-alert'));
-                  expect(document.querySelector('#vl-proza-message-toaster vl-alert').getAttribute('type')).to.equal('error');
-                  expect(document.querySelector('#vl-proza-message-toaster vl-alert').getAttribute('title')).to.equal('Technische storing');
+                  assert.equal(document.querySelector('#vl-proza-message-toaster vl-alert').getAttribute('type'), 'error');
+                  assert.equal(document.querySelector('#vl-proza-message-toaster vl-alert').getAttribute('title'), 'Technische storing');
                   should.exist(document.querySelector('#vl-proza-message-toaster vl-alert p'));
-                  expect(document.querySelector('#vl-proza-message-toaster vl-alert p').textContent).to.equal('Uw wijziging kon niet bewaard worden. Probeer het later opnieuw of neem contact op met de helpdesk als het probleem zich blijft voordoen.');
+                  assert.equal(document.querySelector('#vl-proza-message-toaster vl-alert p').textContent, 'Uw wijziging kon niet bewaard worden. Probeer het later opnieuw of neem contact op met de helpdesk als het probleem zich blijft voordoen.');
                   assert(editor.undoManager.undo.calledTwice);
                   assert(editor.destroy.called);
                   done();
@@ -401,7 +376,7 @@
       test('een enter toets in combinatie met de shift toets zal de bewerk modus niet deactiveren', (done) => {
         const message = fixture('vl-proza-message-fixture');
         fetchMock.flush(true).then(() => {
-          prozaMessageEditButton(message).click();
+          message._buttonElement.click();
           const editor = tinyMCE.activeEditor;
           editor.on('init', () => {
             sandbox.spy(editor, 'destroy');
@@ -422,18 +397,18 @@
         fetchMock.put('/proza/domein/foo/bar', {code: 'bar', tekst: 'nieuwe proza message'});
         const message = fixture('vl-proza-message-fixture');
         fetchMock.flush(true).then(() => {
-          prozaMessageEditButton(message).click();
+          message._buttonElement.click();
           const editor = tinyMCE.activeEditor;
           editor.on('init', () => {
             sandbox.spy(editor, 'destroy');
             editor.on('blur', () => {
               fetchMock.flush(true).then(() => {
-                expect(fetchMock.lastCall()[0]).to.equal('/proza/domein/foo/bar');
-                expect(fetchMock.lastCall()[1].method).to.equal('PUT');
-                expect(fetchMock.lastCall()[1].body).to.equal('nieuwe proza message');
+                assert.equal(fetchMock.lastCall()[0], '/proza/domein/foo/bar');
+                assert.equal(fetchMock.lastCall()[1].method, 'PUT');
+                assert.equal(fetchMock.lastCall()[1].body, 'nieuwe proza message');
                 assert(editor.destroy.called);
                 VlProzaMessage.__getMessageCacheForDomain('foo')['bar'].then((tekst) => {
-                  expect(tekst).to.equal('nieuwe proza message');
+                  assert.equal(tekst, 'nieuwe proza message'),
                   done();
                 });
               });
@@ -444,39 +419,57 @@
         });
       });
 
-      test('het click event van de proza bewerk knop wordt gestopt', () => {
+      test('het click event van de proza bewerk knop wordt gestopt', (done) => {
         const element = fixture('vl-proza-message-inside-button');
-        return fetchMock.flush(true).then(() => {
+        fetchMock.flush(true).then(() => {
           const message = element.querySelector('#message-1');
-          const button = prozaMessageEditButton(message);
           element.addEventListener('click', () => {
             throw new Error('click event werd niet gestopt!');
           });
-          return button.click();
+          message._buttonElement.click();
+          setTimeout(() => done());
         });
       });
 
       test('zal een class toevoegen wanneer het block attribuut aanwezig is', () => {
         const proza = fixture('vl-proza-message-fixture');
-        proza.classList.contains('vl-proza-message__block').should.to.be.false;
+        assert.isFalse(proza.classList.contains('vl-proza-message__block'));
         proza.setAttribute('data-vl-block', '');
-        proza.classList.contains('vl-proza-message__block').should.to.be.true;
+        assert.isTrue(proza.classList.contains('vl-proza-message__block'));
         proza.removeAttribute('data-vl-block');
-        proza.classList.contains('vl-proza-message__block').should.to.be.false;
+        assert.isFalse(proza.classList.contains('vl-proza-message__block'));
       });
 
-      test('zal op basis van de inhoud van het proza bericht het block attribuut automatisch toevoegen indien nodig', () => {
-        ['message', '<span>message</span>'].forEach((message) => {
-          let proza = fixture('vl-proza-message-fixture');
-          fetchMock.get('/proza/domein/foo/bar', {code: 'bar', tekst: message}, {overwriteRoutes: true});
-          return fetchMock.flush(true).then(() => {
-            expect(proza.getAttribute('data-vl-block')).to.be.null;
-
-            ['<p>message</p>', '<table>message</table>', '<span style=\'display: block;\'>message</span>', '<span style=\'display: inline-block;\'>message</span>', '<span style=\'display: flex;\'>message</span>', '<span style=\'display: grid;\'>message</span>'].forEach((message) => {
-              proza = fixture('vl-proza-message-fixture');
-              fetchMock.get('/proza/domein/foo/bar', {code: 'bar', tekst: message}, {overwriteRoutes: true});
-              return fetchMock.flush(true).then(() => {
-                expect(proza.getAttribute('data-vl-block')).not.to.be.null;
+      test('zal op basis van de inhoud van het proza bericht het block attribuut automatisch toevoegen indien nodig', (done) => {
+        const construct = (message, callback) => {
+          delete VlProzaMessage.__cache;
+          delete VlProzaMessagePreloader.__cache;
+          const proza = fixture('vl-proza-message-fixture');
+          fetchMock.get('proza/domein/foo/bar', {code: 'bar', tekst: message}, {overwriteRoutes: true});
+          fetchMock.flush(true).then(() => awaitUntil(() => proza._wysiwygElement.innerHTML === message).then(() => callback(proza)));
+        };
+    
+        construct('message', (proza) => {
+          assert.isNull(proza.getAttribute('data-vl-block'));
+          construct('<span>message</span>', (proza) => {
+            assert.isNull(proza.getAttribute('data-vl-block'));
+            construct('<p>message</p>', (proza) => {
+              assert.isNotNull(proza.getAttribute('data-vl-block'));
+              construct('<table></table>', (proza) => {
+                assert.isNotNull(proza.getAttribute('data-vl-block'));
+                construct('<span style="display: block;">message</span>', (proza) => {
+                  assert.isNotNull(proza.getAttribute('data-vl-block'));
+                  construct('<span style="display: inline-block;">message</span>', (proza) => {
+                    assert.isNotNull(proza.getAttribute('data-vl-block'));
+                    construct('<span style="display: flex;">message</span>', (proza) => {
+                      assert.isNotNull(proza.getAttribute('data-vl-block'));
+                      construct('<span style="display: grid;">message</span>', (proza) => {
+                        assert.isNotNull(proza.getAttribute('data-vl-block'));
+                        done();
+                      });
+                    });
+                  });
+                });
               });
             });
           });
@@ -486,13 +479,13 @@
       test('is bestand tegen een save wanneer de actieve editor al weg is', (done) => {
         const message = fixture('vl-proza-message-fixture');
         fetchMock.flush(true).then(() => {
-          prozaMessageEditButton(message).click();
+          message._buttonElement.click();
           const editor = tinyMCE.activeEditor;
           editor.on('init', () => {
-            should.not.exist(prozaTypographyElement(message));
-            awaitUntil(() => prozaTypographyElement(message)).then(() => {
-              VlProzaMessage.__getMessageCacheForDomain('foo')['bar'].then((msg) => {
-                expect(msg.tekst).to.equal('nieuwe proza message');
+            should.not.exist(message._typographyElement);
+            awaitUntil(() => message._typographyElement).then(() => {
+              return VlProzaMessage.__getMessageCacheForDomain('foo')['bar'].then((msg) => {
+                assert.equal(msg.tekst, 'nieuwe proza message'),
                 done();
               });
             });
@@ -509,8 +502,19 @@
           });
         });
       });
+
+      test('het parameters attribuut zal doorgegeven worden aan het vl-typography element', (done) => {
+        const message = fixture('vl-proza-message-fixture');
+        fetchMock.flush(true).then(() => {
+          assert.isUndefined(message._typographyElement.dataset.vlParameters);
+          const parameters = '{"key1": "key1", "key2": "key2"}';
+          message.setAttribute('data-vl-parameters', parameters);
+          assert.equal(message._typographyElement.dataset.vlParameters, parameters);
+          done();
+        });
+      });
     });
-</script>
+  </script>
 </body>
 
 </html>

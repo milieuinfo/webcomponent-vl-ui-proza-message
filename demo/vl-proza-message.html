@@ -16,14 +16,17 @@
           'code': 'bar',
           'tekst': 'foobar',
         });
+
         fetchMock.put('/proza/domein/foo/bar', {
           'code': 'bar',
           'tekst': 'foobar',
         });
+
         fetchMock.put('/proza/domein/bar/foo', {
           'code': 'foo',
           'tekst': 'foobar',
         });
+
         fetchMock.put('/proza/domein/bar/bar', {
           'code': 'foo',
           'tekst': 'foobar',
@@ -73,11 +76,12 @@
 
         fetchMock.get('proza/domein/foo/typography', {
           'code': 'typography',
-          'tekst': '<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod <a href=\'#\'>tempor incididunt</a> ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p><p>Lorem dolor sit amet, consectetur adipisicing elit. Deleniti, in.</p>',
+          'tekst': '<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod <a href="#">tempor incididunt</a> ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p><p>Lorem dolor sit amet, consectetur adipisicing elit. Deleniti, in.</p>',
         });
+
         fetchMock.put('/proza/domein/foo/typography', {
           'code': 'typography',
-          'tekst': '<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod <a href=\'#\'>tempor incididunt</a> ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p><p>Lorem dolor sit amet, consectetur adipisicing elit. Deleniti, in.</p>',
+          'tekst': '<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod <a href="#">tempor incididunt</a> ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p><p>Lorem dolor sit amet, consectetur adipisicing elit. Deleniti, in.</p>',
         });
 
         fetchMock.get('proza/domein/bar', [{
@@ -87,6 +91,16 @@
           'code': 'bar',
           'tekst': 'barbar',
         }]);
+
+        fetchMock.get('proza/domein/foo/parameters', {
+          'code': 'parameters',
+          'tekst': '<p>Lorem <b>${this.key2}</b> dolor sit amet, consectetur adipiscing elit. Duis iaculis molestie feugiat. Lorem <b>${this.key2}</b> eros, consequat et venenatis ac, scelerisque feugiat nunc. Nam molestie tincidunt lectus, nec volutpat ante egestas at. Curabitur quis odio metus. Morbi at purus ac purus convallis <b>${this.key1}</b> at eu est. Nunc id ligula quis justo semper ullamcorper. Donec orci nisi, <b>${this.key1}</b> varius massa ut, vulputate imperdiet nibh. Maecenas <b>${this.key1}</b> lectus quis turpis cursus, ac vehicula ligula fermentum.</p><p>Praesent consequat diam nec semper congue. <b>${this.key2}</b> tempor ut erat nec aliquam. Quisque ullamcorper sapien magna, sit amet porta <b>${this.key2}</b> pulvinar aliquam. Sed eleifend fringilla augue in vehicula. Sed leo sem, imperdiet non ornare maximus, bibendum facilisis massa. Nunc condimentum leo mi, quis porta ante mattis ut. Quisque eu enim vel metus consequat iaculis. Donec malesuada odio quis quam vulputate vestibulum.</p>',
+        });
+        
+        fetchMock.put('/proza/domein/foo/parameters', {
+          'code': 'parameters',
+          'tekst': '<p>Lorem <b>${this.key2}</b> dolor sit amet, consectetur adipiscing elit. Duis iaculis molestie feugiat. Lorem <b>${this.key2}</b> eros, consequat et venenatis ac, scelerisque feugiat nunc. Nam molestie tincidunt lectus, nec volutpat ante egestas at. Curabitur quis odio metus. Morbi at purus ac purus convallis <b>${this.key1}</b> at eu est. Nunc id ligula quis justo semper ullamcorper. Donec orci nisi, <b>${this.key1}</b> varius massa ut, vulputate imperdiet nibh. Maecenas <b>${this.key1}</b> lectus quis turpis cursus, ac vehicula ligula fermentum.</p><p>Praesent consequat diam nec semper congue. <b>${this.key2}</b> tempor ut erat nec aliquam. Quisque ullamcorper sapien magna, sit amet porta <b>${this.key2}</b> pulvinar aliquam. Sed eleifend fringilla augue in vehicula. Sed leo sem, imperdiet non ornare maximus, bibendum facilisis massa. Nunc condimentum leo mi, quis porta ante mattis ut. Quisque eu enim vel metus consequat iaculis. Donec malesuada odio quis quam vulputate vestibulum.</p>',
+        });
 
         fetchMock.get(/proza\/domein\/.*\/toegelatenoperaties/, {
           'create': true,
@@ -147,6 +161,10 @@
 
         <vl-demo data-vl-title="Proza message tabel">
             <vl-proza-message id="message-13" data-vl-domain="foo" data-vl-code="table"></vl-proza-message>
+        </vl-demo>
+
+        <vl-demo data-vl-title="Proza message met parameters">
+          <vl-proza-message id="message-14" data-vl-domain="foo" data-vl-code="parameters" data-vl-parameters='{"key1": "tempus", "key2": "ipsum"}'></vl-proza-message>
         </vl-demo>
     </vl-demo-page>
 </body>

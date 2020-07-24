@@ -67,6 +67,10 @@ class VlProzaMessagePage extends Page {
     return this._getProzaMessage('#message-13');
   }
 
+  async getMessageWithParameters() {
+    return this._getProzaMessage('#message-14');
+  }
+
   async load() {
     await super.load(Config.baseUrl + '/demo/vl-proza-message.html');
   }
