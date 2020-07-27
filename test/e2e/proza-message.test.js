@@ -33,15 +33,17 @@ describe('vl-proza-message', async () => {
     await message.edit();
     await message.clear();
     await message.confirm();
+    message = await vlProzaMessagePage.getMessageFirstDemo();
     await assert.eventually.equal(message.getText(), '');
   });
 
   it('als gebruiker kan ik op de escape-toets drukken om mijn wijzigingen te annuleren', async () => {
-    const message = await vlProzaMessagePage.getMessageFirstDemo();
+    let message = await vlProzaMessagePage.getMessageFirstDemo();
     await assert.eventually.equal(message.getText(), 'foobar');
     await message.edit();
     await message.type('decibel');
     await message.cancel();
+    message = await vlProzaMessagePage.getMessageFirstDemo();
     await assert.eventually.equal(message.getText(), 'foobar');
   });
 
@@ -50,6 +52,7 @@ describe('vl-proza-message', async () => {
     await message.edit();
     await message.type('decibel');
     await message.confirm();
+    message = await vlProzaMessagePage.getMessageFirstDemo();
     await assert.eventually.equal(message.getText(), 'decibel');
   });
 
@@ -60,6 +63,7 @@ describe('vl-proza-message', async () => {
     await message.shiftEnter();
     await message.append('break');
     await message.confirm();
+    message = await vlProzaMessagePage.getMessageFirstDemo();
     await assert.eventually.include(message.getText(), '\n');
   });
 
@@ -127,6 +131,17 @@ describe('vl-proza-message', async () => {
     const alert = (await toaster.getAlerts())[0];
     await assert.eventually.isTrue(alert.isWarning());
     await assert.eventually.equal(alert.getTitle(), 'Technische storing');
+  });
+
+  it('als gebruiker zie ik de parameter values in lees modus', async () => {
+    const message = await vlProzaMessagePage.getMessageWithParameters();
+    await assert.eventually.equal(message.getText(), 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis iaculis molestie feugiat. Lorem ipsum eros, consequat et venenatis ac, scelerisque feugiat nunc. Nam molestie tincidunt lectus, nec volutpat ante egestas at. Curabitur quis odio metus. Morbi at purus ac purus convallis tempus at eu est. Nunc id ligula quis justo semper ullamcorper. Donec orci nisi, tempus varius massa ut, vulputate imperdiet nibh. Maecenas tempus lectus quis turpis cursus, ac vehicula ligula fermentum.\nPraesent consequat diam nec semper congue. ipsum tempor ut erat nec aliquam. Quisque ullamcorper sapien magna, sit amet porta ipsum pulvinar aliquam. Sed eleifend fringilla augue in vehicula. Sed leo sem, imperdiet non ornare maximus, bibendum facilisis massa. Nunc condimentum leo mi, quis porta ante mattis ut. Quisque eu enim vel metus consequat iaculis. Donec malesuada odio quis quam vulputate vestibulum.');
+  });
+
+  it('als gebruiker zie ik de parameter keys in bewerk modus', async () => {
+    const message = await vlProzaMessagePage.getMessageWithParameters();
+    await message.edit();
+    await assert.eventually.equal(message.getWysiwygText(), 'Lorem ${parameter.key2} dolor sit amet, consectetur adipiscing elit. Duis iaculis molestie feugiat. Lorem ${parameter.key2} eros, consequat et venenatis ac, scelerisque feugiat nunc. Nam molestie tincidunt lectus, nec volutpat ante egestas at. Curabitur quis odio metus. Morbi at purus ac purus convallis ${parameter.key1} at eu est. Nunc id ligula quis justo semper ullamcorper. Donec orci nisi, ${parameter.key1} varius massa ut, vulputate imperdiet nibh. Maecenas ${parameter.key1} lectus quis turpis cursus, ac vehicula ligula fermentum.\n\nPraesent consequat diam nec semper congue. ${parameter.key2} tempor ut erat nec aliquam. Quisque ullamcorper sapien magna, sit amet porta ${parameter.key2} pulvinar aliquam. Sed eleifend fringilla augue in vehicula. Sed leo sem, imperdiet non ornare maximus, bibendum facilisis massa. Nunc condimentum leo mi, quis porta ante mattis ut. Quisque eu enim vel metus consequat iaculis. Donec malesuada odio quis quam vulputate vestibulum.');
   });
 
   afterEach(async () => {
