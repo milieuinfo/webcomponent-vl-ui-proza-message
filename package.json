@@ -37,26 +37,26 @@
     "demo": "http-server"
   },
   "dependencies": {
-    "tinymce": "5.4.1",
-    "vl-ui-alert": "^3.0.5",
-    "vl-ui-button": "^5.0.5",
-    "vl-ui-core": "^5.6.2",
-    "vl-ui-icon": "^5.1.0",
-    "vl-ui-toaster": "^3.0.6",
-    "vl-ui-typography": "^3.1.0"
+    "tinymce": "^5.4.1",
+    "vl-ui-alert": "milieuinfo/webcomponent-vl-ui-alert#3.11.5",
+    "vl-ui-button": "milieuinfo/webcomponent-vl-ui-button#3.11.5",
+    "vl-ui-core": "milieuinfo/webcomponent-vl-ui-core#3.11.5",
+    "vl-ui-icon": "milieuinfo/webcomponent-vl-ui-icon#3.11.5",
+    "vl-ui-toaster": "milieuinfo/webcomponent-vl-ui-toaster#3.11.5",
+    "vl-ui-typography": "milieuinfo/webcomponent-vl-ui-typography#3.11.5"
   },
   "peerDependencies": {
-    "tinymce": "5.4.1",
-    "vl-ui-alert": "^3.0.5",
-    "vl-ui-button": "^5.0.5",
-    "vl-ui-core": "^5.6.2",
-    "vl-ui-icon": "^5.1.0",
-    "vl-ui-toaster": "^3.0.6",
-    "vl-ui-typography": "^3.1.0"
+    "tinymce": "^5.4.1",
+    "vl-ui-alert": "milieuinfo/webcomponent-vl-ui-alert#3.11.5",
+    "vl-ui-button": "milieuinfo/webcomponent-vl-ui-button#3.11.5",
+    "vl-ui-core": "milieuinfo/webcomponent-vl-ui-core#3.11.5",
+    "vl-ui-icon": "milieuinfo/webcomponent-vl-ui-icon#3.11.5",
+    "vl-ui-toaster": "milieuinfo/webcomponent-vl-ui-toaster#3.11.5",
+    "vl-ui-typography": "milieuinfo/webcomponent-vl-ui-typography#3.11.5"
   },
   "devDependencies": {
-    "@govflanders/vl-ui-typography": "^3.9.2",
-    "@govflanders/vl-ui-util": "^3.10.1",
-    "vl-ui-util": "^5.2.10"
+    "@govflanders/vl-ui-typography": "^3.11.5",
+    "@govflanders/vl-ui-util": "^3.11.5",
+    "vl-ui-util": "github:milieuinfo/webcomponent-vl-ui-util#3.11.5"
   }
 }

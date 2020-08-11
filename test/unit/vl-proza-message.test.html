@@ -111,13 +111,13 @@
           const message1 = proza.querySelector('#message-1');
           const icon1 = message1._buttonElement.querySelector('[is="vl-icon"]');
           should.exist(message1._buttonElement);
-          assert.equal(icon1.getAttribute('icon'), 'edit');
+          assert.equal(icon1.getAttribute('data-vl-icon'), 'edit');
           should.exist(prozaMessageUpdatableClass(message1));
 
           const message2 = proza.querySelector('#message-2');
           const icon2 = message2._buttonElement.querySelector('[is="vl-icon"]');
           should.exist(message2._buttonElement);
-          assert.equal(icon2.getAttribute('icon'), 'edit');
+          assert.equal(icon2.getAttribute('data-vl-icon'), 'edit');
           should.exist(prozaMessageUpdatableClass(message2));
           done();
         });
