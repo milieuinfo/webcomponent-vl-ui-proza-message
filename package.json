@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "tinymce": "5.4.1",
-    "vl-ui-alert": "^3.0.5",
+    "vl-ui-alert": "^4.0.0",
     "vl-ui-button": "^5.0.5",
     "vl-ui-core": "^5.6.2",
     "vl-ui-icon": "^5.1.0",
@@ -47,7 +47,7 @@
   },
   "peerDependencies": {
     "tinymce": "5.4.1",
-    "vl-ui-alert": "^3.0.5",
+    "vl-ui-alert": "^4.0.0",
     "vl-ui-button": "^5.0.5",
     "vl-ui-core": "^5.6.2",
     "vl-ui-icon": "^5.1.0",
