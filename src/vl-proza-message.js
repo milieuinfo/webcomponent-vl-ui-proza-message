@@ -312,7 +312,7 @@ export class VlProzaMessage extends vlElement(HTMLElement) {
 
   __getProzaSaveErrorAlertTemplate() {
     return this._template(`
-      <vl-alert type="error" data-vl-icon="alert-triangle" data-vl-title="Technische storing" data-vl-closable>
+      <vl-alert data-vl-type="warning" data-vl-icon="warning" data-vl-title="Technische storing" data-vl-closable>
         <p>Uw wijziging kon niet bewaard worden. Probeer het later opnieuw of neem contact op met de helpdesk als het probleem zich blijft voordoen.</p>
       </vl-alert>
     `);
