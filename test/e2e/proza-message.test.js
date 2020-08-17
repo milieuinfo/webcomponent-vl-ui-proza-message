@@ -129,7 +129,7 @@ describe('vl-proza-message', async () => {
     const toaster = await vlProzaMessagePage.getToaster();
     await assert.eventually.lengthOf(toaster.getAlerts(), 1);
     const alert = (await toaster.getAlerts())[0];
-    await assert.eventually.isTrue(alert.isWarning());
+    await assert.eventually.isTrue(alert.isError());
     await assert.eventually.equal(alert.getTitle(), 'Technische storing');
   });
 
