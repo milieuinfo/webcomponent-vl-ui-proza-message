@@ -12,6 +12,7 @@ import '/node_modules/tinymce/tinymce.min.js';
  * @classdesc De vl-proza-message webcomponent kan gebruikt worden om teksten te laten beheren door de business. De edit modus wordt geactiveerd door op het potlood icoon te klikken. De edit modus kan gedactiveerd worden door op enter te duwen of een focus te geven aan een ander element op de pagina. Wanneer de gebruiker op escape klikt zal de edit modus afgesloten worden en zullen de wijzigingen ongedaan gemaakt worden.
  *
  * @extends HTMLElement
+ * @mixes vlElement
  *
  * @property {string} data-vl-domain - Het Proza domein waarin het Proza bericht zit.
  * @property {string} data-vl-code - De code die het Proza bericht identificeert.
@@ -53,7 +54,7 @@ export class VlProzaMessage extends vlElement(HTMLElement) {
   __addToasterElement() {
     const id = 'vl-proza-message-toaster';
     if (!document.getElementById(id)) {
-      document.body.appendChild(this._template(`<div is='vl-toaster' top-right id=${id}></div>`));
+      document.body.appendChild(this._template(`<div is='vl-toaster' data-vl-top-right id=${id}></div>`));
     }
     return document.getElementById(id);
   }
@@ -311,7 +312,7 @@ export class VlProzaMessage extends vlElement(HTMLElement) {
 
   __getProzaSaveErrorAlertTemplate() {
     return this._template(`
-      <vl-alert type="error" icon="alert-triangle" title="Technische storing" closable>
+      <vl-alert type="error" data-vl-icon="alert-triangle" data-vl-title="Technische storing" data-vl-closable>
         <p>Uw wijziging kon niet bewaard worden. Probeer het later opnieuw of neem contact op met de helpdesk als het probleem zich blijft voordoen.</p>
       </vl-alert>
     `);
@@ -406,9 +407,10 @@ export class VlProzaMessage extends vlElement(HTMLElement) {
 /**
  * VlProzaMessagePreloader
  * @class
- * @classdesc
+ * @classdesc Proza preloader dient om proza codes op voorhand op te halen zodat deze sneller getoond kunnen worden aan de gebruiker.
  *
  * @extends HTMLElement
+ * @mixes vlElement
  *
  * @property {string} data-vl-domain - Het Proza domein waarin de Proza berichten zitten.
  *
