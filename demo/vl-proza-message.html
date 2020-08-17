@@ -4,11 +4,13 @@
 <head>
     <title>vl-proza-message voorbeeld</title>
     <script type="module" src="/node_modules/vl-ui-demo/dist/vl-demo-all.js"></script>
+    <script type="module" src="/node_modules/vl-ui-body/dist/vl-body.js"></script>
+    <script type="module" src="/node_modules/vl-ui-button/dist/vl-button.js"></script>
     <script src="/node_modules/fetch-mock/es5/client-bundle.js"></script>
 
     <script type="module" src="/src/vl-proza-message.js"></script>
-    <script type="module" src="/node_modules/vl-ui-button/dist/vl-button.js"></script>
 
+    <link rel="stylesheet" type="text/css" href="/node_modules/vl-ui-body/dist/style.css" />
     <link rel="stylesheet" type="text/css" href="/node_modules/vl-ui-button/dist/style.css" />
 
     <script>
@@ -111,7 +113,7 @@
     </script>
 </head>
 
-<body>
+<body is="vl-body">
     <vl-demo-page data-vl-webcomponent="vl-proza-message">
         <vl-demo data-vl-title="Proza message">
             <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
