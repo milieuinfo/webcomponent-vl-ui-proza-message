@@ -31,7 +31,6 @@ export class VlProzaMessage extends vlElement(HTMLElement) {
 
   constructor() {
     super();
-    this.appendChild(this.__createWysiwygElement());
     this.shadow(`
       <style>
         @import '/src/style.css';
@@ -72,6 +71,7 @@ export class VlProzaMessage extends vlElement(HTMLElement) {
   }
 
   connectedCallback() {
+    this.appendChild(this.__createWysiwygElement());
     this.__processToegelatenOperaties();
   }
 
