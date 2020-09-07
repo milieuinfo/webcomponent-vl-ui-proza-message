@@ -143,11 +143,9 @@
         sandbox.spy(console, 'error');
         fetchMock.mock('proza/domein/foo/bar', 404, {overwriteRoutes: true});
 
-        const proza = fixture('vl-proza-messages-fixture');
-        fetchMock.flush(true).then(() => {
-          assert.equal(proza.querySelector('#message-1')._wysiwygElement.textContent, '');
-          assert.equal(proza.querySelector('#message-2')._wysiwygElement.textContent, '');
-          console.error.should.be.called;
+        const proza = fixture('vl-proza-message-fixture');
+        awaitUntil(() => console.error.called).then(() => {
+          assert.equal(proza._wysiwygElement.textContent, '');
           done();
         });
       });
@@ -166,11 +164,13 @@
       });
 
       test('haalt het bericht en de toegelaten operaties maar 1 keer op indien deze al in de cache zitten', (done) => {
-        fixture('vl-proza-messages-fixture');
-        fetchMock.flush(true).then(() => {
-          assert.lengthOf(fetchMock.calls('proza/domein/foo/bar'), 1);
-          assert.lengthOf(fetchMock.calls('proza/domein/foo/toegelatenoperaties'), 1);
-          done();
+        const proza = fixture('vl-proza-messages-fixture');
+        Promise.all([...proza.querySelectorAll('vl-proza-message')].map((element) => awaitUntil(() => element._typographyElement))).then(() => {
+          fetchMock.flush(true).then(() => {
+            assert.lengthOf(fetchMock.calls('proza/domein/foo/bar'), 1);
+            assert.lengthOf(fetchMock.calls('proza/domein/foo/toegelatenoperaties'), 1);
+            done();
+          });
         });
       });
 
@@ -209,18 +209,14 @@
       test('zodra een proza domein code opgehaald werd zal het wysiwyg element in lees modus verplaatst worden naar een vl-typography element zodat de wysiwyg stijl toegepast wordt', (done) => {
         const message = fixture('vl-proza-message-fixture');
         should.not.exist(message._typographyElement);
-        fetchMock.flush(true).then(() => {
-          should.exist(message._typographyElement);
-          should.exist(message._wysiwygElement);
-          done();
-        });
+        awaitUntil(() => message._typographyElement).then(() => done());
       });
 
       test('zodra de bewerk modus geactiveerd wordt zal het wysiwyg element verplaatst worden zodat het door TinyMCE gebruikt kan worden', (done) => {
         const message = fixture('vl-proza-message-fixture');
         should.not.exist(message._typographyElement);
         should.exist(message._wysiwygElement);
-        fetchMock.flush(true).then(() => {
+        awaitUntil(() => message._typographyElement).then(() => {
           should.exist(message._typographyElement);
           should.exist(message._wysiwygElement);
           message._buttonElement.click();
@@ -314,28 +310,30 @@
       test('een enter toets zal de bewerk modus deactiveren en de enter wijziging ongedaan maken en de wijziging persisteren', (done) => {
         fetchMock.put('/proza/domein/foo/bar', {code: 'bar', tekst: 'nieuwe proza message'});
         const message = fixture('vl-proza-message-fixture');
-        fetchMock.flush(true).then(() => {
-          message._buttonElement.click();
-          const editor = tinyMCE.activeEditor;
-          editor.on('init', () => {
-            sandbox.spy(editor, 'destroy');
-            sandbox.spy(editor.undoManager, 'undo');
-            editor.on('keydown', (event) => {
-              fetchMock.flush(true).then(() => {
-                assert.equal(fetchMock.lastCall()[0], '/proza/domein/foo/bar');
-                assert.equal(fetchMock.lastCall()[1].method, 'PUT');
-                assert.equal(fetchMock.lastCall()[1].body, 'nieuwe proza message');
-                assert(editor.destroy.called);
-                assert(editor.undoManager.undo.calledOnce);
-                VlProzaMessage.__getMessageCacheForDomain('foo')['bar'].then((tekst) => {
-                  assert.equal(tekst, 'nieuwe proza message');
-                  done();
+        awaitUntil(() => message._typographyElement).then(() => {
+          fetchMock.flush(true).then(() => {
+            message._buttonElement.click();
+            const editor = tinyMCE.activeEditor;
+            editor.on('init', () => {
+              sandbox.spy(editor, 'destroy');
+              sandbox.spy(editor.undoManager, 'undo');
+              editor.on('keydown', (event) => {
+                fetchMock.flush(true).then(() => {
+                  assert.equal(fetchMock.lastCall()[0], '/proza/domein/foo/bar');
+                  assert.equal(fetchMock.lastCall()[1].method, 'PUT');
+                  assert.equal(fetchMock.lastCall()[1].body, 'nieuwe proza message');
+                  assert(editor.destroy.called);
+                  assert(editor.undoManager.undo.calledOnce);
+                  VlProzaMessage.__getMessageCacheForDomain('foo')['bar'].then((tekst) => {
+                    assert.equal(tekst, 'nieuwe proza message');
+                    done();
+                  });
                 });
               });
-            });
-            editor.setContent('nieuwe proza message');
-            editor.fire('keydown', {
-              keyCode: 13,
+              editor.setContent('nieuwe proza message');
+              editor.fire('keydown', {
+                keyCode: 13,
+              });
             });
           });
         });
@@ -396,25 +394,27 @@
       test('een wysiwyg blur zal de bewerk modus deactiveren en de wijziging persisteren', (done) => {
         fetchMock.put('/proza/domein/foo/bar', {code: 'bar', tekst: 'nieuwe proza message'});
         const message = fixture('vl-proza-message-fixture');
-        fetchMock.flush(true).then(() => {
-          message._buttonElement.click();
-          const editor = tinyMCE.activeEditor;
-          editor.on('init', () => {
-            sandbox.spy(editor, 'destroy');
-            editor.on('blur', () => {
-              fetchMock.flush(true).then(() => {
-                assert.equal(fetchMock.lastCall()[0], '/proza/domein/foo/bar');
-                assert.equal(fetchMock.lastCall()[1].method, 'PUT');
-                assert.equal(fetchMock.lastCall()[1].body, 'nieuwe proza message');
-                assert(editor.destroy.called);
-                VlProzaMessage.__getMessageCacheForDomain('foo')['bar'].then((tekst) => {
-                  assert.equal(tekst, 'nieuwe proza message'),
-                  done();
+        awaitUntil(() => message._typographyElement).then(() => {
+          fetchMock.flush(true).then(() => {
+            message._buttonElement.click();
+            const editor = tinyMCE.activeEditor;
+            editor.on('init', () => {
+              sandbox.spy(editor, 'destroy');
+              editor.on('blur', () => {
+                fetchMock.flush(true).then(() => {
+                  assert.equal(fetchMock.lastCall()[0], '/proza/domein/foo/bar');
+                  assert.equal(fetchMock.lastCall()[1].method, 'PUT');
+                  assert.equal(fetchMock.lastCall()[1].body, 'nieuwe proza message');
+                  assert(editor.destroy.called);
+                  VlProzaMessage.__getMessageCacheForDomain('foo')['bar'].then((tekst) => {
+                    assert.equal(tekst, 'nieuwe proza message'),
+                    done();
+                  });
                 });
               });
+              editor.setContent('nieuwe proza message');
+              editor.fire('blur');
             });
-            editor.setContent('nieuwe proza message');
-            editor.fire('blur');
           });
         });
       });
@@ -505,12 +505,14 @@
 
       test('het parameters attribuut zal doorgegeven worden aan het vl-typography element', (done) => {
         const message = fixture('vl-proza-message-fixture');
-        fetchMock.flush(true).then(() => {
-          assert.isUndefined(message._typographyElement.dataset.vlParameters);
-          const parameters = '{"key1": "key1", "key2": "key2"}';
-          message.setAttribute('data-vl-parameters', parameters);
-          assert.equal(message._typographyElement.dataset.vlParameters, parameters);
-          done();
+        awaitUntil(() => message._typographyElement).then(() => {
+          fetchMock.flush(true).then(() => {
+            assert.isUndefined(message._typographyElement.dataset.vlParameters);
+            const parameters = '{"key1": "key1", "key2": "key2"}';
+            message.setAttribute('data-vl-parameters', parameters);
+            assert.equal(message._typographyElement.dataset.vlParameters, parameters);
+            done();
+          });
         });
       });
     });
