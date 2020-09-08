@@ -1,4 +1,4 @@
-import {vlElement, define} from '/node_modules/vl-ui-core/dist/vl-core.js';
+import {vlElement, define, awaitUntil} from '/node_modules/vl-ui-core/dist/vl-core.js';
 import '/node_modules/vl-ui-button/dist/vl-button.js';
 import '/node_modules/vl-ui-icon/dist/vl-icon.js';
 import '/node_modules/vl-ui-typography/dist/vl-typography.js';
@@ -153,17 +153,19 @@ export class VlProzaMessage extends vlElement(HTMLElement) {
   }
 
   _loadMessage() {
-    if (this._domain && this._code) {
-      VlProzaMessage._getMessage(this._domain, this._code).then((message) => {
-        this._wysiwygElement.innerHTML = message;
-        this.__wrapWysiwygElement();
-        if (this.__containsBlockElement(message)) {
-          this.setAttribute('data-vl-block', '');
-        }
-      });
-    } else {
-      this._wysiwygElement.innerHTML = null;
-    }
+    awaitUntil(() => this._wysiwygElement).then(() => {
+      if (this._domain && this._code) {
+        VlProzaMessage._getMessage(this._domain, this._code).then((message) => {
+          this._wysiwygElement.innerHTML = message;
+          this.__wrapWysiwygElement();
+          if (this.__containsBlockElement(message)) {
+            this.setAttribute('data-vl-block', '');
+          }
+        });
+      } else {
+        this._wysiwygElement.innerHTML = null;
+      }
+    });
   }
 
   static _getMessage(domain, code) {

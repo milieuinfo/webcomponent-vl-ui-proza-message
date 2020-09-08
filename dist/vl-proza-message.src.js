@@ -1,4 +1,4 @@
-import {vlElement, define} from 'vl-ui-core';
+import {vlElement, define, awaitUntil} from 'vl-ui-core';
 import 'vl-ui-button';
 import 'vl-ui-icon';
 import 'vl-ui-typography';
@@ -157,17 +157,19 @@ export class VlProzaMessage extends vlElement(HTMLElement) {
   }
 
   _loadMessage() {
-    if (this._domain && this._code) {
-      VlProzaMessage._getMessage(this._domain, this._code).then((message) => {
-        this._wysiwygElement.innerHTML = message;
-        this.__wrapWysiwygElement();
-        if (this.__containsBlockElement(message)) {
-          this.setAttribute('data-vl-block', '');
-        }
-      });
-    } else {
-      this._wysiwygElement.innerHTML = null;
-    }
+    awaitUntil(() => this._wysiwygElement).then(() => {
+      if (this._domain && this._code) {
+        VlProzaMessage._getMessage(this._domain, this._code).then((message) => {
+          this._wysiwygElement.innerHTML = message;
+          this.__wrapWysiwygElement();
+          if (this.__containsBlockElement(message)) {
+            this.setAttribute('data-vl-block', '');
+          }
+        });
+      } else {
+        this._wysiwygElement.innerHTML = null;
+      }
+    });
   }
 
   static _getMessage(domain, code) {
