@@ -1,8 +1,8 @@
-const {assert, driver} = require('vl-ui-core').Test.Setup;
+const {assert, getDriver} = require('vl-ui-core').Test.Setup;
 const VlProzaMessagePage = require('./pages/vl-proza-message.page');
 
 describe('vl-proza-message', async () => {
-  const vlProzaMessagePage = new VlProzaMessagePage(driver);
+  let vlProzaMessagePage;
   let message;
 
   beforeEach(() => {
@@ -10,6 +10,7 @@ describe('vl-proza-message', async () => {
   });
 
   before(() => {
+    vlProzaMessagePage = new VlProzaMessagePage(getDriver());
     return vlProzaMessagePage.load();
   });
 
