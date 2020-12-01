@@ -30,20 +30,20 @@
     "test:unit": "npm explore vl-ui-util -- npm run test:component:unit",
     "test:unit:grid": "npm explore vl-ui-util -- npm run test:component:unit:grid",
     "test:e2e": "npm explore vl-ui-util -- npm run test:component:e2e",
-    "test:e2e:grid": "npm explore vl-ui-util -- npm run test:component:e2e:grid",
+    "test:e2e:grid": "npm explore vl-ui-util -- npm run test:component:e2e:browserstack",
     "release": "npm explore vl-ui-util -- npm run release",
     "release:prepare": "npm explore vl-ui-util -- npm run release-component:prepare $(pwd) proza-message",
     "release:testless": "np --yolo",
     "demo": "http-server"
   },
   "dependencies": {
-    "tinymce": "^5.4.2",
+    "tinymce": "^5.6.1",
     "vl-ui-alert": "^4.0.0",
     "vl-ui-button": "^5.0.6",
-    "vl-ui-core": "^6.0.0",
+    "vl-ui-core": "^6.2.3",
     "vl-ui-icon": "^5.2.0",
     "vl-ui-toaster": "^3.0.7",
-    "vl-ui-typography": "^3.1.1"
+    "vl-ui-typography": "^3.1.2"
   },
   "peerDependencies": {
     "tinymce": "^5.4.1",
@@ -57,7 +57,7 @@
   "devDependencies": {
     "@govflanders/vl-ui-typography": "^3.11.5",
     "@govflanders/vl-ui-util": "^3.11.5",
-    "vl-ui-body": "^1.0.3",
-    "vl-ui-util": "^5.2.17"
+    "vl-ui-body": "^1.0.5",
+    "vl-ui-util": "^5.3.1"
   }
 }
