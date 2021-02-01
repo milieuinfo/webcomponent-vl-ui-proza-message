@@ -40,7 +40,7 @@
     "tinymce": "^5.6.2",
     "vl-ui-alert": "^4.0.1",
     "vl-ui-button": "^5.0.9",
-    "vl-ui-core": "^7.1.0",
+    "vl-ui-core": "^7.1.1",
     "vl-ui-icon": "^5.2.1",
     "vl-ui-toaster": "^3.0.8",
     "vl-ui-typography": "^3.1.3"
