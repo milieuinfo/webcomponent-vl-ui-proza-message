@@ -340,6 +340,7 @@
       });
 
       test('als het bewaren van een proza message mislukt wordt de editor modus beeindigd en een error message getoond', (done) => {
+        debugger;
         fetchMock.put('/proza/domein/foo/bar', 404);
         const message = fixture('vl-proza-message-fixture');
         fetchMock.flush(true).then(() => {
@@ -351,15 +352,17 @@
             editor.on('keydown', (event) => {
               fetchMock.flush(true).then(() => {
                 setTimeout(() => {
-                  should.exist(document.querySelector('#vl-proza-message-toaster'));
-                  should.exist(document.querySelector('#vl-proza-message-toaster vl-alert'));
-                  assert.equal(document.querySelector('#vl-proza-message-toaster vl-alert').getAttribute('type'), 'error');
-                  assert.equal(document.querySelector('#vl-proza-message-toaster vl-alert').getAttribute('title'), 'Technische storing');
-                  should.exist(document.querySelector('#vl-proza-message-toaster vl-alert p'));
-                  assert.equal(document.querySelector('#vl-proza-message-toaster vl-alert p').textContent, 'Uw wijziging kon niet bewaard worden. Probeer het later opnieuw of neem contact op met de helpdesk als het probleem zich blijft voordoen.');
-                  assert(editor.undoManager.undo.calledTwice);
-                  assert(editor.destroy.called);
-                  done();
+                  setTimeout(() => {
+                    should.exist(document.querySelector('#vl-proza-message-toaster'));
+                    should.exist(document.querySelector('#vl-proza-message-toaster vl-alert'));
+                    assert.equal(document.querySelector('#vl-proza-message-toaster vl-alert').getAttribute('type'), 'error');
+                    assert.equal(document.querySelector('#vl-proza-message-toaster vl-alert').getAttribute('title'), 'Technische storing');
+                    should.exist(document.querySelector('#vl-proza-message-toaster vl-alert p'));
+                    assert.equal(document.querySelector('#vl-proza-message-toaster vl-alert p').textContent, 'Uw wijziging kon niet bewaard worden. Probeer het later opnieuw of neem contact op met de helpdesk als het probleem zich blijft voordoen.');
+                    assert(editor.undoManager.undo.calledTwice);
+                    assert(editor.destroy.called);
+                    done();
+                  });
                 }, 0);
               });
             });
