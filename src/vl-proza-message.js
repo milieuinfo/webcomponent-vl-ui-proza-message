@@ -71,8 +71,11 @@ export class VlProzaMessage extends vlElement(HTMLElement) {
   }
 
   connectedCallback() {
-    this.appendChild(this.__createWysiwygElement());
-    this.__processToegelatenOperaties();
+    if (!this.__initialized) {
+      this.appendChild(this.__createWysiwygElement());
+      this.__processToegelatenOperaties();
+      this.__initialized = true;
+    }
   }
 
   disconnectedCallback() {

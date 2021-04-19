@@ -53,6 +53,18 @@
     </template>
   </test-fixture>
 
+  <test-fixture id="vl-proza-message-move">
+    <template>
+      <div id="outer">
+        <div id="parent">
+          <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
+        </div>
+        <div id="sibling">
+        </div>
+      </div>
+    </template>
+  </test-fixture>
+
   <script type="module">
     import {VlProzaMessage, VlProzaMessagePreloader, ProzaRestClient} from '../../src/vl-proza-message.js';
     import {awaitUntil} from 'vl-ui-core/dist/vl-core';
@@ -517,6 +529,16 @@
             done();
           });
         });
+      });
+
+      test('boodschap wordt niet meer dan 1 keer gerendered als de proza message onder een andere parent zou komen te hangen', async () => {
+        const testFixture = fixture('vl-proza-message-move');
+        const prozaMessage = testFixture.querySelector('vl-proza-message');
+        await awaitUntil(() => prozaMessage._typographyElement);
+        await fetchMock.flush(true);
+        assert.equal(prozaMessage.querySelectorAll('div#wysiwyg').length, 1);
+        testFixture.querySelector('#sibling').appendChild(prozaMessage);
+        assert.equal(prozaMessage.querySelectorAll('div#wysiwyg').length, 1);
       });
     });
   </script>
