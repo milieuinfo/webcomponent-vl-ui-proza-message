@@ -189,6 +189,7 @@
       test('het aanpassen van het data-vl-code attribuut zal ervoor zorgen dat het bericht voor die code getoond wordt', (done) => {
         const proza = fixture('vl-proza-messages-fixture');
         fetchMock.restore();
+        fetchMock.mock('proza/domein/foo/bar', {code: 'bar', tekst: 'foobar'});
         fetchMock.mock('proza/domein/foo/foo', {code: 'foo', tekst: 'foofoo'});
         const message1 = proza.querySelector('#message-1');
         message1.dataset.vlCode = 'foo';
@@ -202,6 +203,7 @@
       test('het aanpassen van het data-vl-domain attribuut zal ervoor zorgen dat het bericht voor dat domein getoond wordt', (done) => {
         const proza = fixture('vl-proza-messages-fixture');
         fetchMock.restore();
+        fetchMock.mock('proza/domein/foo/bar', {code: 'bar', tekst: 'foobar'});
         fetchMock.mock('proza/domein/bar/bar', {code: 'bar', tekst: 'barbar'});
         const message1 = proza.querySelector('#message-1');
         message1.dataset.vlDomain = 'bar';
@@ -352,7 +354,6 @@
       });
 
       test('als het bewaren van een proza message mislukt wordt de editor modus beeindigd en een error message getoond', (done) => {
-        debugger;
         fetchMock.put('/proza/domein/foo/bar', 404);
         const message = fixture('vl-proza-message-fixture');
         fetchMock.flush(true).then(() => {
