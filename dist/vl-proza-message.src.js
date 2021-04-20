@@ -75,10 +75,10 @@ export class VlProzaMessage extends vlElement(HTMLElement) {
   }
 
   connectedCallback() {
-    if (!this.initialized) {
+    if (!this.__initialized) {
       this.appendChild(this.__createWysiwygElement());
       this.__processToegelatenOperaties();
-      this.initialized = true;
+      this.__initialized = true;
     }
   }
 
