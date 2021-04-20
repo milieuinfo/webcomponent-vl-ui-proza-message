@@ -24,7 +24,9 @@ Build:
   key: BD
   tasks:
     - clean
-    - script: |
+    - script: 
+      interpreter: /bin/sh
+      scripts: |
         #!/usr/env/bin bash
         set -e
         export browserstack_username="${bamboo_browserstack_username}"
@@ -42,8 +44,9 @@ Build:
 Release:
   key: REL
   tasks:
-    - clean
-    - script: |
+    - script: 
+      interpreter: /bin/sh
+      scripts: |
         #!/usr/env/bin bash
         set -e
         /opt/scripts/git/git-repository-information-restore.sh
