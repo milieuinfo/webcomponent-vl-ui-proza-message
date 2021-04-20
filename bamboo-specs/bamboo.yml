@@ -24,15 +24,15 @@ Build:
   key: BD
   tasks:
     - clean
-    - script: 
+    - script:
       interpreter: /bin/sh
-      scripts: 
+      scripts:
         - |
-        #!/usr/env/bin bash
-        set -e
-        export browserstack_username="${bamboo_browserstack_username}"
-        export browserstack_password="${bamboo_browserstack_password}"
-        docker-compose -f test/docker-compose.yml up --scale selenium-chrome=3 --scale selenium-firefox=3 --exit-code-from tests --force-recreate
+          #!/usr/env/bin bash
+          set -e
+          export browserstack_username="${bamboo_browserstack_username}"
+          export browserstack_password="${bamboo_browserstack_password}"
+          docker-compose -f test/docker-compose.yml up --scale selenium-chrome=3 --scale selenium-firefox=3 --exit-code-from tests --force-recreate
   final-tasks:
     - script: /opt/scripts/docker/stop-docker-containers.sh
     - test-parser:
@@ -45,16 +45,16 @@ Build:
 Release:
   key: REL
   tasks:
-    - script: 
+    - script:
       interpreter: /bin/sh
-      scripts: 
+      scripts:
         - |
-        #!/usr/env/bin bash
-        set -e
-        /opt/scripts/git/git-repository-information-restore.sh
-        export git_repo="${bamboo_repository_git_repositoryUrl}"
-        export release_version="${bamboo.release_version}"
-        docker-compose -f docker-compose-release.yml run release
+          #!/usr/env/bin bash
+          set -e
+          /opt/scripts/git/git-repository-information-restore.sh
+          export git_repo="${bamboo_repository_git_repositoryUrl}"
+          export release_version="${bamboo.release_version}"
+          docker-compose -f docker-compose-release.yml run release
   final-tasks:
     - script: /opt/scripts/docker/stop-docker-containers.sh
   requirements:
