@@ -26,7 +26,8 @@ Build:
     - clean
     - script: 
       interpreter: /bin/sh
-      scripts: |
+      scripts: 
+        - |
         #!/usr/env/bin bash
         set -e
         export browserstack_username="${bamboo_browserstack_username}"
@@ -46,7 +47,8 @@ Release:
   tasks:
     - script: 
       interpreter: /bin/sh
-      scripts: |
+      scripts: 
+        - |
         #!/usr/env/bin bash
         set -e
         /opt/scripts/git/git-repository-information-restore.sh
