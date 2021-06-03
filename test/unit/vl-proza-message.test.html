@@ -7,65 +7,65 @@
     <script src="../../../web-component-tester/browser.js"></script>
     <script src="/node_modules/sinon/pkg/sinon.js"></script>
     <script src="/node_modules/sinon-chai/lib/sinon-chai.js"></script>
-    
+
     <script type="module" src="/node_modules/vl-ui-button/dist/vl-button.js"></script>
     <script type="module" src="../../src/vl-proza-message.js"></script>
 </head>
 
 <body>
-  <test-fixture id="vl-proza-message-fixture">
+<test-fixture id="vl-proza-message-fixture">
     <template>
-      <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
+        <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
     </template>
-  </test-fixture>
+</test-fixture>
 
-  <test-fixture id="vl-proza-messages-fixture">
+<test-fixture id="vl-proza-messages-fixture">
     <template>
-      <div>
-        <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
-        <vl-proza-message id="message-2" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
-      </div>
-    </template>
-  </test-fixture>
-
-  <test-fixture id="vl-proza-message-inside-button">
-    <template>
-      <button is="vl-button">
-        <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
-      </button>
-    </template>
-  </test-fixture>
-    
-  <test-fixture id="vl-proza-message-inside-link">
-    <template>
-      <a href="http://www.google.be">
-        <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
-      </a>
-    </template>
-  </test-fixture>
-    
-  <test-fixture id="vl-proza-message-blur">
-    <template>
-      <div>
-        <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
-        <div id="to-have-blur-on-proza-message"></div>
-      </div>
-    </template>
-  </test-fixture>
-
-  <test-fixture id="vl-proza-message-move">
-    <template>
-      <div id="outer">
-        <div id="parent">
-          <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
+        <div>
+            <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
+            <vl-proza-message id="message-2" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
         </div>
-        <div id="sibling">
-        </div>
-      </div>
     </template>
-  </test-fixture>
+</test-fixture>
 
-  <script type="module">
+<test-fixture id="vl-proza-message-inside-button">
+    <template>
+        <button is="vl-button">
+            <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
+        </button>
+    </template>
+</test-fixture>
+
+<test-fixture id="vl-proza-message-inside-link">
+    <template>
+        <a href="http://www.google.be">
+            <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
+        </a>
+    </template>
+</test-fixture>
+
+<test-fixture id="vl-proza-message-blur">
+    <template>
+        <div>
+            <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
+            <div id="to-have-blur-on-proza-message"></div>
+        </div>
+    </template>
+</test-fixture>
+
+<test-fixture id="vl-proza-message-move">
+    <template>
+        <div id="outer">
+            <div id="parent">
+                <vl-proza-message id="message-1" data-vl-domain="foo" data-vl-code="bar"></vl-proza-message>
+            </div>
+            <div id="sibling">
+            </div>
+        </div>
+    </template>
+</test-fixture>
+
+<script type="module">
     import {VlProzaMessage, VlProzaMessagePreloader, ProzaRestClient} from '../../src/vl-proza-message.js';
     import {awaitUntil} from 'vl-ui-core/dist/vl-core';
     import fetchMock from '../../node_modules/fetch-mock/esm/client.js';
@@ -76,6 +76,10 @@
 
       setup((done) => {
         fetchMock.get('proza/domein/foo/bar', {code: 'bar', tekst: 'foobar'});
+        fetchMock.get('proza/domein/foo/bereik', {
+          code: 'bereik',
+          tekst: 'Van ${parameter.van} tot ${parameter.tot}',
+        });
         fetchMock.get('proza/domein/foo/toegelatenoperaties', {update: true});
 
         customElements.whenDefined('vl-proza-message').then(() => done());
@@ -464,7 +468,7 @@
           fetchMock.get('proza/domein/foo/bar', {code: 'bar', tekst: message}, {overwriteRoutes: true});
           fetchMock.flush(true).then(() => awaitUntil(() => proza._wysiwygElement.innerHTML === message).then(() => callback(proza)));
         };
-    
+
         construct('message', (proza) => {
           assert.isNull(proza.getAttribute('data-vl-block'));
           construct('<span>message</span>', (proza) => {
@@ -541,8 +545,23 @@
         testFixture.querySelector('#sibling').appendChild(prozaMessage);
         assert.equal(prozaMessage.querySelectorAll('div#wysiwyg').length, 1);
       });
+
+      test('via getMessage kan een bericht opgevraagd worden', async () => {
+        assert.equal(await VlProzaMessage.getMessage('foo', 'bar'), 'foobar');
+      });
+
+      test('via getMessage kan een bericht met parameters opgevraagd worden', async () => {
+        assert.equal(await VlProzaMessage.getMessage('foo', 'bereik', {van: 50, tot: 1000}), 'Van 50 tot 1000');
+      });
+
+      test('getMessage haalt het bericht maar 1 keer op indien deze al in de cache zitten', async () => {
+        await VlProzaMessage.getMessage('foo', 'bar');
+        await VlProzaMessage.getMessage('foo', 'bar');
+
+        assert.lengthOf(fetchMock.calls('proza/domein/foo/bar'), 1);
+      });
     });
-  </script>
+</script>
 </body>
 
 </html>
