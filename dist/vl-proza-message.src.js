@@ -201,7 +201,8 @@ export class VlProzaMessage extends vlElement(HTMLElement) {
     } else {
       try {
         return await VlProzaMessage.__getMessageFromPreloaderCache(domain, code);
-      } catch {
+      } catch (error) {
+        console.info(error);
         return await VlProzaMessage.__getSingleMessage(domain, code);
       }
     }
@@ -494,6 +495,21 @@ export class VlProzaMessagePreloader extends vlElement(HTMLElement) {
       } else {
         throw Error(`Bericht voor {domein: ${domain}, code: ${code}} niet gevonden`);
       }
+    });
+  }
+
+  /**
+   * Geeft de Proza codes terug op basis van een prefix.
+   *
+   * @param {String} domain - Het Proza domein waarin het Proza bericht zit.
+   * @param {String} prefix - De prefix van de code die het Proza bericht
+   * identificeert.
+   * @return {Promise<[string]>} Resolved naar de Proza codes met de
+   * opgegeven prefix
+   */
+  static getProzaCodes(domain, prefix) {
+    return VlProzaMessagePreloader._getMessages(domain).then((messages) => {
+      return messages.keys().filter((code) => code.startsWith(prefix));
     });
   }
 
