@@ -152,6 +152,15 @@
           });
         });
       });
+
+      test('VlProzaMessage#getMessage haalt het bericht niet nog een keer op indien deze al in de preload cache zitten', async () => {
+        fixture('vl-proza-preloaded-messages-fixture');
+        await fetchMock.flush(true);
+        await VlProzaMessage.getMessage('foo', 'bar');
+
+        assert.lengthOf(fetchMock.calls('proza/domein/foo'), 1);
+        assert.lengthOf(fetchMock.calls('proza/domein/foo/bar'), 0);
+      });
     });
 </script>
 </body>
