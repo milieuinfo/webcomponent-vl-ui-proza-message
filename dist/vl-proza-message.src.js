@@ -201,7 +201,8 @@ export class VlProzaMessage extends vlElement(HTMLElement) {
     } else {
       try {
         return await VlProzaMessage.__getMessageFromPreloaderCache(domain, code);
-      } catch {
+      } catch (error) {
+        console.info(error);
         return await VlProzaMessage.__getSingleMessage(domain, code);
       }
     }
