@@ -1,7 +1,7 @@
 import {vlElement, define, awaitUntil} from '/node_modules/vl-ui-core/dist/vl-core.js';
+import {VlTypography} from '/node_modules/vl-ui-typography/dist/vl-typography.js';
 import '/node_modules/vl-ui-button/dist/vl-button.js';
 import '/node_modules/vl-ui-icon/dist/vl-icon.js';
-import '/node_modules/vl-ui-typography/dist/vl-typography.js';
 import '/node_modules/vl-ui-toaster/dist/vl-toaster.js';
 import '/node_modules/vl-ui-alert/dist/vl-alert.js';
 import '/node_modules/tinymce/tinymce.min.js';
@@ -158,7 +158,7 @@ export class VlProzaMessage extends vlElement(HTMLElement) {
   _loadMessage() {
     awaitUntil(() => this._wysiwygElement).then(() => {
       if (this._domain && this._code) {
-        VlProzaMessage._getMessage(this._domain, this._code).then((message) => {
+        VlProzaMessage.getMessage(this._domain, this._code).then((message) => {
           this._wysiwygElement.innerHTML = message;
           this.__wrapWysiwygElement();
           if (this.__containsBlockElement(message)) {
@@ -171,14 +171,35 @@ export class VlProzaMessage extends vlElement(HTMLElement) {
     });
   }
 
-  static _getMessage(domain, code) {
-    const messageCache = VlProzaMessage.__getMessageCacheForDomain(domain);
-    if (messageCache[code]) {
-      return messageCache[code];
+  /**
+   * Geeft een Proza bericht terug.
+   *
+   * @param {string} domain Het Proza domein waarin het Proza bericht zit.
+   * @param {string} code De code die het Proza bericht identificeert.
+   * @param {object} [parameters] Eventuele parameters die gebruikt kunnen worden om placeholders in het Proza bericht te vervangen.
+   * @return {Promise<string>} Resolved naar het Proza bericht indien teruggevonden en anders wordt de Promise rejected.
+   */
+  static async getMessage(domain, code, parameters) {
+    const message = await VlProzaMessage.__getRawMessage(domain, code);
+
+    if (parameters) {
+      return VlTypography.replaceTemplateParameters(message, parameters);
     } else {
-      return VlProzaMessage.__getMessageFromPreloaderCache(domain, code).catch(() => {
-        return VlProzaMessage.__getSingleMessage(domain, code);
-      });
+      return message;
+    }
+  }
+
+  static async __getRawMessage(domain, code) {
+    const messageCache = VlProzaMessage.__getMessageCacheForDomain(domain);
+
+    if (messageCache[code]) {
+      return await messageCache[code];
+    } else {
+      try {
+        return await VlProzaMessage.__getMessageFromPreloaderCache(domain, code);
+      } catch {
+        return await VlProzaMessage.__getSingleMessage(domain, code);
+      }
     }
   }
 
