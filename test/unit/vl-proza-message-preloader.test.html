@@ -90,7 +90,7 @@
         });
       });
 
-      test('kan de proza codes opzoeken aan de hand van een prefix', (done) => {
+      test('kan de proza codes opzoeken aan de hand van een prefix', async () => {
         fetchMock.mock('proza/domein/bar', [
           {
             code: 'foo',
@@ -107,13 +107,11 @@
         ]);
         const preloader = fixture('vl-proza-message-preloader-fixture');
         preloader.dataset.vlDomain = 'bar';
-        VlProzaMessagePreloader.getProzaCodes('bar', 'foo').then((codes) => {
-          assert.deepEqual(codes, ['foo', 'foobar']);
-          done();
-        });
+        const codes = await VlProzaMessagePreloader.getProzaCodes('bar', 'foo');
+        assert.deepEqual(codes, ['foo', 'foobar']);
       });
 
-      test('als er geen messages zijn met de opgegeven prefix, zullen er geen codes terugkomen bij het opvragen met prefix', (done) => {
+      test('als er geen messages zijn met de opgegeven prefix, zullen er geen codes terugkomen bij het opvragen met prefix', async () => {
         fetchMock.mock('proza/domein/bar', [
           {
             code: 'foo',
@@ -126,10 +124,8 @@
         ]);
         const preloader = fixture('vl-proza-message-preloader-fixture');
         preloader.dataset.vlDomain = 'bar';
-        VlProzaMessagePreloader.getProzaCodes('bar', 'other').then((codes) => {
-          assert.deepEqual(codes, []);
-          done();
-        });
+        const codes = await VlProzaMessagePreloader.getProzaCodes('bar', 'other');
+        assert.deepEqual(codes, []);
       });
     });
 </script>

@@ -503,10 +503,9 @@ export class VlProzaMessagePreloader extends vlElement(HTMLElement) {
    * @return {Promise<[string]>} Resolved naar de Proza codes met de
    * opgegeven prefix
    */
-  static getProzaCodes(domain, prefix) {
-    return VlProzaMessagePreloader._getMessages(domain).then((messages) => {
-      return Object.keys(messages).filter((code) => code.startsWith(prefix));
-    });
+  static async getProzaCodes(domain, prefix) {
+    const messages = await VlProzaMessagePreloader._getMessages(domain);
+    return Object.keys(messages).filter((code) => code.startsWith(prefix));
   }
 
   /**
