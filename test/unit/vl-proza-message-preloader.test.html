@@ -89,6 +89,48 @@
           done();
         });
       });
+
+      test('kan de proza codes opzoeken aan de hand van een prefix', (done) => {
+        fetchMock.mock('proza/domein/bar', [
+          {
+            code: 'foo',
+            tekst: 'barfoo',
+          },
+          {
+            code: 'bar',
+            tekst: 'barfoo',
+          },
+          {
+            code: 'foobar',
+            tekst: 'barfoo',
+          },
+        ]);
+        const preloader = fixture('vl-proza-message-preloader-fixture');
+        preloader.dataset.vlDomain = 'bar';
+        VlProzaMessagePreloader.getProzaCodes('bar', 'foo').then((codes) => {
+          assert.deepEqual(codes, ['foo', 'foobar']);
+          done();
+        });
+      });
+
+      test('als er geen messages zijn met de opgegeven prefix, zullen er geen codes terugkomen bij het opvragen met prefix', (done) => {
+        fetchMock.mock('proza/domein/bar', [
+          {
+            code: 'foo',
+            tekst: 'barfoo',
+          },
+          {
+            code: 'bar',
+            tekst: 'barfoo',
+          },
+        ]);
+        const preloader = fixture('vl-proza-message-preloader-fixture');
+        preloader.dataset.vlDomain = 'bar';
+        VlProzaMessagePreloader.getProzaCodes('bar', 'other').then((codes) => {
+          assert.deepEqual(codes, []);
+          done();
+        });
+      });
     });
 </script>
 </body>
