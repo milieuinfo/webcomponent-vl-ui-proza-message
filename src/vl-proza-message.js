@@ -1,4 +1,4 @@
-import {vlElement, define, awaitUntil} from '/node_modules/vl-ui-core/dist/vl-core.js';
+import {awaitUntil, define, vlElement} from '/node_modules/vl-ui-core/dist/vl-core.js';
 import {VlTypography} from '/node_modules/vl-ui-typography/dist/vl-typography.js';
 import '/node_modules/vl-ui-button/dist/vl-button.js';
 import '/node_modules/vl-ui-icon/dist/vl-icon.js';
@@ -9,7 +9,9 @@ import '/node_modules/tinymce/tinymce.min.js';
 /**
  * VlProzaMessage
  * @class
- * @classdesc De vl-proza-message webcomponent kan gebruikt worden om teksten te laten beheren door de business. De edit modus wordt geactiveerd door op het potlood icoon te klikken. De edit modus kan gedactiveerd worden door op enter te duwen of een focus te geven aan een ander element op de pagina. Wanneer de gebruiker op escape klikt zal de edit modus afgesloten worden en zullen de wijzigingen ongedaan gemaakt worden.
+ * @classdesc De vl-proza-message webcomponent kan gebruikt worden om teksten te laten beheren door de business. De edit modus wordt geactiveerd door
+ *   op het potlood icoon te klikken. De edit modus kan gedactiveerd worden door op enter te duwen of een focus te geven aan een ander element op de
+ *   pagina. Wanneer de gebruiker op escape klikt zal de edit modus afgesloten worden en zullen de wijzigingen ongedaan gemaakt worden.
  *
  * @extends HTMLElement
  * @mixes vlElement
@@ -504,6 +506,8 @@ export class VlProzaMessagePreloader extends vlElement(HTMLElement) {
    * opgegeven prefix
    */
   static async getProzaCodes(domain, prefix) {
+    VlProzaMessagePreloader._preload(domain);
+
     const messages = await VlProzaMessagePreloader._getMessages(domain);
     return Object.keys(messages).filter((code) => code.startsWith(prefix));
   }
