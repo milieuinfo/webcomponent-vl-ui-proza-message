@@ -507,7 +507,6 @@ export class VlProzaMessagePreloader extends vlElement(HTMLElement) {
    */
   static async getProzaCodes(domain, prefix) {
     VlProzaMessagePreloader._preload(domain);
-
     const messages = await VlProzaMessagePreloader._getMessages(domain);
     return Object.keys(messages).filter((code) => code.startsWith(prefix));
   }
