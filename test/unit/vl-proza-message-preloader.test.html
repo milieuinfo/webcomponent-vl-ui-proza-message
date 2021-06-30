@@ -89,6 +89,63 @@
           done();
         });
       });
+
+      test('kan de proza codes opzoeken aan de hand van een prefix', async () => {
+        fetchMock.mock('proza/domein/bar', [
+          {
+            code: 'foo',
+            tekst: 'barfoo',
+          },
+          {
+            code: 'bar',
+            tekst: 'barfoo',
+          },
+          {
+            code: 'foobar',
+            tekst: 'barfoo',
+          },
+        ]);
+        const preloader = fixture('vl-proza-message-preloader-fixture');
+        preloader.dataset.vlDomain = 'bar';
+        const codes = await VlProzaMessagePreloader.getProzaCodes('bar', 'foo');
+        assert.deepEqual(codes, ['foo', 'foobar']);
+      });
+
+      test('als er geen messages zijn met de opgegeven prefix, zullen er geen codes terugkomen bij het opvragen met prefix', async () => {
+        fetchMock.mock('proza/domein/bar', [
+          {
+            code: 'foo',
+            tekst: 'barfoo',
+          },
+          {
+            code: 'bar',
+            tekst: 'barfoo',
+          },
+        ]);
+        const preloader = fixture('vl-proza-message-preloader-fixture');
+        preloader.dataset.vlDomain = 'bar';
+        const codes = await VlProzaMessagePreloader.getProzaCodes('bar', 'other');
+        assert.deepEqual(codes, []);
+      });
+
+      test('kan de proza codes opzoeken aan de hand van een prefix zonder preloader component', async () => {
+        fetchMock.mock('proza/domein/bar', [
+          {
+            code: 'foo',
+            tekst: 'barfoo',
+          },
+          {
+            code: 'bar',
+            tekst: 'barfoo',
+          },
+          {
+            code: 'foobar',
+            tekst: 'barfoo',
+          },
+        ], {delay: 500});
+        const codes = await VlProzaMessagePreloader.getProzaCodes('bar', 'foo');
+        assert.deepEqual(codes, ['foo', 'foobar']);
+      });
     });
 </script>
 </body>

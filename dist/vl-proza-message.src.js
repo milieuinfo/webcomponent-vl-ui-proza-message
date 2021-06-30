@@ -499,6 +499,21 @@ export class VlProzaMessagePreloader extends vlElement(HTMLElement) {
   }
 
   /**
+   * Geeft de Proza codes terug op basis van een prefix.
+   *
+   * @param {String} domain - Het Proza domein waarin het Proza bericht zit.
+   * @param {String} prefix - De prefix van de code die het Proza bericht
+   * identificeert.
+   * @return {Promise<[string]>} Resolved naar de Proza codes met de
+   * opgegeven prefix
+   */
+  static getProzaCodes(domain, prefix) {
+    return VlProzaMessagePreloader._getMessages(domain).then((messages) => {
+      return Object.keys(messages).filter((code) => code.startsWith(prefix));
+    });
+  }
+
+  /**
     * Geeft terug of het Proza domein al reeds preloaded werd.
     *
     * @param {String} domain - Het Proza domein.
