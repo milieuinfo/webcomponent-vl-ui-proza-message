@@ -1,4 +1,4 @@
-import {vlElement, define, awaitUntil} from 'vl-ui-core';
+import {awaitUntil, define, vlElement} from 'vl-ui-core';
 import {VlTypography} from 'vl-ui-typography';
 import 'vl-ui-button';
 import 'vl-ui-icon';
@@ -9,7 +9,9 @@ import 'tinymce/tinymce.min.js';
 /**
  * VlProzaMessage
  * @class
- * @classdesc De vl-proza-message webcomponent kan gebruikt worden om teksten te laten beheren door de business. De edit modus wordt geactiveerd door op het potlood icoon te klikken. De edit modus kan gedactiveerd worden door op enter te duwen of een focus te geven aan een ander element op de pagina. Wanneer de gebruiker op escape klikt zal de edit modus afgesloten worden en zullen de wijzigingen ongedaan gemaakt worden.
+ * @classdesc De vl-proza-message webcomponent kan gebruikt worden om teksten te laten beheren door de business. De edit modus wordt geactiveerd door
+ *   op het potlood icoon te klikken. De edit modus kan gedactiveerd worden door op enter te duwen of een focus te geven aan een ander element op de
+ *   pagina. Wanneer de gebruiker op escape klikt zal de edit modus afgesloten worden en zullen de wijzigingen ongedaan gemaakt worden.
  *
  * @extends HTMLElement
  * @mixes vlElement
@@ -496,6 +498,21 @@ export class VlProzaMessagePreloader extends vlElement(HTMLElement) {
         throw Error(`Bericht voor {domein: ${domain}, code: ${code}} niet gevonden`);
       }
     });
+  }
+
+  /**
+   * Geeft de Proza codes terug op basis van een prefix.
+   *
+   * @param {String} domain - Het Proza domein waarin het Proza bericht zit.
+   * @param {String} prefix - De prefix van de code die het Proza bericht
+   * identificeert.
+   * @return {Promise<[string]>} Resolved naar de Proza codes met de
+   * opgegeven prefix
+   */
+  static async getProzaCodes(domain, prefix) {
+    VlProzaMessagePreloader._preload(domain);
+    const messages = await VlProzaMessagePreloader._getMessages(domain);
+    return Object.keys(messages).filter((code) => code.startsWith(prefix));
   }
 
   /**
